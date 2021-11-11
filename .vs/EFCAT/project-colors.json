@@ -1,0 +1,26 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "8f9a87dd-35d3-4a10-9bc0-979d8d83e2fe": {
+      "ProjectGuid": "8f9a87dd-35d3-4a10-9bc0-979d8d83e2fe",
+      "DisplayName": "EFCAT",
+      "ColorIndex": 0
+    },
+    "8176a6c7-bbfa-431d-839a-165bfc442eb1": {
+      "ProjectGuid": "8176a6c7-bbfa-431d-839a-165bfc442eb1",
+      "DisplayName": "Model",
+      "ColorIndex": 1
+    },
+    "d5c14cc5-fc0c-4293-9bb9-c03f2a83a1cf": {
+      "ProjectGuid": "d5c14cc5-fc0c-4293-9bb9-c03f2a83a1cf",
+      "DisplayName": "Domain",
+      "ColorIndex": 2
+    },
+    "b8fa31d7-f69b-41c5-bf72-57ca827e562a": {
+      "ProjectGuid": "b8fa31d7-f69b-41c5-bf72-57ca827e562a",
+      "DisplayName": "WebApi",
+      "ColorIndex": 3
+    }
+  },
+  "NextColorIndex": 4
+}

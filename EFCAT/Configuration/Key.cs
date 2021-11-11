@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace EFCAT.Configuration {
-    public class Key {
+    internal class Key {
         public string Name { get; set; }
         public Type Type { get; set; }
         public Key(string name, Type type) {

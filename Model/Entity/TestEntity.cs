@@ -25,8 +25,8 @@ namespace Model.Entity {
         // Number from 0-100 saved as NUMBER(5, 2) which is equal to 999.99
         [Number(min: 0, max: 100, digits: 3, decimals: 2)]
         [Column("NUMBER")]
-        public int Number { get; set; }
+        public double Number { get; set; }
 
-        ICollection<TestManyToOne> testManyToOnes { get; set; }
+        //public ICollection<TestManyToOne> testManyToOnes { get; set; }
     }
 }

@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS8644: Type does not implement interface member. Nullability of reference types in interface implemented by the base type doesn't match.
+dotnet_diagnostic.CS8644.severity = none
