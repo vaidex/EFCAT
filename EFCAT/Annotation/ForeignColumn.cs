@@ -14,14 +14,15 @@ namespace EFCAT.Annotation {
         public readonly string[] keys;
         public readonly DeleteBehavior onDelete;
 
-        public ForeignColumn([NotNullAttribute] ForeignType type, string key = "", DeleteBehavior onDelete = DeleteBehavior.Cascade) {
+        public ForeignColumn(ForeignType type = ForeignType.ONE_TO_ONE, string keys = "", DeleteBehavior onDelete = DeleteBehavior.Cascade) {
             this.type = type;
-            this.keys = key != "" ? key.Replace(" ", "").Split(",") : null;
+            this.keys = (keys != "" ? keys.Replace(" ", "").Split(",") : new string[0]);
             this.onDelete = onDelete;
         }
 
-        
+
     }
 
     public enum ForeignType { ONE_TO_ONE, MANY_TO_ONE }
 }
+

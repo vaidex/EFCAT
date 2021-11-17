@@ -1,26 +1,23 @@
 ﻿using EFCAT.Annotation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace EFCAT.Configuration {
-    public class DatabaseContext : Microsoft.EntityFrameworkCore.DbContext {
-        Dictionary<Type, Key[]> Entities = new Dictionary<Type, Key[]>();
+    public class DatabaseContext : DbContext {
+        private Dictionary<Type, Key[]> Entities { get; set; }
 
-        public DatabaseContext(DbContextOptions options) : base(options) {
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            base.OnConfiguring(optionsBuilder);
-        }
-
+        public DatabaseContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
+            Entities = new Dictionary<Type, Key[]>();
             foreach (var entityType in modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType)) if(!Entities.ContainsKey(entityType)) UpdateEntity(modelBuilder, entityType);
-            base.OnModelCreating(modelBuilder);
         }
 
         void UpdateEntity(ModelBuilder modelBuilder, Type entityType) {
+            Console.WriteLine(entityType.FullName);
+
             var entity = modelBuilder.Entity(entityType);
             var properties = entityType.GetProperties();
 
@@ -42,13 +39,15 @@ namespace EFCAT.Configuration {
                     if (column.keys != null) if (fk_keys.Count == column.keys.Length) for (int i = 0; i < fk_keys.Count; i++) fk_keys[i].Name = column.keys[i]; else throw new Exception("Wrong amount of foreign keys.");
                     foreach (var key in fk_keys) entity.Property(key.Type, key.Name);
 
+                    string[] fk_keys_array = fk_keys.Select(k => k.Name).ToArray<string>();
+
                     switch (column.type) {
                         default:
                         case ForeignType.ONE_TO_ONE:
                             entity
                                 .HasOne(property.PropertyType, property.Name)
                                 .WithOne(property.PropertyType.GetProperties().Where(p => p.PropertyType == entityType).Select(p => p.Name).FirstOrDefault())
-                                .HasForeignKey(entityType, fk_keys.Select(k => k.Name).ToArray<string>())
+                                .HasForeignKey(entityType, fk_keys_array)
                                 .OnDelete(column.onDelete)
                                 .IsRequired(property.HasAttribute<PrimaryKey>());
                             break;
@@ -56,14 +55,14 @@ namespace EFCAT.Configuration {
                             entity
                                 .HasOne(property.PropertyType, property.Name)
                                 .WithMany(property.PropertyType.GetProperties().Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericArguments()[0] == entityType).Select(p => p.Name).FirstOrDefault())
-                                .HasForeignKey(fk_keys.Select(k => k.Name).ToArray<string>())
+                                .HasForeignKey(fk_keys_array)
                                 .OnDelete(column.onDelete)
                                 .IsRequired(property.HasAttribute<PrimaryKey>());
                             break;
                     }
 
                     if (property.HasAttribute<PrimaryKey>()) keys.AddRange(fk_keys);
-                    if (property.HasAttribute<Unique>()) entity.HasIndex(fk_keys.Select(key => key.Name).ToArray()).IsUnique(true);
+                    if (property.HasAttribute<Unique>()) entity.HasIndex(fk_keys_array).IsUnique(true);
                 } else {
                     if (property.HasAttribute<AutoIncrement>()) entity.Property(property.Name).ValueGeneratedOnAdd();
                     if (property.HasAttribute<PrimaryKey>()) keys.Add(new Key(property.Name, property.PropertyType));

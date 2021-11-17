@@ -5,7 +5,7 @@ namespace Model.Entity {
     [Table("TEST_MTOS")]
     public class TestManyToOne {
         [PrimaryKey]
-        [ForeignColumn(ForeignType.ONE_TO_ONE, "TEST_ID")]
+        [ForeignColumn(ForeignType.MANY_TO_ONE, "TEST_ID, TEST_NAME")]
         public TestEntity TestEntity { get; set; }
     }
 }

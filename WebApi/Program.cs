@@ -12,8 +12,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ITestRepository, TestRepository>();
-
 builder.Services.AddDbContext<TestDbContext>(
     options => options
     .UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new System.Version("8.0.25")))
@@ -21,28 +19,15 @@ builder.Services.AddDbContext<TestDbContext>(
     .EnableDetailedErrors()
 );
 
+builder.Services.AddScoped<ITestRepository, TestRepository>();
+
+
 var app = builder.Build();
 
 using (var context = app.Services.CreateScope().ServiceProvider.GetService<TestDbContext>()) {
     if (context == null) return;
-    context.Database.EnsureDeleted();
-    context.Database.EnsureCreated();
-}
-
-/*
-using(var context = app.Services.CreateScope().ServiceProvider.GetService<TestDbContext>()) {
-    if (context == null) return;
     context.Database.Migrate();
-
-    if(context.Find<TestEntity>() == null) {
-        var iu = context.Add<TestEntity>(new TestEntity() {
-            Name = "TestName",
-            Password = "TestPassword",
-            Number = 2.23
-        });
-        context.SaveChanges();
-    }
-}*/
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

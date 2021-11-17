@@ -655,7 +655,7 @@
           }
         }
       },
-      "EFCAT/1.0.3": {
+      "EFCAT/1.0.4": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
@@ -1930,7 +1930,7 @@
         "version.txt"
       ]
     },
-    "EFCAT/1.0.3": {
+    "EFCAT/1.0.4": {
       "type": "project",
       "path": "../EFCAT/EFCAT.csproj",
       "msbuildProject": "../EFCAT/EFCAT.csproj"
@@ -1938,7 +1938,7 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "EFCAT >= 1.0.3",
+      "EFCAT >= 1.0.4",
       "Microsoft.EntityFrameworkCore.Tools >= 6.0.0",
       "Pomelo.EntityFrameworkCore.MySql >= 6.0.0"
     ]

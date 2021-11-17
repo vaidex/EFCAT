@@ -718,7 +718,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "EFCAT": "1.0.3",
+          "EFCAT": "1.0.4",
           "Model": "1.0.0"
         },
         "compile": {
@@ -728,7 +728,7 @@
           "bin/placeholder/Domain.dll": {}
         }
       },
-      "EFCAT/1.0.3": {
+      "EFCAT/1.0.4": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
@@ -745,7 +745,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "EFCAT": "1.0.3",
+          "EFCAT": "1.0.4",
           "Pomelo.EntityFrameworkCore.MySql": "6.0.0"
         },
         "compile": {
@@ -2123,7 +2123,7 @@
       "path": "../Domain/Domain.csproj",
       "msbuildProject": "../Domain/Domain.csproj"
     },
-    "EFCAT/1.0.3": {
+    "EFCAT/1.0.4": {
       "type": "project",
       "path": "../EFCAT/EFCAT.csproj",
       "msbuildProject": "../EFCAT/EFCAT.csproj"
