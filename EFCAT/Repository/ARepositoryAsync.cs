@@ -26,14 +26,14 @@ namespace EFCAT.Repository {
             return entity;
         }
 
-        public async void UpdateAsync(TEntity entity) {
+        public async Task UpdateAsync(TEntity entity) {
             _entitySet.Update(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async void DeleteAsync(TKey Id) => DeleteAsync(await ReadAsync(Id));
+        public async Task DeleteAsync(TKey Id) => DeleteAsync(await ReadAsync(Id));
         
-        public async void DeleteAsync(TEntity entity) {
+        public async Task DeleteAsync(TEntity entity) {
             _entitySet.Remove(entity);
             await _context.SaveChangesAsync();
         }

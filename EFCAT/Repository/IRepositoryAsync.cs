@@ -9,8 +9,8 @@ namespace EFCAT.Repository {
         Task<IEnumerable<TEntity>> ReadAllAsync(int start, int count);
         Task<IEnumerable<TEntity>> FilterAsync(Expression<Func<TEntity, bool>> filter);
         Task<TEntity> CreateAsync(TEntity entity);
-        void UpdateAsync(TEntity entity);
-        void DeleteAsync(TKey Id);
-        void DeleteAsync(TEntity entity);
+        Task UpdateAsync(TEntity entity);
+        Task DeleteAsync(TKey Id);
+        Task DeleteAsync(TEntity entity);
     }
 }
