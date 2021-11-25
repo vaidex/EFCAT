@@ -1,4 +1,4 @@
-﻿using EFCAT.Configuration;
+﻿using EFCAT.Model.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Model.Entity;
 

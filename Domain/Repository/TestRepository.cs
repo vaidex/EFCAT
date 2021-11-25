@@ -1,12 +1,12 @@
-﻿using EFCAT.Repository;
+﻿using EFCAT.Domain.Repository;
 using Model.Configuration;
 using Model.Entity;
 
-namespace Domain.Repository {
-    public interface ITestRepository : IRepository<TestEntity, int> { }
+namespace Domain.Repository;
 
-    public class TestRepository : ARepository<TestEntity, int>, ITestRepository {
-        public TestRepository(TestDbContext context) : base(context) {
-        }
+public interface ITestRepository : IRepository<TestEntity, int> { }
+
+public class TestRepository : ARepository<TestEntity, int>, ITestRepository {
+    public TestRepository(TestDbContext context) : base(context) {
     }
 }

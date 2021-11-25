@@ -1,4 +1,4 @@
-﻿using EFCAT.Annotation;
+﻿using EFCAT.Model.Annotation;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Model.Entity {

@@ -1006,14 +1006,14 @@
       },
       "Domain/1.0.0": {
         "dependencies": {
-          "EFCAT": "1.0.5",
+          "EFCAT": "1.0.7",
           "Model": "1.0.0"
         },
         "runtime": {
           "Domain.dll": {}
         }
       },
-      "EFCAT/1.0.5": {
+      "EFCAT/1.0.7": {
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
@@ -1024,7 +1024,7 @@
       },
       "Model/1.0.0": {
         "dependencies": {
-          "EFCAT": "1.0.5",
+          "EFCAT": "1.0.7",
           "Pomelo.EntityFrameworkCore.MySql": "6.0.0"
         },
         "runtime": {
@@ -1821,7 +1821,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "EFCAT/1.0.5": {
+    "EFCAT/1.0.7": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

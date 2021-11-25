@@ -1,7 +1,6 @@
 using Domain.Repository;
 using Microsoft.EntityFrameworkCore;
 using Model.Configuration;
-using Model.Entity;
 
 var builder = WebApplication.CreateBuilder(args);
 

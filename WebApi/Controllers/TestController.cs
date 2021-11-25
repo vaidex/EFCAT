@@ -1,14 +1,14 @@
 ﻿using Domain.Repository;
-using EFCAT.Repository;
-using EFCAT.Service;
+using EFCAT.Domain.Repository;
+using EFCAT.Service.Controller;
 using Microsoft.AspNetCore.Mvc;
 using Model.Entity;
 
-namespace WebApi.Controllers {
-    [ApiController]
-    [Route("test")]
-    public class TestController : AControllerAsync<TestEntity, int> {
-        public TestController(ITestAsyncRepository repository) : base(repository) {
-        }
+namespace WebApi.Controllers;
+
+[ApiController]
+[Route("test")]
+public class TestController : AControllerAsync<ITestAsyncRepository, TestEntity, int> {
+    public TestController(ITestAsyncRepository repository) : base(repository) {
     }
 }
