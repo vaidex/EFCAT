@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace EFCAT.Service {
-    public abstract class AController<TEntity, TKey> : ControllerBase where TEntity : class {
+    public abstract class AController<TInterface, TEntity, TKey> : ControllerBase where TEntity : class where TInterface : IRepository<TEntity, TKey> {
 
-        private IRepository<TEntity, TKey> _repository;
+        protected TInterface _repository;
 
-        public AController(IRepository<TEntity, TKey> repository) {
+        public AController(TInterface repository) {
             _repository = repository;
         }
 

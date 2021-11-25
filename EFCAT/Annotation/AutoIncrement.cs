@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EFCAT.Annotation {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class AutoIncrement : ValidationAttribute {
+    public class AutoIncrement : Attribute {
 
     }
 }

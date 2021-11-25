@@ -1,7 +1,5 @@
 ﻿using EFCAT.Annotation;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Model.Entity {
     [Table("TEST_ENTITIES")]
@@ -11,7 +9,6 @@ namespace Model.Entity {
         [Column("ID")]
         public int Id { get; set; }
 
-        [PrimaryKey]
         [Unique]
         [Required]
         [MaxLength(20)]
@@ -29,6 +26,6 @@ namespace Model.Entity {
         [Column("NUMBER")]
         public double Number { get; set; }
 
-        //public ICollection<TestManyToOne> testManyToOnes { get; set; }
+        public ICollection<TestManyToOne>? TestManyToOnes { get; set; }
     }
 }

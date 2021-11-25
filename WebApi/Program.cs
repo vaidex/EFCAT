@@ -12,14 +12,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<ITestAsyncRepository, TestAsyncRepository>();
+
 builder.Services.AddDbContext<TestDbContext>(
     options => options
     .UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new System.Version("8.0.25")))
     .EnableSensitiveDataLogging()
     .EnableDetailedErrors()
 );
-
-builder.Services.AddScoped<ITestRepository, TestRepository>();
 
 
 var app = builder.Build();
