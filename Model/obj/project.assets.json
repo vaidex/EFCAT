@@ -1537,7 +1537,7 @@
           "lib/netstandard1.3/System.Xml.XDocument.dll": {}
         }
       },
-      "EFCAT/1.0.7": {
+      "EFCAT/1.0.9": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
@@ -5330,7 +5330,7 @@
         "system.xml.xdocument.nuspec"
       ]
     },
-    "EFCAT/1.0.7": {
+    "EFCAT/1.0.9": {
       "type": "project",
       "path": "../EFCAT/EFCAT.csproj",
       "msbuildProject": "../EFCAT/EFCAT.csproj"
@@ -5338,7 +5338,7 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "EFCAT >= 1.0.7",
+      "EFCAT >= 1.0.9",
       "Microsoft.EntityFrameworkCore.Tools >= 6.0.0",
       "Pomelo.EntityFrameworkCore.MySql >= 6.0.0"
     ]

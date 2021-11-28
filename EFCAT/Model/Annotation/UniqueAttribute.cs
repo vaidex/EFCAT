@@ -3,9 +3,9 @@
 namespace EFCAT.Model.Annotation;
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class Unique : ValidationAttribute {
+public class UniqueAttribute : ValidationAttribute {
 
-    public Unique() {
+    public UniqueAttribute() {
 
     }
 

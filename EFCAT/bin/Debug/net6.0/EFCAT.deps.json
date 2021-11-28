@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v6.0": {
-      "EFCAT/1.0.7": {
+      "EFCAT/1.0.8": {
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
@@ -1093,7 +1093,7 @@
     }
   },
   "libraries": {
-    "EFCAT/1.0.7": {
+    "EFCAT/1.0.8": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

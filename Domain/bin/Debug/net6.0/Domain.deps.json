@@ -8,7 +8,7 @@
     ".NETCoreApp,Version=v6.0": {
       "Domain/1.0.0": {
         "dependencies": {
-          "EFCAT": "1.0.7",
+          "EFCAT": "1.0.8",
           "Model": "1.0.0"
         },
         "runtime": {
@@ -1111,7 +1111,7 @@
           "System.Xml.ReaderWriter": "4.0.11"
         }
       },
-      "EFCAT/1.0.7": {
+      "EFCAT/1.0.8": {
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
@@ -1122,7 +1122,7 @@
       },
       "Model/1.0.0": {
         "dependencies": {
-          "EFCAT": "1.0.7",
+          "EFCAT": "1.0.8",
           "Pomelo.EntityFrameworkCore.MySql": "6.0.0"
         },
         "runtime": {
@@ -1858,7 +1858,7 @@
       "path": "system.xml.xdocument/4.0.11",
       "hashPath": "system.xml.xdocument.4.0.11.nupkg.sha512"
     },
-    "EFCAT/1.0.7": {
+    "EFCAT/1.0.8": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

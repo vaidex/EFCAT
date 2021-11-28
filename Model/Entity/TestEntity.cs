@@ -6,25 +6,21 @@ namespace Model.Entity {
     public class TestEntity {
         [PrimaryKey]
         [AutoIncrement]
-        [Column("ID")]
         public int Id { get; set; }
 
         [Unique]
         [Required]
-        [MaxLength(20)]
-        [Column("NAME")]
+        [Varchar(16, Min = 3, ErrorMessage = "You need to have between @min and @max characters.")]
         public string Name { get; set; }
 
         [Encrypt]
         [Required]
-        [MaxLength(256)]
-        [Column("PASSWORD")]
+        [Varchar(256)]
         public string Password { get; set; }
 
-        // Number from 0-100 saved as NUMBER(5, 2) which is equal to 999.99
-        [Number(min: 0, max: 100, digits: 3, decimals: 2)]
-        [Column("NUMBER")]
-        public double Number { get; set; }
+        // Number from 0-100 saved as DECIMAL(5, 2) which is equal to 999.99
+        [Decimal(3, 2, Min = 10, Max = 20)]
+        public decimal Number { get; set; }
 
         public ICollection<TestManyToOne>? TestManyToOnes { get; set; }
     }
