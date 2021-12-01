@@ -23,3 +23,10 @@ C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\obj\Debug\net6.0\EFCAT.csproj.C
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\obj\Debug\net6.0\EFCAT.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\obj\Debug\net6.0\ref\EFCAT.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\obj\Debug\net6.0\EFCAT.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.Domain.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.Model.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.Service.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.Domain.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.Model.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.Service.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\obj\Debug\net6.0\EFCAT.csproj.CopyComplete

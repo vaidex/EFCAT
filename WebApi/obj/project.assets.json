@@ -1614,14 +1614,56 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
-          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
+          "EFCAT.Domain": "1.0.0",
+          "EFCAT.Model": "1.0.0",
+          "EFCAT.Service": "1.0.0"
         },
         "compile": {
           "bin/placeholder/EFCAT.dll": {}
         },
         "runtime": {
           "bin/placeholder/EFCAT.dll": {}
+        }
+      },
+      "EFCAT.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
+        },
+        "compile": {
+          "bin/placeholder/EFCAT.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/EFCAT.Domain.dll": {}
+        }
+      },
+      "EFCAT.Model/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
+        },
+        "compile": {
+          "bin/placeholder/EFCAT.Model.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/EFCAT.Model.dll": {}
+        }
+      },
+      "EFCAT.Service/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "EFCAT.Domain": "1.0.0",
+          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
+        },
+        "compile": {
+          "bin/placeholder/EFCAT.Service.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/EFCAT.Service.dll": {}
         }
       },
       "Model/1.0.0": {
@@ -5527,6 +5569,21 @@
       "type": "project",
       "path": "../EFCAT/EFCAT.csproj",
       "msbuildProject": "../EFCAT/EFCAT.csproj"
+    },
+    "EFCAT.Domain/1.0.0": {
+      "type": "project",
+      "path": "../EFCAT.Domain/EFCAT.Domain.csproj",
+      "msbuildProject": "../EFCAT.Domain/EFCAT.Domain.csproj"
+    },
+    "EFCAT.Model/1.0.0": {
+      "type": "project",
+      "path": "../EFCAT.Model/EFCAT.Model.csproj",
+      "msbuildProject": "../EFCAT.Model/EFCAT.Model.csproj"
+    },
+    "EFCAT.Service/1.0.0": {
+      "type": "project",
+      "path": "../EFCAT.Service/EFCAT.Service.csproj",
+      "msbuildProject": "../EFCAT.Service/EFCAT.Service.csproj"
     },
     "Model/1.0.0": {
       "type": "project",

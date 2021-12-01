@@ -1,0 +1,17 @@
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.csproj.AssemblyReference.cache
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.AssemblyInfoInputs.cache
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.AssemblyInfo.cs
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.csproj.CoreCompileInputs.cache
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Service.deps.json
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Service.runtimeconfig.json
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Service.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\ref\EFCAT.Service.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Service.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Domain.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Domain.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.csproj.CopyComplete
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\ref\EFCAT.Service.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.genruntimeconfig.cache

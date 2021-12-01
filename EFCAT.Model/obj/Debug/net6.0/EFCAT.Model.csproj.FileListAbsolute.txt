@@ -1,0 +1,14 @@
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\bin\Debug\net6.0\EFCAT.Model.deps.json
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\bin\Debug\net6.0\EFCAT.Model.runtimeconfig.json
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\bin\Debug\net6.0\EFCAT.Model.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\bin\Debug\net6.0\ref\EFCAT.Model.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\bin\Debug\net6.0\EFCAT.Model.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\obj\Debug\net6.0\EFCAT.Model.csproj.AssemblyReference.cache
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\obj\Debug\net6.0\EFCAT.Model.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\obj\Debug\net6.0\EFCAT.Model.AssemblyInfoInputs.cache
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\obj\Debug\net6.0\EFCAT.Model.AssemblyInfo.cs
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\obj\Debug\net6.0\EFCAT.Model.csproj.CoreCompileInputs.cache
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\obj\Debug\net6.0\EFCAT.Model.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\obj\Debug\net6.0\ref\EFCAT.Model.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\obj\Debug\net6.0\EFCAT.Model.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\obj\Debug\net6.0\EFCAT.Model.genruntimeconfig.cache

@@ -1,0 +1,12 @@
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\bin\Debug\net6.0\EFCAT.Domain.deps.json
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\bin\Debug\net6.0\EFCAT.Domain.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\bin\Debug\net6.0\ref\EFCAT.Domain.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\bin\Debug\net6.0\EFCAT.Domain.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\obj\Debug\net6.0\EFCAT.Domain.csproj.AssemblyReference.cache
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\obj\Debug\net6.0\EFCAT.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\obj\Debug\net6.0\EFCAT.Domain.AssemblyInfoInputs.cache
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\obj\Debug\net6.0\EFCAT.Domain.AssemblyInfo.cs
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\obj\Debug\net6.0\EFCAT.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\obj\Debug\net6.0\EFCAT.Domain.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\obj\Debug\net6.0\ref\EFCAT.Domain.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\obj\Debug\net6.0\EFCAT.Domain.pdb

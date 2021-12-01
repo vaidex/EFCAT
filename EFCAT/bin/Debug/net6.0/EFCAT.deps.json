@@ -6,10 +6,11 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v6.0": {
-      "EFCAT/1.0.8": {
+      "EFCAT/1.0.9": {
         "dependencies": {
-          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
-          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
+          "EFCAT.Domain": "1.0.0",
+          "EFCAT.Model": "1.0.0",
+          "EFCAT.Service": "1.0.0"
         },
         "runtime": {
           "EFCAT.dll": {}
@@ -1089,11 +1090,37 @@
           "System.Threading": "4.0.11",
           "System.Xml.ReaderWriter": "4.0.11"
         }
+      },
+      "EFCAT.Domain/1.0.0": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
+        },
+        "runtime": {
+          "EFCAT.Domain.dll": {}
+        }
+      },
+      "EFCAT.Model/1.0.0": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
+        },
+        "runtime": {
+          "EFCAT.Model.dll": {}
+        }
+      },
+      "EFCAT.Service/1.0.0": {
+        "dependencies": {
+          "EFCAT.Domain": "1.0.0",
+          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
+        },
+        "runtime": {
+          "EFCAT.Service.dll": {}
+        }
       }
     }
   },
   "libraries": {
-    "EFCAT/1.0.8": {
+    "EFCAT/1.0.9": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -1804,6 +1831,21 @@
       "sha512": "sha512-Mk2mKmPi0nWaoiYeotq1dgeNK1fqWh61+EK+w4Wu8SWuTYLzpUnschb59bJtGywaPq7SmTuPf44wrXRwbIrukg==",
       "path": "system.xml.xdocument/4.0.11",
       "hashPath": "system.xml.xdocument.4.0.11.nupkg.sha512"
+    },
+    "EFCAT.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "EFCAT.Model/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "EFCAT.Service/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

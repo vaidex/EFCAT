@@ -16,8 +16,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
+	  <ProjectReference Include="..\EFCAT.Domain\EFCAT.Domain.csproj" />
+	  <ProjectReference Include="..\EFCAT.Model\EFCAT.Model.csproj" />
+	  <ProjectReference Include="..\EFCAT.Service\EFCAT.Service.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
