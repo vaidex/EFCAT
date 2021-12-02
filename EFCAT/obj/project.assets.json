@@ -1490,7 +1490,7 @@
           "bin/placeholder/EFCAT.Domain.dll": {}
         }
       },
-      "EFCAT.Model/1.0.0": {
+      "EFCAT.Model/1.0.1": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
@@ -5204,7 +5204,7 @@
       "path": "../EFCAT.Domain/EFCAT.Domain.csproj",
       "msbuildProject": "../EFCAT.Domain/EFCAT.Domain.csproj"
     },
-    "EFCAT.Model/1.0.0": {
+    "EFCAT.Model/1.0.1": {
       "type": "project",
       "path": "../EFCAT.Model/EFCAT.Model.csproj",
       "msbuildProject": "../EFCAT.Model/EFCAT.Model.csproj"
@@ -5218,7 +5218,7 @@
   "projectFileDependencyGroups": {
     "net6.0": [
       "EFCAT.Domain >= 1.0.0",
-      "EFCAT.Model >= 1.0.0",
+      "EFCAT.Model >= 1.0.1",
       "EFCAT.Service >= 1.0.0"
     ]
   },
@@ -5227,7 +5227,7 @@
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
-    "version": "1.0.9",
+    "version": "1.0.10",
     "restore": {
       "projectUniqueName": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT\\EFCAT.csproj",
       "projectName": "EFCAT",

@@ -15,3 +15,9 @@ C:\Users\Admin\Documents\Files\XTREY\EFCAT\Model\obj\Debug\net6.0\Model.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\Model\obj\Debug\net6.0\ref\Model.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\Model\obj\Debug\net6.0\Model.pdb
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\Model\obj\Debug\net6.0\Model.genruntimeconfig.cache
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\Model\bin\Debug\net6.0\EFCAT.Domain.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\Model\bin\Debug\net6.0\EFCAT.Model.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\Model\bin\Debug\net6.0\EFCAT.Service.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\Model\bin\Debug\net6.0\EFCAT.Domain.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\Model\bin\Debug\net6.0\EFCAT.Model.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\Model\bin\Debug\net6.0\EFCAT.Service.pdb

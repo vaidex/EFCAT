@@ -136,7 +136,7 @@
       }
     },
     "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT.Model\\EFCAT.Model.csproj": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "restore": {
         "projectUniqueName": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT.Model\\EFCAT.Model.csproj",
         "projectName": "EFCAT.Model",
@@ -286,7 +286,7 @@
       }
     },
     "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT\\EFCAT.csproj": {
-      "version": "1.0.9",
+      "version": "1.0.10",
       "restore": {
         "projectUniqueName": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT\\EFCAT.csproj",
         "projectName": "EFCAT",

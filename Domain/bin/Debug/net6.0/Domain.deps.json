@@ -8,7 +8,7 @@
     ".NETCoreApp,Version=v6.0": {
       "Domain/1.0.0": {
         "dependencies": {
-          "EFCAT": "1.0.8",
+          "EFCAT": "1.0.10",
           "Model": "1.0.0"
         },
         "runtime": {
@@ -1111,18 +1111,45 @@
           "System.Xml.ReaderWriter": "4.0.11"
         }
       },
-      "EFCAT/1.0.8": {
+      "EFCAT/1.0.10": {
         "dependencies": {
-          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
-          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
+          "EFCAT.Domain": "1.0.0",
+          "EFCAT.Model": "1.0.1",
+          "EFCAT.Service": "1.0.0"
         },
         "runtime": {
           "EFCAT.dll": {}
         }
       },
+      "EFCAT.Domain/1.0.0": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
+        },
+        "runtime": {
+          "EFCAT.Domain.dll": {}
+        }
+      },
+      "EFCAT.Model/1.0.1": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
+        },
+        "runtime": {
+          "EFCAT.Model.dll": {}
+        }
+      },
+      "EFCAT.Service/1.0.0": {
+        "dependencies": {
+          "EFCAT.Domain": "1.0.0",
+          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
+        },
+        "runtime": {
+          "EFCAT.Service.dll": {}
+        }
+      },
       "Model/1.0.0": {
         "dependencies": {
-          "EFCAT": "1.0.8",
+          "EFCAT": "1.0.10",
           "Pomelo.EntityFrameworkCore.MySql": "6.0.0"
         },
         "runtime": {
@@ -1858,7 +1885,22 @@
       "path": "system.xml.xdocument/4.0.11",
       "hashPath": "system.xml.xdocument.4.0.11.nupkg.sha512"
     },
-    "EFCAT/1.0.8": {
+    "EFCAT/1.0.10": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "EFCAT.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "EFCAT.Model/1.0.1": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "EFCAT.Service/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

@@ -69,3 +69,9 @@ C:\Users\Admin\Documents\Files\XTREY\EFCAT\WebApi\obj\Debug\net6.0\WebApi.genrun
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\WebApi\bin\Debug\net6.0\Microsoft.DotNet.PlatformAbstractions.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\WebApi\bin\Debug\net6.0\Microsoft.Extensions.DependencyModel.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\WebApi\bin\Debug\net6.0\Newtonsoft.Json.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\WebApi\bin\Debug\net6.0\EFCAT.Domain.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\WebApi\bin\Debug\net6.0\EFCAT.Model.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\WebApi\bin\Debug\net6.0\EFCAT.Service.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\WebApi\bin\Debug\net6.0\EFCAT.Domain.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\WebApi\bin\Debug\net6.0\EFCAT.Model.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\WebApi\bin\Debug\net6.0\EFCAT.Service.pdb

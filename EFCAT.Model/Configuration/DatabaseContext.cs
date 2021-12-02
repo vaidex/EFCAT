@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 
 using System.Text.RegularExpressions;
@@ -13,16 +14,19 @@ namespace EFCAT.Model.Configuration;
 
 public class DatabaseContext : DbContext {
     private Dictionary<Type, Key[]> Entities { get; set; }
+    private Dictionary<Type, List<string>> References { get; set; }
 
     public DatabaseContext([NotNull] DbContextOptions options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         Entities = new Dictionary<Type, Key[]>();
+        References = new Dictionary<Type, List<string>>();
+
         foreach (var entityType in modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType)) if (!Entities.ContainsKey(entityType)) UpdateEntity(modelBuilder, entityType);
     }
 
     void UpdateEntity(ModelBuilder modelBuilder, Type entityType) {
-        Console.WriteLine("Table found: " + entityType.FullName);
+        Tools.Print("Table found: " + entityType.FullName);
 
         var entity = modelBuilder.Entity(entityType);
         var properties = entityType.GetProperties();
@@ -30,15 +34,16 @@ public class DatabaseContext : DbContext {
         List<Key> keys = new List<Key>();
 
         if (properties == null || !properties.Any()) return;
+        References.Add(entityType, new List<string>());
         foreach (var property in properties) {
             if (property.HasAttribute<ForeignColumnAttribute>()) {
                 List<Key> fk_keys;
                 if (property.PropertyType == entityType) {
                     if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) throw new Exception("Property needs to be nullable.");
-                    fk_keys = keys.Select(k => new Key((property.Name + "_" + k.Name.GetSqlName()).ToUpper(), k.Type)).ToList();
+                    else fk_keys = keys.Select(k => new Key((property.Name + k.Name).GetSqlName(), k.Type)).ToList();
                 } else {
                     if (!Entities.ContainsKey(property.PropertyType)) UpdateEntity(modelBuilder, property.PropertyType);
-                    fk_keys = Entities[property.PropertyType].Select(k => new Key((property.Name + "_" + k.Name).ToUpper(), k.Type)).ToList();
+                    fk_keys = Entities[property.PropertyType].Select(k => new Key((property.Name + k.Name).GetSqlName(), k.Type)).ToList();
                 }
 
                 ForeignColumnAttribute column = property.GetAttributes<ForeignColumnAttribute>().First();
@@ -46,31 +51,35 @@ public class DatabaseContext : DbContext {
                 foreach (var key in fk_keys) entity.Property(key.Type, key.Name);
 
                 string[] fk_keys_array = fk_keys.Select(k => k.Name).ToArray<string>();
-                List<string> reference;
+                string? reference;
+                bool isRequired = (property.HasAttribute<PrimaryKeyAttribute>() || property.HasAttribute<RequiredAttribute>());
 
                 switch (column.type) {
                     default:
                     case ForeignType.ONE_TO_ONE:
-                        reference = property.PropertyType.GetProperties().Where(p => p.PropertyType == entityType).Select(p => p.Name).ToList();
+                        reference = property.PropertyType.GetProperties().Where(p => p.PropertyType == entityType && (p.HasAttribute<ReferenceColumnAttribute>() ? (p.GetAttribute<ReferenceColumnAttribute>().property == property.Name) : false)).Select(p => p.Name).FirstOrDefault(property.PropertyType.GetProperties().Where(p => p.PropertyType == entityType && (!p.HasAttribute<ReferenceColumnAttribute>())).Select(p => p.Name).Where(name => !References[property.PropertyType].Contains(name)).FirstOrDefault());
                         entity
                             .HasOne(property.PropertyType, property.Name)
-                            .WithOne(reference.FirstOrDefault())
+                            .WithOne(reference)
                             .HasForeignKey(entityType, fk_keys_array)
                             .OnDelete(column.onDelete)
-                            .IsRequired(property.HasAttribute<PrimaryKeyAttribute>());
+                            .IsRequired(isRequired);
                         break;
                     case ForeignType.MANY_TO_ONE:
-                        reference = property.PropertyType.GetProperties().Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericArguments()[0] == entityType).Select(p => p.Name).ToList();
+                        reference = property.PropertyType.GetProperties().Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericArguments()[0] == entityType && (p.HasAttribute<ReferenceColumnAttribute>() ? (p.GetAttribute<ReferenceColumnAttribute>().property == property.Name) : false)).Select(p => p.Name).FirstOrDefault(property.PropertyType.GetProperties().Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericArguments()[0] == entityType && (!p.HasAttribute<ReferenceColumnAttribute>())).Select(p => p.Name).Where(name => !References[property.PropertyType].Contains(name)).FirstOrDefault());
                         entity
                             .HasOne(property.PropertyType, property.Name)
-                            .WithMany(reference.FirstOrDefault())
+                            .WithMany(reference)
                             .HasForeignKey(fk_keys_array)
                             .OnDelete(column.onDelete)
-                            .IsRequired((property.HasAttribute<PrimaryKeyAttribute>() || property.HasAttribute<RequiredAttribute>()));
+                            .IsRequired(isRequired);
                         break;
                 }
 
-                Console.WriteLine(entityType.Name + " has reference in " + property.Name + ": " + reference[0]);
+                if(reference != null) References[property.PropertyType].Add(reference);
+
+                if(reference != null) Tools.Print($"Foreign key {entityType.Name}[{property.Name}] has reference in {property.PropertyType.Name}[{reference}].");
+                else Tools.Print($"Foreign key {entityType.Name}[{property.Name}] found but has no reference.");
 
                 if (property.HasAttribute<PrimaryKeyAttribute>()) keys.AddRange(fk_keys);
                 if (property.HasAttribute<UniqueAttribute>()) entity.HasIndex(fk_keys_array).IsUnique(true);
@@ -96,6 +105,15 @@ public class DatabaseContext : DbContext {
 }
 
 internal static class Tools {
+    internal static void Print(string s) {
+        s = $"[EFCAT] {s}";
+        System.Diagnostics.Debug.WriteLine(s);
+        System.Console.WriteLine(s);
+    }
+}
+
+internal static class ExtensionTools {
+    
     internal static T GetAttribute<T>(this PropertyInfo property) where T : Attribute => property.GetAttributes<T>().First();
 
     internal static IEnumerable<T> GetAttributes<T>(this PropertyInfo property) where T : Attribute {

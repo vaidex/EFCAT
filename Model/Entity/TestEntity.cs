@@ -23,5 +23,8 @@ namespace Model.Entity {
         public decimal Number { get; set; }
 
         public ICollection<TestManyToOne>? TestManyToOnes { get; set; }
+
+        [ReferenceColumn("TestSecondEntity")]
+        public ICollection<TestManyToOne>? TestSecondManyToOnes { get; set; }
     }
 }
