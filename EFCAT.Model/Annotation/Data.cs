@@ -93,11 +93,11 @@ public class TinyintAttribute : SqlIntRangeAttribute {
 }
 
 public class BoolAttribute : SqlAttribute {
-    public BoolAttribute() : base("bool", "") { }
+    public BoolAttribute() : base("bit", "") { }
 }
 
-public class BooleanAttribute : SqlAttribute {
-    public BooleanAttribute() : base("bool", "") { }
+public class BooleanAttribute : BoolAttribute {
+    public BooleanAttribute() { }
 }
 
 public class SmallintAttribute : SqlIntRangeAttribute {

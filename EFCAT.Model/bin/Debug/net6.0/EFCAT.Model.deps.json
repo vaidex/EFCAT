@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v6.0": {
-      "EFCAT.Model/1.0.1": {
+      "EFCAT.Model/1.0.2": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0",
           "Microsoft.EntityFrameworkCore.Tools": "6.0.0"
@@ -485,7 +485,7 @@
     }
   },
   "libraries": {
-    "EFCAT.Model/1.0.1": {
+    "EFCAT.Model/1.0.2": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

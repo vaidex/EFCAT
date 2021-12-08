@@ -26,7 +26,7 @@ public class DatabaseContext : DbContext {
     }
 
     void UpdateEntity(ModelBuilder modelBuilder, Type entityType) {
-        Tools.Print("Table found: " + entityType.FullName);
+        Tools.PrintInfo("Table found: " + entityType.FullName);
 
         var entity = modelBuilder.Entity(entityType);
         var properties = entityType.GetProperties();
@@ -47,44 +47,46 @@ public class DatabaseContext : DbContext {
                 }
 
                 ForeignColumnAttribute column = property.GetAttributes<ForeignColumnAttribute>().First();
+
+                bool isRequired = (property.HasAttribute<PrimaryKeyAttribute>() || property.HasAttribute<RequiredAttribute>());
                 if (column.keys != null) if (fk_keys.Count == column.keys.Length) for (int i = 0; i < fk_keys.Count; i++) fk_keys[i].Name = column.keys[i]; else throw new Exception("Wrong amount of foreign keys.");
-                foreach (var key in fk_keys) entity.Property(key.Type, key.Name);
+                foreach (var key in fk_keys) if(isRequired) entity.Property(key.Type, key.Name); else entity.Property(key.Type.GetNullableType(), key.Name);
 
                 string[] fk_keys_array = fk_keys.Select(k => k.Name).ToArray<string>();
-                string? reference;
-                bool isRequired = (property.HasAttribute<PrimaryKeyAttribute>() || property.HasAttribute<RequiredAttribute>());
+                string? referenceName;
 
                 switch (column.type) {
                     default:
                     case ForeignType.ONE_TO_ONE:
-                        reference = property.PropertyType.GetProperties().Where(p => p.PropertyType == entityType && (p.HasAttribute<ReferenceColumnAttribute>() ? (p.GetAttribute<ReferenceColumnAttribute>().property == property.Name) : false)).Select(p => p.Name).FirstOrDefault(property.PropertyType.GetProperties().Where(p => p.PropertyType == entityType && (!p.HasAttribute<ReferenceColumnAttribute>())).Select(p => p.Name).Where(name => !References[property.PropertyType].Contains(name)).FirstOrDefault());
+                        referenceName = property.PropertyType.GetProperties().Where(p => p.PropertyType == entityType && (p.HasAttribute<ReferenceColumnAttribute>() ? (p.GetAttribute<ReferenceColumnAttribute>().property == property.Name) : false)).Select(p => p.Name).FirstOrDefault(property.PropertyType.GetProperties().Where(p => p.PropertyType == entityType && (!p.HasAttribute<ReferenceColumnAttribute>())).Select(p => p.Name).Where(name => !References[property.PropertyType].Contains(name)).FirstOrDefault());
                         entity
                             .HasOne(property.PropertyType, property.Name)
-                            .WithOne(reference)
+                            .WithOne(referenceName)
                             .HasForeignKey(entityType, fk_keys_array)
                             .OnDelete(column.onDelete)
                             .IsRequired(isRequired);
                         break;
                     case ForeignType.MANY_TO_ONE:
-                        reference = property.PropertyType.GetProperties().Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericArguments()[0] == entityType && (p.HasAttribute<ReferenceColumnAttribute>() ? (p.GetAttribute<ReferenceColumnAttribute>().property == property.Name) : false)).Select(p => p.Name).FirstOrDefault(property.PropertyType.GetProperties().Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericArguments()[0] == entityType && (!p.HasAttribute<ReferenceColumnAttribute>())).Select(p => p.Name).Where(name => !References[property.PropertyType].Contains(name)).FirstOrDefault());
+                        referenceName = property.PropertyType.GetProperties().Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericArguments()[0] == entityType && (p.HasAttribute<ReferenceColumnAttribute>() ? (p.GetAttribute<ReferenceColumnAttribute>().property == property.Name) : false)).Select(p => p.Name).FirstOrDefault(property.PropertyType.GetProperties().Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericArguments()[0] == entityType && (!p.HasAttribute<ReferenceColumnAttribute>())).Select(p => p.Name).Where(name => !References[property.PropertyType].Contains(name)).FirstOrDefault());
                         entity
                             .HasOne(property.PropertyType, property.Name)
-                            .WithMany(reference)
+                            .WithMany(referenceName)
                             .HasForeignKey(fk_keys_array)
                             .OnDelete(column.onDelete)
                             .IsRequired(isRequired);
                         break;
                 }
 
-                if(reference != null) References[property.PropertyType].Add(reference);
+                if (referenceName != null) References[property.PropertyType].Add(referenceName);
 
-                if(reference != null) Tools.Print($"Foreign key {entityType.Name}[{property.Name}] has reference in {property.PropertyType.Name}[{reference}].");
-                else Tools.Print($"Foreign key {entityType.Name}[{property.Name}] found but has no reference.");
+                if (referenceName != null) Tools.PrintInfo($"Foreign key {entityType.Name}[{property.Name}] has reference in {property.PropertyType.Name}[{referenceName}].");
+                else Tools.PrintInfo($"Foreign key {entityType.Name}[{property.Name}] found but has no reference.");
 
                 if (property.HasAttribute<PrimaryKeyAttribute>()) keys.AddRange(fk_keys);
                 if (property.HasAttribute<UniqueAttribute>()) entity.HasIndex(fk_keys_array).IsUnique(true);
             } else {
                 if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) break;
+                else if (property.PropertyType.GetCustomAttributes<TableAttribute>().Count() > 0) break;
 
                 PropertyBuilder propertyBuilder = entity.Property(property.Name);
 
@@ -105,7 +107,7 @@ public class DatabaseContext : DbContext {
 }
 
 internal static class Tools {
-    internal static void Print(string s) {
+    internal static void PrintInfo(string s) {
         s = $"[EFCAT] {s}";
         System.Diagnostics.Debug.WriteLine(s);
         System.Console.WriteLine(s);
@@ -133,11 +135,11 @@ internal static class ExtensionTools {
         return attributes != null && attributes.Any();
     }
 
-    internal static IQueryable Query(this DbContext context, string entityName) => context.Query(context.Model.FindEntityType(entityName).ClrType);
-
-    static readonly MethodInfo? SetMethod = typeof(DbContext).GetMethod(nameof(DbContext.Set));
-
-    internal static IQueryable Query(this DbContext context, Type entityType) => (IQueryable)SetMethod.MakeGenericMethod(entityType).Invoke(context, null);
-
     internal static string GetSqlName(this string input) => Regex.Replace(input, "(?<=[a-z])([A-Z])", "_$1", RegexOptions.Compiled).ToUpper();
+
+    internal static Type GetNullableType(this Type type) {
+        type = Nullable.GetUnderlyingType(type) ?? type;
+        if (type.IsValueType) return typeof(Nullable<>).MakeGenericType(type);
+        return type;
+    }
 }

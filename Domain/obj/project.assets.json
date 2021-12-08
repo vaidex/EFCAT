@@ -1500,12 +1500,12 @@
           "lib/netstandard1.3/System.Xml.XDocument.dll": {}
         }
       },
-      "EFCAT/1.0.10": {
+      "EFCAT/1.0.11": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
           "EFCAT.Domain": "1.0.0",
-          "EFCAT.Model": "1.0.1",
+          "EFCAT.Model": "1.0.2",
           "EFCAT.Service": "1.0.0"
         },
         "compile": {
@@ -1528,7 +1528,7 @@
           "bin/placeholder/EFCAT.Domain.dll": {}
         }
       },
-      "EFCAT.Model/1.0.1": {
+      "EFCAT.Model/1.0.2": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
@@ -1560,7 +1560,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "EFCAT": "1.0.10",
+          "EFCAT": "1.0.11",
           "Pomelo.EntityFrameworkCore.MySql": "6.0.0"
         },
         "compile": {
@@ -5294,7 +5294,7 @@
         "system.xml.xdocument.nuspec"
       ]
     },
-    "EFCAT/1.0.10": {
+    "EFCAT/1.0.11": {
       "type": "project",
       "path": "../EFCAT/EFCAT.csproj",
       "msbuildProject": "../EFCAT/EFCAT.csproj"
@@ -5304,7 +5304,7 @@
       "path": "../EFCAT.Domain/EFCAT.Domain.csproj",
       "msbuildProject": "../EFCAT.Domain/EFCAT.Domain.csproj"
     },
-    "EFCAT.Model/1.0.1": {
+    "EFCAT.Model/1.0.2": {
       "type": "project",
       "path": "../EFCAT.Model/EFCAT.Model.csproj",
       "msbuildProject": "../EFCAT.Model/EFCAT.Model.csproj"
@@ -5322,7 +5322,7 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "EFCAT >= 1.0.10",
+      "EFCAT >= 1.0.11",
       "Model >= 1.0.0"
     ]
   },

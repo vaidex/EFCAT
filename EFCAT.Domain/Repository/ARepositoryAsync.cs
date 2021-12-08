@@ -31,7 +31,7 @@ public abstract class ARepositoryAsync<TEntity, TKey> : IRepositoryAsync<TEntity
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(TKey Id) => DeleteAsync(await ReadAsync(Id));
+    public async Task DeleteAsync(TKey Id) => await DeleteAsync(await ReadAsync(Id));
 
     public async Task DeleteAsync(TEntity entity) {
         _entitySet.Remove(entity);
