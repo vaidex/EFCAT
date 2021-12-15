@@ -17,5 +17,3 @@ C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.genruntimeconfig.cache
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Model.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Model.pdb
-C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Util.dll
-C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Util.pdb

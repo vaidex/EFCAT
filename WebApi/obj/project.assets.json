@@ -1708,7 +1708,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "EFCAT": "1.0.11",
+          "EFCAT": "1.0.12",
           "Model": "1.0.0"
         },
         "compile": {
@@ -1718,13 +1718,13 @@
           "bin/placeholder/Domain.dll": {}
         }
       },
-      "EFCAT/1.0.11": {
+      "EFCAT/1.0.12": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "EFCAT.Domain": "1.0.0",
-          "EFCAT.Model": "1.0.2",
-          "EFCAT.Service": "1.0.0"
+          "EFCAT.Domain": "1.0.2",
+          "EFCAT.Model": "1.0.3",
+          "EFCAT.Service": "1.0.2"
         },
         "compile": {
           "bin/placeholder/EFCAT.dll": {}
@@ -1733,11 +1733,11 @@
           "bin/placeholder/EFCAT.dll": {}
         }
       },
-      "EFCAT.Domain/1.0.0": {
+      "EFCAT.Domain/1.0.2": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "EFCAT.Model": "1.0.2",
+          "EFCAT.Model": "1.0.3",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0",
           "System.Linq.Dynamic.Core": "1.2.14"
         },
@@ -1748,11 +1748,10 @@
           "bin/placeholder/EFCAT.Domain.dll": {}
         }
       },
-      "EFCAT.Model/1.0.2": {
+      "EFCAT.Model/1.0.3": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "EFCAT.Util": "1.0.0",
           "EntityFramework": "6.4.4",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
         },
@@ -1763,11 +1762,11 @@
           "bin/placeholder/EFCAT.Model.dll": {}
         }
       },
-      "EFCAT.Service/1.0.0": {
+      "EFCAT.Service/1.0.2": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "EFCAT.Domain": "1.0.0",
+          "EFCAT.Domain": "1.0.2",
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
         },
@@ -1778,21 +1777,11 @@
           "bin/placeholder/EFCAT.Service.dll": {}
         }
       },
-      "EFCAT.Util/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v6.0",
-        "compile": {
-          "bin/placeholder/EFCAT.Util.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/EFCAT.Util.dll": {}
-        }
-      },
       "Model/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "EFCAT": "1.0.11",
+          "EFCAT": "1.0.12",
           "Pomelo.EntityFrameworkCore.MySql": "6.0.0"
         },
         "compile": {
@@ -6051,30 +6040,25 @@
       "path": "../Domain/Domain.csproj",
       "msbuildProject": "../Domain/Domain.csproj"
     },
-    "EFCAT/1.0.11": {
+    "EFCAT/1.0.12": {
       "type": "project",
       "path": "../EFCAT/EFCAT.csproj",
       "msbuildProject": "../EFCAT/EFCAT.csproj"
     },
-    "EFCAT.Domain/1.0.0": {
+    "EFCAT.Domain/1.0.2": {
       "type": "project",
       "path": "../EFCAT.Domain/EFCAT.Domain.csproj",
       "msbuildProject": "../EFCAT.Domain/EFCAT.Domain.csproj"
     },
-    "EFCAT.Model/1.0.2": {
+    "EFCAT.Model/1.0.3": {
       "type": "project",
       "path": "../EFCAT.Model/EFCAT.Model.csproj",
       "msbuildProject": "../EFCAT.Model/EFCAT.Model.csproj"
     },
-    "EFCAT.Service/1.0.0": {
+    "EFCAT.Service/1.0.2": {
       "type": "project",
       "path": "../EFCAT.Service/EFCAT.Service.csproj",
       "msbuildProject": "../EFCAT.Service/EFCAT.Service.csproj"
-    },
-    "EFCAT.Util/1.0.0": {
-      "type": "project",
-      "path": "../EFCAT.Util/EFCAT.Util.csproj",
-      "msbuildProject": "../EFCAT.Util/EFCAT.Util.csproj"
     },
     "Model/1.0.0": {
       "type": "project",

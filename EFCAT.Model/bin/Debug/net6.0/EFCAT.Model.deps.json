@@ -6,9 +6,8 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v6.0": {
-      "EFCAT.Model/1.0.2": {
+      "EFCAT.Model/1.0.3": {
         "dependencies": {
-          "EFCAT.Util": "1.0.0",
           "EntityFramework": "6.4.4",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0",
           "Microsoft.EntityFrameworkCore.Tools": "6.0.0"
@@ -572,16 +571,11 @@
             "fileVersion": "4.700.19.56404"
           }
         }
-      },
-      "EFCAT.Util/1.0.0": {
-        "runtime": {
-          "EFCAT.Util.dll": {}
-        }
       }
     }
   },
   "libraries": {
-    "EFCAT.Model/1.0.2": {
+    "EFCAT.Model/1.0.3": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -942,11 +936,6 @@
       "sha512": "sha512-CeWTdRNfRaSh0pm2gDTJFwVaXfTq6Xwv/sA887iwPTneW7oMtMlpvDIO+U60+3GWTB7Aom6oQwv5VZVUhQRdPQ==",
       "path": "system.windows.extensions/4.7.0",
       "hashPath": "system.windows.extensions.4.7.0.nupkg.sha512"
-    },
-    "EFCAT.Util/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
     }
   }
 }

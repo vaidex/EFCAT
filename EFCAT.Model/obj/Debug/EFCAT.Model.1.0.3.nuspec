@@ -1,25 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
-    <id>EFCAT</id>
-    <version>1.0.10</version>
+    <id>EFCAT.Model</id>
+    <version>1.0.3</version>
     <authors>NicoZeli</authors>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <license type="expression">Apache-2.0</license>
     <licenseUrl>https://licenses.nuget.org/Apache-2.0</licenseUrl>
     <icon>icon.png</icon>
-    <description>A simple tool for your sql entity framework core project.</description>
+    <description>An extension for your sql entity framework core model layer.</description>
     <repository url="https://github.com/xtreydev/EFCAT" />
     <dependencies>
       <group targetFramework="net6.0">
-        <dependency id="EFCAT.Domain" version="1.0.0" exclude="Build,Analyzers" />
-        <dependency id="EFCAT.Model" version="1.0.1" exclude="Build,Analyzers" />
-        <dependency id="EFCAT.Service" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="EntityFramework" version="6.4.4" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.EntityFrameworkCore.SqlServer" version="6.0.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.dll" target="lib\net6.0\EFCAT.dll" />
+    <file src="C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\bin\Debug\net6.0\EFCAT.Model.runtimeconfig.json" target="lib\net6.0\EFCAT.Model.runtimeconfig.json" />
+    <file src="C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\bin\Debug\net6.0\EFCAT.Model.dll" target="lib\net6.0\EFCAT.Model.dll" />
     <file src="C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\icon.png" target="\icon.png" />
   </files>
 </package>

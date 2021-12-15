@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "A33jPRDjJpnwvIXgutI4dqQPnHujwdy2daIONnxcoC7kqC3g/CpAgVWhga9EzaPTyZEInz2h3IRFQ3i8yFsJ7Q==",
+  "dgSpecHash": "SSY9mJqVL9ElZIi1mSjxkCThz3QBbIbS70Q1/UzGL3WNOK7czegzndfnL2KcpOUiwYkkC9GXuhV/8j6txL8qQQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\WebApi\\WebApi.csproj",
   "expectedPackageFiles": [
@@ -123,9 +123,7 @@
     "C:\\Users\\Admin\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.1\\system.threading.tasks.extensions.4.5.1.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\system.windows.extensions\\4.7.0\\system.windows.extensions.4.7.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\system.xml.readerwriter\\4.0.11\\system.xml.readerwriter.4.0.11.nupkg.sha512",
-    "C:\\Users\\Admin\\.nuget\\packages\\system.xml.xdocument\\4.0.11\\system.xml.xdocument.4.0.11.nupkg.sha512",
-    "C:\\Users\\Admin\\.nuget\\packages\\efcat.domain\\1.0.0\\efcat.domain.1.0.0.nupkg.sha512",
-    "C:\\Users\\Admin\\.nuget\\packages\\efcat.service\\1.0.0\\efcat.service.1.0.0.nupkg.sha512"
+    "C:\\Users\\Admin\\.nuget\\packages\\system.xml.xdocument\\4.0.11\\system.xml.xdocument.4.0.11.nupkg.sha512"
   ],
   "logs": []
 }

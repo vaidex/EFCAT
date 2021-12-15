@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>EFCAT</id>
-    <version>1.0.8</version>
+    <version>1.0.12</version>
     <authors>NicoZeli</authors>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <license type="expression">Apache-2.0</license>
@@ -12,12 +12,14 @@
     <repository url="https://github.com/xtreydev/EFCAT" />
     <dependencies>
       <group targetFramework="net6.0">
-        <dependency id="Microsoft.AspNetCore.Mvc.Core" version="2.2.5" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.EntityFrameworkCore.SqlServer" version="6.0.0" exclude="Build,Analyzers" />
+        <dependency id="EFCAT.Domain" version="1.0.2" exclude="Build,Analyzers" />
+        <dependency id="EFCAT.Model" version="1.0.3" exclude="Build,Analyzers" />
+        <dependency id="EFCAT.Service" version="1.0.2" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>
   <files>
+    <file src="C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.runtimeconfig.json" target="lib\net6.0\EFCAT.runtimeconfig.json" />
     <file src="C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.dll" target="lib\net6.0\EFCAT.dll" />
     <file src="C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\icon.png" target="\icon.png" />
   </files>

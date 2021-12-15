@@ -703,11 +703,10 @@
           }
         }
       },
-      "EFCAT.Model/1.0.2": {
+      "EFCAT.Model/1.0.3": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "EFCAT.Util": "1.0.0",
           "EntityFramework": "6.4.4",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
         },
@@ -716,16 +715,6 @@
         },
         "runtime": {
           "bin/placeholder/EFCAT.Model.dll": {}
-        }
-      },
-      "EFCAT.Util/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v6.0",
-        "compile": {
-          "bin/placeholder/EFCAT.Util.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/EFCAT.Util.dll": {}
         }
       }
     }
@@ -2256,20 +2245,15 @@
         "version.txt"
       ]
     },
-    "EFCAT.Model/1.0.2": {
+    "EFCAT.Model/1.0.3": {
       "type": "project",
       "path": "../EFCAT.Model/EFCAT.Model.csproj",
       "msbuildProject": "../EFCAT.Model/EFCAT.Model.csproj"
-    },
-    "EFCAT.Util/1.0.0": {
-      "type": "project",
-      "path": "../EFCAT.Util/EFCAT.Util.csproj",
-      "msbuildProject": "../EFCAT.Util/EFCAT.Util.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "EFCAT.Model >= 1.0.2",
+      "EFCAT.Model >= 1.0.3",
       "Microsoft.EntityFrameworkCore.SqlServer >= 6.0.0",
       "System.Linq.Dynamic.Core >= 1.2.14"
     ]
@@ -2279,7 +2263,7 @@
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
-    "version": "1.0.0",
+    "version": "1.0.2",
     "restore": {
       "projectUniqueName": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT.Domain\\EFCAT.Domain.csproj",
       "projectName": "EFCAT.Domain",

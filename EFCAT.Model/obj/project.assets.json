@@ -730,16 +730,6 @@
             "rid": "win"
           }
         }
-      },
-      "EFCAT.Util/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v6.0",
-        "compile": {
-          "bin/placeholder/EFCAT.Util.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/EFCAT.Util.dll": {}
-        }
       }
     }
   },
@@ -2278,16 +2268,10 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
-    },
-    "EFCAT.Util/1.0.0": {
-      "type": "project",
-      "path": "../EFCAT.Util/EFCAT.Util.csproj",
-      "msbuildProject": "../EFCAT.Util/EFCAT.Util.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "EFCAT.Util >= 1.0.0",
       "EntityFramework >= 6.4.4",
       "Microsoft.EntityFrameworkCore.SqlServer >= 6.0.0",
       "Microsoft.EntityFrameworkCore.Tools >= 6.0.0"
@@ -2298,7 +2282,7 @@
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
-    "version": "1.0.2",
+    "version": "1.0.3",
     "restore": {
       "projectUniqueName": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT.Model\\EFCAT.Model.csproj",
       "projectName": "EFCAT.Model",
@@ -2325,11 +2309,7 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
-          "projectReferences": {
-            "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT.Util\\EFCAT.Util.csproj": {
-              "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT.Util\\EFCAT.Util.csproj"
-            }
-          }
+          "projectReferences": {}
         }
       },
       "warningProperties": {

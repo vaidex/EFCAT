@@ -12,9 +12,9 @@
     <repository url="https://github.com/xtreydev/EFCAT" />
     <dependencies>
       <group targetFramework="net6.0">
-        <dependency id="EFCAT.Domain" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="EFCAT.Domain" version="1.0.1" exclude="Build,Analyzers" />
         <dependency id="EFCAT.Model" version="1.0.2" exclude="Build,Analyzers" />
-        <dependency id="EFCAT.Service" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="EFCAT.Service" version="1.0.1" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>

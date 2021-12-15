@@ -33,7 +33,7 @@ public abstract class AControllerAsync<TInterface, TEntity, TKey> : ControllerBa
         try {
             return Ok(await _repository.CreateAsync(entity));
         } catch (ValidationException e) {
-            return BadRequest(e.Message);
+            return BadRequest(new ValidationResult(e.Message));
         }
         
     }

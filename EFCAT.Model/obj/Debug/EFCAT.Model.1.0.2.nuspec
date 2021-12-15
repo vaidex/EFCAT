@@ -12,7 +12,6 @@
     <repository url="https://github.com/xtreydev/EFCAT" />
     <dependencies>
       <group targetFramework="net6.0">
-        <dependency id="EFCAT.Util" version="1.0.0" exclude="Build,Analyzers" />
         <dependency id="EntityFramework" version="6.4.4" exclude="Build,Analyzers" />
         <dependency id="Microsoft.EntityFrameworkCore.SqlServer" version="6.0.0" exclude="Build,Analyzers" />
       </group>
