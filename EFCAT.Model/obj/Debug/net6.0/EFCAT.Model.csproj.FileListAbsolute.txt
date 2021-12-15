@@ -1,5 +1,4 @@
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\bin\Debug\net6.0\EFCAT.Model.deps.json
-C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\bin\Debug\net6.0\EFCAT.Model.runtimeconfig.json
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\bin\Debug\net6.0\EFCAT.Model.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\bin\Debug\net6.0\ref\EFCAT.Model.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\bin\Debug\net6.0\EFCAT.Model.pdb
@@ -11,4 +10,3 @@ C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\obj\Debug\net6.0\EFCAT.Mo
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\obj\Debug\net6.0\EFCAT.Model.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\obj\Debug\net6.0\ref\EFCAT.Model.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\obj\Debug\net6.0\EFCAT.Model.pdb
-C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Model\obj\Debug\net6.0\EFCAT.Model.genruntimeconfig.cache

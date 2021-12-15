@@ -5,10 +5,10 @@ using System.Linq.Expressions;
 namespace EFCAT.Domain.Repository;
 
 public abstract class ARepository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntity : class {
-    protected DatabaseContext _context;
+    protected DbContext _context;
     protected DbSet<TEntity> _entitySet;
 
-    protected ARepository(DatabaseContext context) {
+    protected ARepository(DbContext context) {
         _context = context;
         _entitySet = _context.Set<TEntity>();
     }

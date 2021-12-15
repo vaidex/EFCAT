@@ -30,5 +30,3 @@ C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.Domain.p
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.Model.pdb
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.Service.pdb
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\obj\Debug\net6.0\EFCAT.csproj.CopyComplete
-C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.runtimeconfig.json
-C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\obj\Debug\net6.0\EFCAT.genruntimeconfig.cache

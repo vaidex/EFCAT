@@ -4,7 +4,6 @@ C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.AssemblyInfo.cs
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.csproj.CoreCompileInputs.cache
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Service.deps.json
-C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Service.runtimeconfig.json
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Service.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\ref\EFCAT.Service.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Service.pdb
@@ -14,6 +13,5 @@ C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\ref\EFCAT.Service.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.pdb
-C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.genruntimeconfig.cache
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Model.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Model.pdb

@@ -13,5 +13,3 @@ C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\obj\Debug\net6.0\EFCAT.D
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\bin\Debug\net6.0\EFCAT.Model.dll
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\bin\Debug\net6.0\EFCAT.Model.pdb
 C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\obj\Debug\net6.0\EFCAT.Domain.csproj.CopyComplete
-C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\bin\Debug\net6.0\EFCAT.Domain.runtimeconfig.json
-C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\obj\Debug\net6.0\EFCAT.Domain.genruntimeconfig.cache

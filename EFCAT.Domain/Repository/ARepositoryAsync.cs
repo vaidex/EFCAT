@@ -8,10 +8,10 @@ using System.ComponentModel.DataAnnotations;
 namespace EFCAT.Domain.Repository;
 
 public abstract class ARepositoryAsync<TEntity, TKey> : IRepositoryAsync<TEntity, TKey> where TEntity : class {
-    protected DatabaseContext _context;
+    protected DbContext _context;
     protected DbSet<TEntity> _entitySet;
 
-    protected ARepositoryAsync(DatabaseContext context) {
+    protected ARepositoryAsync(DbContext context) {
         _context = context;
         _entitySet = _context.Set<TEntity>();
     }
