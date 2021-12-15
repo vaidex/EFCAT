@@ -29,7 +29,14 @@ public abstract class AControllerAsync<TInterface, TEntity, TKey> : ControllerBa
     //Method: Post
     //URL /entity
     [HttpPost]
-    public async Task<ActionResult<TEntity>> Create([Required] TEntity e) => Ok(await _repository.CreateAsync(e));
+    public async Task<ActionResult<TEntity>> Create([Required] TEntity entity) {
+        try {
+            return Ok(await _repository.CreateAsync(entity));
+        } catch (ValidationException e) {
+            return BadRequest(e.Message);
+        }
+        
+    }
 
     //Method: Put
     //URL /entity/{id}

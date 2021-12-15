@@ -24,4 +24,6 @@ public class SqlAttribute : ValidationAttribute {
 
     public void MaxSizeReached(string size) => throw new ArgumentOutOfRangeException($"{Type.ToUpper()} has max size of {size}");
     public void MinSizeReached(string size) => throw new ArgumentOutOfRangeException($"{Type.ToUpper()} has min size of {size}");
+
+    public override bool IsValid(object? value) => true;
 }

@@ -1,13 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EFCAT.Model.Annotation;
+using EFCAT.Model.Configuration;
+using EFCAT.Util;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Linq.Dynamic.Core;
+using System.ComponentModel.DataAnnotations;
 
 namespace EFCAT.Domain.Repository;
 
 public abstract class ARepositoryAsync<TEntity, TKey> : IRepositoryAsync<TEntity, TKey> where TEntity : class {
-    protected DbContext _context;
+    protected DatabaseContext _context;
     protected DbSet<TEntity> _entitySet;
 
-    protected ARepositoryAsync(DbContext context) {
+    protected ARepositoryAsync(DatabaseContext context) {
         _context = context;
         _entitySet = _context.Set<TEntity>();
     }
@@ -21,6 +26,9 @@ public abstract class ARepositoryAsync<TEntity, TKey> : IRepositoryAsync<TEntity
     public async Task<IEnumerable<TEntity>> FilterAsync(Expression<Func<TEntity, bool>> filter) => await _entitySet.AsQueryable<TEntity>().Where(filter).ToListAsync();
 
     public async Task<TEntity> CreateAsync(TEntity entity) {
+        foreach(var property in entity.GetType().GetProperties()) {
+            if (property.HasAttribute<UniqueAttribute>()) if (await _entitySet.Where($"{property.Name} == @0", property.GetValue(entity)).CountAsync() > 0) throw new ValidationException(property.GetAttribute<UniqueAttribute>().ErrorMessage == null ? $"{property.Name} needs to be unique." : property.GetAttribute<UniqueAttribute>().ErrorMessage);
+        }
         _entitySet.Add(entity);
         await _context.SaveChangesAsync();
         return entity;

@@ -1,13 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EFCAT.Model.Configuration;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace EFCAT.Domain.Repository;
 
 public abstract class ARepository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntity : class {
-    protected DbContext _context;
+    protected DatabaseContext _context;
     protected DbSet<TEntity> _entitySet;
 
-    protected ARepository(Microsoft.EntityFrameworkCore.DbContext context) {
+    protected ARepository(DatabaseContext context) {
         _context = context;
         _entitySet = _context.Set<TEntity>();
     }

@@ -19,6 +19,7 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.runtimeconfig.json" target="lib\net6.0\EFCAT.runtimeconfig.json" />
     <file src="C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\bin\Debug\net6.0\EFCAT.dll" target="lib\net6.0\EFCAT.dll" />
     <file src="C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\icon.png" target="\icon.png" />
   </files>

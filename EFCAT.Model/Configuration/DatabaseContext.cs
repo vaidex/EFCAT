@@ -1,9 +1,12 @@
 ﻿using EFCAT.Model.Annotation;
 using EFCAT.Model.Annotation.Util;
+using EFCAT.Util;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity.Validation;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
@@ -16,13 +19,14 @@ public class DatabaseContext : DbContext {
     private Dictionary<Type, Key[]> Entities { get; set; }
     private Dictionary<Type, List<string>> References { get; set; }
 
-    public DatabaseContext([NotNull] DbContextOptions options) : base(options) { }
+    public DatabaseContext([NotNull] DbContextOptions options) : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         Entities = new Dictionary<Type, Key[]>();
         References = new Dictionary<Type, List<string>>();
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType)) if (!Entities.ContainsKey(entityType)) UpdateEntity(modelBuilder, entityType);
+        base.OnModelCreating(modelBuilder);
     }
 
     void UpdateEntity(ModelBuilder modelBuilder, Type entityType) {
@@ -49,8 +53,8 @@ public class DatabaseContext : DbContext {
                 ForeignColumnAttribute column = property.GetAttributes<ForeignColumnAttribute>().First();
 
                 bool isRequired = (property.HasAttribute<PrimaryKeyAttribute>() || property.HasAttribute<RequiredAttribute>());
-                if (column.keys != null) if (fk_keys.Count == column.keys.Length) for (int i = 0; i < fk_keys.Count; i++) fk_keys[i].Name = column.keys[i]; else throw new Exception("Wrong amount of foreign keys.");
-                foreach (var key in fk_keys) if(isRequired) entity.Property(key.Type, key.Name); else entity.Property(key.Type.GetNullableType(), key.Name);
+                if (column.keys.Length > 0) if (fk_keys.Count == column.keys.Length) for (int i = 0; i < fk_keys.Count; i++) fk_keys[i].Name = column.keys[i]; else throw new Exception("Wrong amount of foreign keys.");
+                foreach (var key in fk_keys) if (isRequired) entity.Property(key.Type, key.Name); else entity.Property(key.Type.GetNullableType(), key.Name);
 
                 string[] fk_keys_array = fk_keys.Select(k => k.Name).ToArray<string>();
                 string? referenceName;
@@ -90,7 +94,7 @@ public class DatabaseContext : DbContext {
 
                 PropertyBuilder propertyBuilder = entity.Property(property.Name);
 
-                propertyBuilder.HasColumnName(property.HasAttribute<ColumnAttribute>() ? property.GetAttribute<ColumnAttribute>().Name : property.Name.GetSqlName());
+                propertyBuilder.HasColumnName(property.GetSqlName());
                 if (property.HasAttribute<SqlAttribute>()) propertyBuilder.HasColumnType(property.GetAttribute<SqlAttribute>().GetTypeName());
                 if (property.HasAttribute<AutoIncrementAttribute>()) propertyBuilder.ValueGeneratedOnAdd();
                 if (property.HasAttribute<PrimaryKeyAttribute>()) keys.Add(new Key(property.Name, property.PropertyType));
@@ -98,48 +102,9 @@ public class DatabaseContext : DbContext {
                 if (property.HasAttribute<Encrypt>()) propertyBuilder.HasConversion(new ValueConverter<string, string>(value => property.GetAttribute<Encrypt>().Hash(value), value => value));
             }
         }
-
         if (entityType.BaseType == typeof(System.Object))
             if (keys.Count > 0) entity.HasKey(keys.Select(k => k.Name).ToArray<string>());
             else entity.HasNoKey();
         Entities.Add(entityType, keys.ToArray());
-    }
-}
-
-internal static class Tools {
-    internal static void PrintInfo(string s) {
-        s = $"[EFCAT] {s}";
-        System.Diagnostics.Debug.WriteLine(s);
-        System.Console.WriteLine(s);
-    }
-}
-
-internal static class ExtensionTools {
-    
-    internal static T GetAttribute<T>(this PropertyInfo property) where T : Attribute => property.GetAttributes<T>().First();
-
-    internal static IEnumerable<T> GetAttributes<T>(this PropertyInfo property) where T : Attribute {
-        if (property == null) throw new ArgumentNullException(nameof(property));
-        else if (property.Name == null) throw new ArgumentNullException(nameof(property.Name));
-        else if (property.ReflectedType == null) throw new ArgumentNullException(nameof(property.ReflectedType));
-
-        var propertyInfo = property.ReflectedType.GetProperty(property.Name);
-
-        if (propertyInfo == null) return null;
-
-        return propertyInfo.GetCustomAttributes<T>();
-    }
-
-    internal static bool HasAttribute<T>(this PropertyInfo property) where T : Attribute {
-        IEnumerable<T> attributes = GetAttributes<T>(property);
-        return attributes != null && attributes.Any();
-    }
-
-    internal static string GetSqlName(this string input) => Regex.Replace(input, "(?<=[a-z])([A-Z])", "_$1", RegexOptions.Compiled).ToUpper();
-
-    internal static Type GetNullableType(this Type type) {
-        type = Nullable.GetUnderlyingType(type) ?? type;
-        if (type.IsValueType) return typeof(Nullable<>).MakeGenericType(type);
-        return type;
     }
 }
