@@ -1,50 +1,124 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace EFCAT.Model.Annotation;
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class Encrypt : Attribute {
 
-    HashAlgorithm algorithm = SHA256.Create();
+[NotMapped]
+public class Crypt<TAlgorithm> where TAlgorithm : IAlgorithm, new() {
 
-    public Encrypt() { }
+    private string? _value;
 
-    public Encrypt(HashAlgorithm algorithm) {
-        this.algorithm = algorithm;
+    public string Value { get => Get(); set => Set(value); }
+
+    TAlgorithm _algorithm = new TAlgorithm();
+
+    public Crypt() { }
+
+    public Crypt(string value) => _value = value;
+
+    public static implicit operator Crypt<TAlgorithm>(string value) => value == null ? new Crypt<TAlgorithm>() : new Crypt<TAlgorithm>() { Value = value };
+
+    private string Encrypt(string value) => _algorithm.Encrypt(value);
+
+    public string Decrypt() => _algorithm.Decrypt(_value ?? "");
+
+    public bool Verify(string value) => Encrypt(value) == Get();
+
+    public string Get() => _value ?? "";
+    public void Set(string value) => _value = Encrypt(value);
+
+    public override string ToString() => Get();
+}
+
+public class CryptConverter<TAlgorithm> : ValueConverter<Crypt<TAlgorithm>, string> where TAlgorithm : IAlgorithm, new() {
+    public CryptConverter() : base(value => value.ToString(), value => new Crypt<TAlgorithm>(value)) { }
+}
+
+public interface IAlgorithm {
+    string Encrypt(string value);
+    string Decrypt(string value);
+}
+
+public class Algorithm : IAlgorithm {
+    private HashAlgorithm _algorithm;
+
+    public Algorithm(HashAlgorithm algorithm) { _algorithm = algorithm; }
+
+    public string Encrypt(string value) {
+        StringBuilder sb = new StringBuilder();
+
+        Byte[] result = _algorithm.ComputeHash(Encoding.UTF8.GetBytes(value));
+        foreach(Byte b in result) sb.Append(b.ToString("x2"));
+
+        return sb.ToString();
     }
 
-    public string Hash(string value) {
-        StringBuilder Sb = new StringBuilder();
-
-
-        using (SHA256 hash = SHA256.Create()) {
-            Encoding enc = Encoding.UTF8;
-            Byte[] result = hash.ComputeHash(enc.GetBytes(value));
-
-            foreach (Byte b in result)
-                Sb.Append(b.ToString("x2"));
-        }
-
-        return Sb.ToString();
+    public string Decrypt(string value) {
+        throw new NotImplementedException();
     }
 }
 
-public class Decrypt {
+public class SHA256 : Algorithm {
+    public SHA256() : base(System.Security.Cryptography.SHA256.Create()) { }
+}
 
-    HashAlgorithm algorithm = SHA256.Create();
+public class SHA512 : Algorithm {
+    public SHA512() : base(System.Security.Cryptography.SHA512.Create()) { }
+}
 
-    public Decrypt(HashAlgorithm algorithm) {
-        this.algorithm = algorithm;
+public class CustomAlgorithm : IAlgorithm {
+
+    readonly string _key = "";
+
+    public CustomAlgorithm(string key) {
+        _key = key;
+    }
+    
+    public string Encrypt(string value) {
+        byte[] iv = new byte[16];
+        byte[] array;
+
+        using (Aes aes = Aes.Create()) {
+            aes.Key = Encoding.UTF8.GetBytes(_key);
+            aes.IV = iv;
+
+            ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+            using (MemoryStream memoryStream = new MemoryStream()) {
+                using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write)) {
+                    using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream)) {
+                        streamWriter.Write(value);
+                    }
+
+                    array = memoryStream.ToArray();
+                }
+            }
+        }
+
+        return Convert.ToBase64String(array);
     }
 
-    public bool Verify(string crypted_value, string value) {
-        Encrypt encrypt = new Encrypt(algorithm);
-        if (encrypt.Hash(value) == crypted_value) return true;
-        return false;
+    public string Decrypt(string value) {
+        byte[] iv = new byte[16];
+        byte[] buffer = Convert.FromBase64String(value);
+
+        using (Aes aes = Aes.Create()) {
+            aes.Key = Encoding.UTF8.GetBytes(_key);
+            aes.IV = iv;
+            ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+
+            using (MemoryStream memoryStream = new MemoryStream(buffer)) {
+                using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, decryptor, CryptoStreamMode.Read)) {
+                    using (StreamReader streamReader = new StreamReader((Stream)cryptoStream)) {
+                        return streamReader.ReadToEnd();
+                    }
+                }
+            }
+        }
     }
+
+    
 }

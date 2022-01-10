@@ -13,12 +13,12 @@
     <dependencies>
       <group targetFramework="net6.0">
         <dependency id="EFCAT.Model" version="1.0.3" exclude="Build,Analyzers" />
-        <dependency id="System.Linq.Dynamic.Core" version="1.2.14" exclude="Build,Analyzers" />
+        <dependency id="System.Linq.Dynamic.Core" version="1.2.15" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Domain\bin\Debug\net6.0\EFCAT.Domain.dll" target="lib\net6.0\EFCAT.Domain.dll" />
-    <file src="C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\icon.png" target="\icon.png" />
+    <file src="D:\XTREY\EFCAT\EFCAT.Domain\bin\Debug\net6.0\EFCAT.Domain.dll" target="lib\net6.0\EFCAT.Domain.dll" />
+    <file src="D:\XTREY\EFCAT\EFCAT\icon.png" target="\icon.png" />
   </files>
 </package>

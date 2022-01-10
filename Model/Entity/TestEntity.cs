@@ -13,10 +13,8 @@ namespace Model.Entity {
         [Varchar(16, Min = 3, ErrorMessage = "You need to have between @min and @max characters.")]
         public string Name { get; set; }
 
-        [Encrypt]
         [Required]
-        [Varchar(256)]
-        public string Password { get; set; }
+        public Crypt<SHA256> Password { get; set; }
 
         // Number from 0-100 saved as DECIMAL(5, 2) which is equal to 999.99
         [Decimal(3, 2, Min = 10, Max = 20)]

@@ -18,15 +18,15 @@ namespace Model.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    NAME = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
+                    NAME = table.Column<string>(type: "varchar(16)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PASSWORD = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false)
+                    PASSWORD = table.Column<string>(type: "text", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     NUMBER = table.Column<decimal>(type: "decimal(5,2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TEST_ENTITIES", x => new { x.ID, x.NAME });
+                    table.PrimaryKey("PK_TEST_ENTITIES", x => x.ID);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -35,17 +35,22 @@ namespace Model.Migrations
                 columns: table => new
                 {
                     TEST_ID = table.Column<int>(type: "int", nullable: false),
-                    TEST_NAME = table.Column<string>(type: "varchar(20)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                    TEST_SECOND_ID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TEST_MTOS", x => new { x.TEST_ID, x.TEST_NAME });
+                    table.PrimaryKey("PK_TEST_MTOS", x => x.TEST_ID);
                     table.ForeignKey(
-                        name: "FK_TEST_MTOS_TEST_ENTITIES_TEST_ID_TEST_NAME",
-                        columns: x => new { x.TEST_ID, x.TEST_NAME },
+                        name: "FK_TEST_MTOS_TEST_ENTITIES_TEST_ID",
+                        column: x => x.TEST_ID,
                         principalTable: "TEST_ENTITIES",
-                        principalColumns: new[] { "ID", "NAME" },
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TEST_MTOS_TEST_ENTITIES_TEST_SECOND_ID",
+                        column: x => x.TEST_SECOND_ID,
+                        principalTable: "TEST_ENTITIES",
+                        principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -55,6 +60,11 @@ namespace Model.Migrations
                 table: "TEST_ENTITIES",
                 column: "NAME",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TEST_MTOS_TEST_SECOND_ID",
+                table: "TEST_MTOS",
+                column: "TEST_SECOND_ID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -4,11 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
-
 using System.Text.RegularExpressions;
 
 namespace EFCAT.Model.Configuration;
@@ -17,18 +14,28 @@ public class DatabaseContext : DbContext {
     private Dictionary<Type, Key[]> Entities { get; set; }
     private Dictionary<Type, List<string>> References { get; set; }
 
-    public DatabaseContext([NotNull] DbContextOptions options) : base(options) {}
+    public DatabaseContext([NotNull] DbContextOptions options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
-        Entities = new Dictionary<Type, Key[]>();
-        References = new Dictionary<Type, List<string>>();
 
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType)) if (!Entities.ContainsKey(entityType)) UpdateEntity(modelBuilder, entityType);
-        base.OnModelCreating(modelBuilder);
+
+        try {
+            Entities = new Dictionary<Type, Key[]>();
+            References = new Dictionary<Type, List<string>>();
+
+            List<Type> ClrTypes = modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType).ToList();
+
+            Tools.PrintInfo($"Entities({ClrTypes.Count()}): {ClrTypes.Select(e => e.ToString()).Aggregate((a, b) => a + ", " + b)}");
+
+            foreach (var entityType in ClrTypes) if (!Entities.ContainsKey(entityType)) UpdateEntity(modelBuilder, entityType);
+            base.OnModelCreating(modelBuilder);
+        } catch (Exception ex) {
+            Tools.PrintInfo(ex.Message);
+        }
     }
 
     void UpdateEntity(ModelBuilder modelBuilder, Type entityType) {
-        Tools.PrintInfo("Table found: " + entityType.FullName);
+        Tools.PrintInfo("Generating table: " + entityType.FullName);
 
         var entity = modelBuilder.Entity(entityType);
         var properties = entityType.GetProperties();
@@ -87,17 +94,56 @@ public class DatabaseContext : DbContext {
                 if (property.HasAttribute<PrimaryKeyAttribute>()) keys.AddRange(fk_keys);
                 if (property.HasAttribute<UniqueAttribute>()) entity.HasIndex(fk_keys_array).IsUnique(true);
             } else {
-                if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) break;
-                else if (property.PropertyType.GetCustomAttributes<TableAttribute>().Count() > 0) break;
+                if (property.PropertyType.IsGenericType) {
+                    switch (property.PropertyType.GetGenericTypeDefinition().Name.Remove(property.PropertyType.GetGenericTypeDefinition().Name.IndexOf('`'))) {
+                        case "Crypt":
+                            int size = 256;
+                            switch (property.PropertyType.GetGenericArguments()[0].Name) {
+                                case "SHA256":
+                                    size = 256;
+                                    break;
+                                default:
+                                    if (property.PropertyType.GetGenericArguments()[0].BaseType != null) {
+                                        switch (property.PropertyType.GetGenericArguments()[0].BaseType?.Name) {
+                                            default:
+                                            case "CustomAlgorithm":
+                                                size = 256;
+                                                break;
+                                        }
+                                    }
+                                    break;
+                            }
+                            Type converterType = typeof(CryptConverter<>).MakeGenericType(property.PropertyType.GetGenericArguments()[0]);
+                            object? converter = Activator.CreateInstance(converterType);
+                            entity.Property(property.Name).HasColumnType($"varchar({size})").HasConversion((ValueConverter?)converter);
+                            break;
+                        default:
+                            if (property.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) break;
+                            else if (property.PropertyType.GetCustomAttributes<TableAttribute>().Count() > 0) break;
+                            break;
+                    }
+                } else {
+                    switch (property.PropertyType.Name) {
+                        case "Document":
+                        case "Image":
+                            Tools.PrintInfo($"Located {property.PropertyType.Name} {entityType.Name}[{property.Name}]");
+                            entity.OwnsOne(property.PropertyType, property.Name, img => {
+                                img.Property(typeof(byte[]), "Content").HasColumnName(property.GetSqlName() + "_CONTENT");
+                                img.Property(typeof(string), "Type").HasColumnName(property.GetSqlName() + "_TYPE").HasColumnType("varchar(32)");
+                            });
+                            break;
+                        default:
+                            PropertyBuilder propertyBuilder = entity.Property(property.Name);
 
-                PropertyBuilder propertyBuilder = entity.Property(property.Name);
+                            propertyBuilder.HasColumnName(property.GetSqlName());
+                            if (property.HasAttribute<SqlAttribute>()) propertyBuilder.HasColumnType(property.GetAttribute<SqlAttribute>().GetTypeName());
+                            if (property.HasAttribute<AutoIncrementAttribute>()) propertyBuilder.ValueGeneratedOnAdd();
+                            if (property.HasAttribute<PrimaryKeyAttribute>()) keys.Add(new Key(property.Name, property.PropertyType));
+                            if (property.HasAttribute<UniqueAttribute>()) entity.HasIndex(property.Name).IsUnique(true);
+                            break;
+                    }
+                }
 
-                propertyBuilder.HasColumnName(property.GetSqlName());
-                if (property.HasAttribute<SqlAttribute>()) propertyBuilder.HasColumnType(property.GetAttribute<SqlAttribute>().GetTypeName());
-                if (property.HasAttribute<AutoIncrementAttribute>()) propertyBuilder.ValueGeneratedOnAdd();
-                if (property.HasAttribute<PrimaryKeyAttribute>()) keys.Add(new Key(property.Name, property.PropertyType));
-                if (property.HasAttribute<UniqueAttribute>()) entity.HasIndex(property.Name).IsUnique(true);
-                if (property.HasAttribute<Encrypt>()) propertyBuilder.HasConversion(new ValueConverter<string, string>(value => property.GetAttribute<Encrypt>().Hash(value), value => value));
             }
         }
         if (entityType.BaseType == typeof(System.Object))
@@ -144,4 +190,6 @@ public static class ExtensionTools {
         if (type.IsValueType) return typeof(Nullable<>).MakeGenericType(type);
         return type;
     }
+
+    public static Type GetPropertyType(this PropertyInfo property) => property.PropertyType.IsGenericType ? typeof(string) : property.PropertyType;
 }
