@@ -67,3 +67,5 @@ D:\XTREY\EFCAT\Domain\obj\Debug\net6.0\Domain.csproj.CopyComplete
 D:\XTREY\EFCAT\Domain\obj\Debug\net6.0\Domain.dll
 D:\XTREY\EFCAT\Domain\obj\Debug\net6.0\ref\Domain.dll
 D:\XTREY\EFCAT\Domain\obj\Debug\net6.0\Domain.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\Domain\bin\Debug\net6.0\EFCAT.Model.Data.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\Domain\bin\Debug\net6.0\EFCAT.Model.Data.pdb

@@ -1,5 +1,7 @@
 ﻿using EFCAT.Model.Annotation;
 using EFCAT.Model.Annotation.Util;
+using EFCAT.Model.Converter;
+using EFCAT.Model.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -14,16 +16,15 @@ public class DatabaseContext : DbContext {
     private Dictionary<Type, Key[]> Entities { get; set; }
     private Dictionary<Type, List<string>> References { get; set; }
 
-    public DatabaseContext([NotNull] DbContextOptions options) : base(options) { }
+    public DatabaseContext([NotNull] DbContextOptions options) : base(options) { Settings.DbContextOptions = options; }
+    public DatabaseContext([NotNull] DbContextOptions options, bool writeInformation) : this(options) { Settings.WriteInformation = writeInformation; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
-
-
         try {
             Entities = new Dictionary<Type, Key[]>();
             References = new Dictionary<Type, List<string>>();
 
-            List<Type> ClrTypes = modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType).ToList();
+            List<Type> ClrTypes = modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType).Where(e => !($"{e.Namespace}".ToUpper().StartsWith("EFCAT.MODEL"))).ToList();
 
             Tools.PrintInfo($"Entities({ClrTypes.Count()}): {ClrTypes.Select(e => e.ToString()).Aggregate((a, b) => a + ", " + b)}");
 
@@ -94,56 +95,55 @@ public class DatabaseContext : DbContext {
                 if (property.HasAttribute<PrimaryKeyAttribute>()) keys.AddRange(fk_keys);
                 if (property.HasAttribute<UniqueAttribute>()) entity.HasIndex(fk_keys_array).IsUnique(true);
             } else {
-                if (property.PropertyType.IsGenericType) {
-                    switch (property.PropertyType.GetGenericTypeDefinition().Name.Remove(property.PropertyType.GetGenericTypeDefinition().Name.IndexOf('`'))) {
-                        case "Crypt":
-                            int size = 256;
-                            switch (property.PropertyType.GetGenericArguments()[0].Name) {
-                                case "SHA256":
-                                    size = 256;
-                                    break;
-                                default:
-                                    if (property.PropertyType.GetGenericArguments()[0].BaseType != null) {
-                                        switch (property.PropertyType.GetGenericArguments()[0].BaseType?.Name) {
-                                            default:
-                                            case "CustomAlgorithm":
-                                                size = 256;
-                                                break;
-                                        }
+                string type = $"{ (property.PropertyType.IsGenericType ? property.PropertyType.GetGenericTypeDefinition().Name.Remove(property.PropertyType.GetGenericTypeDefinition().Name.IndexOf('`')) : property.PropertyType.Name) }".ToUpper();
+                string[] paramter = property.PropertyType.IsGenericType ? property.PropertyType.GetGenericArguments().Select(a => a.Name.ToUpper()).ToArray() : new string[0];
+                switch (type) {
+                    case "CRYPT":
+                        int size = 256;
+                        switch (paramter[0]) {
+                            case "SHA256":
+                                size = 256;
+                                break;
+                            default:
+                                if (property.PropertyType.GetGenericArguments()[0].BaseType != null) {
+                                    switch (property.PropertyType.GetGenericArguments()[0].BaseType?.Name) {
+                                        default:
+                                        case "CustomAlgorithm":
+                                            size = 256;
+                                            break;
                                     }
-                                    break;
-                            }
-                            Type converterType = typeof(CryptConverter<>).MakeGenericType(property.PropertyType.GetGenericArguments()[0]);
-                            object? converter = Activator.CreateInstance(converterType);
-                            entity.Property(property.Name).HasColumnType($"varchar({size})").HasConversion((ValueConverter?)converter);
-                            break;
-                        default:
+                                }
+                                break;
+                        }
+                        object? cryptConverter = Activator.CreateInstance(typeof(CryptConverter<>).MakeGenericType(property.PropertyType.GetGenericArguments()[0]));
+                        entity.Property(property.Name).HasColumnName(property.GetSqlName()).HasColumnType($"varchar({size})").HasConversion((ValueConverter?)cryptConverter);
+                        break;
+                    case "JSON":
+                        object? jsonConverter = Activator.CreateInstance(typeof(JsonConverter<>).MakeGenericType(property.PropertyType.GetGenericArguments()[0]));
+                        entity.Property(property.Name).HasColumnName(property.GetSqlName()).HasColumnType($"text").HasConversion((ValueConverter?)jsonConverter);
+                        break;
+                    case "DOCUMENT":
+                    case "IMAGE":
+                        Tools.PrintInfo($"Located {property.PropertyType.Name} {entityType.Name}[{property.Name}]");
+                        entity.OwnsOne(property.PropertyType, property.Name, img => {
+                            img.Property(typeof(byte[]), "Content").HasColumnName(property.GetSqlName() + "_CONTENT");
+                            img.Property(typeof(string), "Type").HasColumnName(property.GetSqlName() + "_TYPE").HasColumnType("varchar(32)");
+                        });
+                        break;
+                    default:
+                        if (property.PropertyType.IsGenericType)
                             if (property.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) break;
                             else if (property.PropertyType.GetCustomAttributes<TableAttribute>().Count() > 0) break;
-                            break;
-                    }
-                } else {
-                    switch (property.PropertyType.Name) {
-                        case "Document":
-                        case "Image":
-                            Tools.PrintInfo($"Located {property.PropertyType.Name} {entityType.Name}[{property.Name}]");
-                            entity.OwnsOne(property.PropertyType, property.Name, img => {
-                                img.Property(typeof(byte[]), "Content").HasColumnName(property.GetSqlName() + "_CONTENT");
-                                img.Property(typeof(string), "Type").HasColumnName(property.GetSqlName() + "_TYPE").HasColumnType("varchar(32)");
-                            });
-                            break;
-                        default:
-                            PropertyBuilder propertyBuilder = entity.Property(property.Name);
 
-                            propertyBuilder.HasColumnName(property.GetSqlName());
-                            if (property.HasAttribute<SqlAttribute>()) propertyBuilder.HasColumnType(property.GetAttribute<SqlAttribute>().GetTypeName());
-                            if (property.HasAttribute<AutoIncrementAttribute>()) propertyBuilder.ValueGeneratedOnAdd();
-                            if (property.HasAttribute<PrimaryKeyAttribute>()) keys.Add(new Key(property.Name, property.PropertyType));
-                            if (property.HasAttribute<UniqueAttribute>()) entity.HasIndex(property.Name).IsUnique(true);
-                            break;
-                    }
+                        PropertyBuilder propertyBuilder = entity.Property(property.Name);
+
+                        propertyBuilder.HasColumnName(property.GetSqlName());
+                        if (property.HasAttribute<SqlAttribute>()) propertyBuilder.HasColumnType(property.GetAttribute<SqlAttribute>().GetTypeName());
+                        if (property.HasAttribute<AutoIncrementAttribute>()) propertyBuilder.ValueGeneratedOnAdd();
+                        if (property.HasAttribute<PrimaryKeyAttribute>()) keys.Add(new Key(property.Name, property.PropertyType));
+                        if (property.HasAttribute<UniqueAttribute>()) entity.HasIndex(property.Name).IsUnique(true);
+                        break;
                 }
-
             }
         }
         if (entityType.BaseType == typeof(System.Object))
@@ -153,8 +153,14 @@ public class DatabaseContext : DbContext {
     }
 }
 
+public static class Settings {
+    public static bool WriteInformation { get; set; } = true;
+    public static DbContextOptions DbContextOptions { get; set; }
+}
+
 public static class Tools {
     public static void PrintInfo(string s) {
+        if (!Settings.WriteInformation) return;
         s = $"[EFCAT] {s}";
         System.Diagnostics.Debug.WriteLine(s);
         System.Console.WriteLine(s);

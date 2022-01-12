@@ -11,14 +11,14 @@ using Model.Configuration;
 namespace Model.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    [Migration("20220102173148_initcreate")]
-    partial class initcreate
+    [Migration("20220112200329_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Model.Entity.TestEntity", b =>
@@ -39,7 +39,7 @@ namespace Model.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasColumnType("varchar(256)")
                         .HasColumnName("PASSWORD");
 
                     b.HasKey("Id");

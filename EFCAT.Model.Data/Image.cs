@@ -1,11 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.RegularExpressions;
+﻿
+namespace EFCAT.Model.Data;
 
-namespace EFCAT.Model.Annotation;
-
-[NotMapped]
-[Owned]
 public class Image : Document {
     public Image() {
         base.filter = "image";

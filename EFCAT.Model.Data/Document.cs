@@ -1,11 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
-namespace EFCAT.Model.Annotation;
+namespace EFCAT.Model.Data;
 
-[NotMapped]
-[Owned]
 public class Document {
     private byte[]? _content;
     public byte[] Content { get => _content ?? new byte[0]; set => _content = value; }

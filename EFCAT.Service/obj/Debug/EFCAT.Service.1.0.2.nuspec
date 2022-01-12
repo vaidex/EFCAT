@@ -18,7 +18,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="D:\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Service.dll" target="lib\net6.0\EFCAT.Service.dll" />
-    <file src="D:\XTREY\EFCAT\EFCAT\icon.png" target="\icon.png" />
+    <file src="C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Service.dll" target="lib\net6.0\EFCAT.Service.dll" />
+    <file src="C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT\icon.png" target="\icon.png" />
   </files>
 </package>

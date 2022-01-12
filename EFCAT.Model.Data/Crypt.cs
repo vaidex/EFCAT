@@ -1,12 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json.Serialization;
 
-namespace EFCAT.Model.Annotation;
+namespace EFCAT.Model.Data;
 
-[NotMapped]
 public class Crypt<TAlgorithm> where TAlgorithm : IAlgorithm, new() {
 
     private string? _value;
@@ -31,10 +27,6 @@ public class Crypt<TAlgorithm> where TAlgorithm : IAlgorithm, new() {
     public void Set(string value) => _value = Encrypt(value);
 
     public override string ToString() => Get();
-}
-
-public class CryptConverter<TAlgorithm> : ValueConverter<Crypt<TAlgorithm>, string> where TAlgorithm : IAlgorithm, new() {
-    public CryptConverter() : base(value => value.ToString(), value => new Crypt<TAlgorithm>(value)) { }
 }
 
 public interface IAlgorithm {

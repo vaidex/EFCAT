@@ -246,3 +246,5 @@ D:\XTREY\EFCAT\WebApi\obj\Debug\net6.0\WebApi.dll
 D:\XTREY\EFCAT\WebApi\obj\Debug\net6.0\ref\WebApi.dll
 D:\XTREY\EFCAT\WebApi\obj\Debug\net6.0\WebApi.pdb
 D:\XTREY\EFCAT\WebApi\obj\Debug\net6.0\WebApi.genruntimeconfig.cache
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\WebApi\bin\Debug\net6.0\EFCAT.Model.Data.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\WebApi\bin\Debug\net6.0\EFCAT.Model.Data.pdb

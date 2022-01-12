@@ -26,7 +26,8 @@ var app = builder.Build();
 
 using (var context = app.Services.CreateScope().ServiceProvider.GetService<TestDbContext>()) {
     if (context == null) return;
-    context.Database.Migrate();
+    context.Database.EnsureDeleted();
+    context.Database.EnsureCreated();
 }
 
 // Configure the HTTP request pipeline.

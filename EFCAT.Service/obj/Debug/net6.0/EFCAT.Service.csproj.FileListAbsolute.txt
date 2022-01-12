@@ -49,3 +49,5 @@ D:\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.csproj.CopyComplete
 D:\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.dll
 D:\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\ref\EFCAT.Service.dll
 D:\XTREY\EFCAT\EFCAT.Service\obj\Debug\net6.0\EFCAT.Service.pdb
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Model.Data.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\EFCAT.Service\bin\Debug\net6.0\EFCAT.Model.Data.pdb

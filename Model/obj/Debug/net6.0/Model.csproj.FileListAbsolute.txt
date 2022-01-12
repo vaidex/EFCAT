@@ -67,3 +67,5 @@ D:\XTREY\EFCAT\Model\obj\Debug\net6.0\Model.dll
 D:\XTREY\EFCAT\Model\obj\Debug\net6.0\ref\Model.dll
 D:\XTREY\EFCAT\Model\obj\Debug\net6.0\Model.pdb
 D:\XTREY\EFCAT\Model\obj\Debug\net6.0\Model.genruntimeconfig.cache
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\Model\bin\Debug\net6.0\EFCAT.Model.Data.dll
+C:\Users\Admin\Documents\Files\XTREY\EFCAT\Model\bin\Debug\net6.0\EFCAT.Model.Data.pdb

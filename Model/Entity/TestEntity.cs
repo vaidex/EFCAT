@@ -1,5 +1,6 @@
 ﻿using EFCAT.Model.Annotation;
-using System.ComponentModel.DataAnnotations;
+using EFCAT.Model.Data;
+using Model.Configuration;
 
 namespace Model.Entity {
     [Table("TEST_ENTITIES")]
@@ -20,9 +21,19 @@ namespace Model.Entity {
         [Decimal(3, 2, Min = 10, Max = 20)]
         public decimal Number { get; set; }
 
+        //public Image Image { get; set; }
+
+        //public Json<TestJson> Json { get; set; }
+
         public ICollection<TestManyToOne>? TestManyToOnes { get; set; }
 
         [ReferenceColumn("TestSecondEntity")]
         public ICollection<TestManyToOne>? TestSecondManyToOnes { get; set; }
     }
+}
+
+[NotGenerated]
+public class TestJson {
+    public string Name { get; set; }
+    public string Description { get; set; }
 }
