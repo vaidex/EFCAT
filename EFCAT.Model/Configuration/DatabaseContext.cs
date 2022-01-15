@@ -1,23 +1,24 @@
 ﻿using EFCAT.Model.Annotation;
-using EFCAT.Model.Annotation.Util;
 using EFCAT.Model.Converter;
-using EFCAT.Model.Data;
+using EFCAT.Model.Data.Annotation;
+using EFCAT.Model.Extension;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace EFCAT.Model.Configuration;
 
 public class DatabaseContext : DbContext {
     private Dictionary<Type, Key[]> Entities { get; set; }
     private Dictionary<Type, List<string>> References { get; set; }
+    private bool Tools { get; set; } = true;
+    private DbContextOptions Options { get; set; }
 
-    public DatabaseContext([NotNull] DbContextOptions options) : base(options) { Settings.DbContextOptions = options; }
-    public DatabaseContext([NotNull] DbContextOptions options, bool writeInformation) : this(options) { Settings.WriteInformation = writeInformation; }
+    public DatabaseContext([NotNull] DbContextOptions options) : base(options) { Settings.DbContextOptions = options; Options = options; }
+    public DatabaseContext([NotNull] DbContextOptions options, bool writeInformation) : this(options) { Tools = writeInformation; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         try {
@@ -131,18 +132,19 @@ public class DatabaseContext : DbContext {
                         });
                         break;
                     default:
-                        if (property.PropertyType.IsGenericType)
-                            if (property.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) break;
-                            else if (property.PropertyType.GetCustomAttributes<TableAttribute>().Count() > 0) break;
+                        if (property.PropertyType.IsGenericType && (property.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>) || property.PropertyType.GetCustomAttributes<TableAttribute>().Count() > 0)) entity.Ignore(property.Name);
+                        else {
+                            PropertyBuilder propertyBuilder = entity.Property(property.Name);
 
-                        PropertyBuilder propertyBuilder = entity.Property(property.Name);
-
-                        propertyBuilder.HasColumnName(property.GetSqlName());
-                        if (property.HasAttribute<SqlAttribute>()) propertyBuilder.HasColumnType(property.GetAttribute<SqlAttribute>().GetTypeName());
-                        if (property.HasAttribute<AutoIncrementAttribute>()) propertyBuilder.ValueGeneratedOnAdd();
-                        if (property.HasAttribute<PrimaryKeyAttribute>()) keys.Add(new Key(property.Name, property.PropertyType));
-                        if (property.HasAttribute<UniqueAttribute>()) entity.HasIndex(property.Name).IsUnique(true);
+                            propertyBuilder.HasColumnName(property.GetSqlName());
+                            property.Attribute<TypeAttribute>(attr => propertyBuilder.HasColumnType(attr.GetTypeName()));
+                            property.Attribute<AutoIncrementAttribute>(attr => propertyBuilder.ValueGeneratedOnAdd());
+                            property.Attribute<PrimaryKeyAttribute>(attr => keys.Add(new Key(property.Name, property.PropertyType)));
+                            property.Attribute<UniqueAttribute>(attr => entity.HasIndex(property.Name).IsUnique(true));
+                            property.Attribute<EnumAttribute>(attr => propertyBuilder.HasConversion(attr.Type));
+                        }
                         break;
+
                 }
             }
         }
@@ -154,48 +156,5 @@ public class DatabaseContext : DbContext {
 }
 
 public static class Settings {
-    public static bool WriteInformation { get; set; } = true;
     public static DbContextOptions DbContextOptions { get; set; }
-}
-
-public static class Tools {
-    public static void PrintInfo(string s) {
-        if (!Settings.WriteInformation) return;
-        s = $"[EFCAT] {s}";
-        System.Diagnostics.Debug.WriteLine(s);
-        System.Console.WriteLine(s);
-    }
-}
-
-public static class ExtensionTools {
-
-    public static T GetAttribute<T>(this PropertyInfo property) where T : Attribute => property.GetAttributes<T>().First();
-
-    public static IEnumerable<T> GetAttributes<T>(this PropertyInfo property) where T : Attribute {
-        if (property == null) throw new ArgumentNullException(nameof(property));
-        else if (property.Name == null) throw new ArgumentNullException(nameof(property.Name));
-        else if (property.ReflectedType == null) throw new ArgumentNullException(nameof(property.ReflectedType));
-
-        var propertyInfo = property.ReflectedType.GetProperty(property.Name);
-
-        if (propertyInfo == null) return null;
-
-        return propertyInfo.GetCustomAttributes<T>();
-    }
-
-    public static bool HasAttribute<T>(this PropertyInfo property) where T : Attribute {
-        IEnumerable<T> attributes = GetAttributes<T>(property);
-        return attributes != null && attributes.Any();
-    }
-
-    public static string GetSqlName(this PropertyInfo property) => $"{(property.HasAttribute<ColumnAttribute>() ? property.GetAttribute<ColumnAttribute>().Name : property.Name.GetSqlName())}";
-    public static string GetSqlName(this string input) => Regex.Replace(input, "(?<=[a-z])([A-Z])", "_$1", RegexOptions.Compiled).ToUpper();
-
-    public static Type GetNullableType(this Type type) {
-        type = Nullable.GetUnderlyingType(type) ?? type;
-        if (type.IsValueType) return typeof(Nullable<>).MakeGenericType(type);
-        return type;
-    }
-
-    public static Type GetPropertyType(this PropertyInfo property) => property.PropertyType.IsGenericType ? typeof(string) : property.PropertyType;
 }

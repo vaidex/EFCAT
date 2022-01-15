@@ -5,65 +5,109 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Internal;
+using EFCAT.Model.Extension;
 
 namespace EFCAT.Model.Annotation;
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
 public class UniqueAttribute : ValidationAttribute {
+    public UniqueAttribute() { }
 
+    // Returns an ValidationError with the Errormessage
     private ValidationResult? Error => new ValidationResult(ErrorMessage);
+    // Returns an ValidationSuccess
     private ValidationResult? Success => ValidationResult.Success;
 
+    // Set the Errormessage
     private void SetError(ValidationContext context) =>
-        ErrorMessage = (ErrorMessage ?? $"The field {context.DisplayName} needs to be unique.");
+        ErrorMessage = (ErrorMessage ?? $"The field @displayname needs to be unique.")
+        .Replace("@displayname", context.DisplayName);
 
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
         // Configure Connection
-        DbContextOptions _dbContextOptions = Settings.DbContextOptions;
-        Type _contextType = _dbContextOptions.ContextType;
-        Type _entityType = context.ObjectType;
-        string _propertyName = context.DisplayName;
+        DbContextOptions dbContextOptions = Settings.DbContextOptions;
+        Type contextType = dbContextOptions.ContextType;
+        Type entityType = context.ObjectType;
+        string propertyName = context.DisplayName;
 
+        // Set the Error Message
         SetError(context);
 
-        string _value = (string)value;
-        if (String.IsNullOrWhiteSpace(_value)) return ValidationResult.Success;
-        _value = _value.Trim();
+        // Check if the value is null or an empty string
+        if (String.IsNullOrWhiteSpace((string)value)) return Error;
 
         // Get the Context
-        ConstructorInfo constructor = _contextType.GetConstructor(new Type[] { _dbContextOptions.GetType() });
-        DatabaseContext dbContext = (DatabaseContext)constructor.Invoke(new object[] { _dbContextOptions });
-
+        ConstructorInfo constructor = contextType.GetConstructor(new Type[] { dbContextOptions.GetType() });
+        DatabaseContext dbContext = (DatabaseContext)constructor.Invoke(new object[] { dbContextOptions });
         // Get the Table
-        IQueryable table = GetTable(dbContext, _entityType);
+        IQueryable table = entityType.GetTable(dbContext);
+        // Get the Entity if it exists
+        var entity = GetEntity(table, entityType, context.ObjectInstance);
+        // Check if the entity is not null
+        if (entity != null)
+            // Check if the values are eual
+            if(CheckValueEquality(entity, propertyName, value)) return Success;
+        // Check if the value is unique
+        return CheckUniqueness(table, entityType, propertyName, value);
+    }
 
-        // Get the Property
-        PropertyInfo propertyInfo = _entityType.GetProperty(_propertyName);
-
+    private object? GetEntity(IQueryable table, Type entity, object instance) {
+        // Check if Entity has Properties
+        if(entity.GetProperties().Length == 0) return null;
         // entity
-        ParameterExpression parameter = Expression.Parameter(_entityType, "entity");
+        ParameterExpression parameter = Expression.Parameter(entity, "entity");
+        // List with all Binary Expressions
+        List<BinaryExpression> expressions = new List<BinaryExpression>();
+        // Iterate over every Property in the Entity
+        foreach (PropertyInfo property in entity.GetProperties()) {
+            // Skip Property if it is no PrimaryKey
+            if (!property.HasAttribute<PrimaryKeyAttribute>()) continue;
+            // Get the Value of the Property
+            var value = entity.GetProperty(property.Name).GetValue(instance);
+            // If the value is null the method returns null
+            if (value == null) return null;
+            // entity.Property
+            MemberExpression member = Expression.MakeMemberAccess(parameter, property);
+            // value
+            ConstantExpression constant = Expression.Constant(Convert.ChangeType(value, property.PropertyType));
+            // entity.Property == value
+            BinaryExpression binary = Expression.Equal(member, constant);
+            // Adds the Expression to the list
+            expressions.Add(binary);
+        }
+        // Combines all Expression: entity.Property == value && ...
+        BinaryExpression final = expressions.Aggregate((left, right) => Expression.And(left, right));
+        // entity => entity.Property == value && ...
+        LambdaExpression lambda = Expression.Lambda(final, parameter);
+        // Execute FirstOrDefault() and get the entity
+        var output = entity.ExecuteQuery("FirstOrDefault", new object[] { table, lambda });
+        // Return the entity
+        return output;
+    }
+
+    private bool CheckValueEquality(object entity, string propertyName, object value) {
+        // Get the Value of the Entity
+        object? entityValue = entity.GetType().GetProperty(propertyName)?.GetValue(entity);
+        // Check if the EntityValue is equal to the Value
+        return entityValue != null ? entityValue.ToString() == value.ToString() : false;
+    }
+
+    private ValidationResult CheckUniqueness(IQueryable table, Type entity, string propertyName, object value) {
+        // Get the Property
+        PropertyInfo propertyInfo = entity.GetProperty(propertyName);
+        // entity
+        ParameterExpression parameter = Expression.Parameter(entity, "entity");
         // entity.Property
         MemberExpression property = Expression.MakeMemberAccess(parameter, propertyInfo);
         // value
-        ConstantExpression convertedValue = Expression.Constant(Convert.ChangeType(_value, propertyInfo.PropertyType));
+        ConstantExpression convertedValue = Expression.Constant(Convert.ChangeType(value, propertyInfo.PropertyType));
         // entity.Property == value
         BinaryExpression equal = Expression.Equal(property, convertedValue);
         // entity => entity.Property == value
         LambdaExpression lambda = Expression.Lambda(equal, parameter);
-
-
-        // Instantiate the count method with the right TSource (our entity type)
-        MethodInfo countMethod = QueryableCountMethod.MakeGenericMethod(_entityType);
-        Console.WriteLine(table.ToString());
-
-        // Execute Count() and say "you're valid if you have none matching"
-        int count = (int)countMethod.Invoke(null, new object[] { table, lambda });
-
+        // Execute Count() and get the amount of inserts
+        int count = (int)entity.ExecuteQuery("Count", new object[] { table, lambda });
+        // Return an Error if count is greater than zero.
         return count == 0 ? Success : Error;
     }
-
-    private IQueryable GetTable(DbContext context, Type entityType) => (IQueryable)((IDbSetCache)context).GetOrAddSet(context.GetDependencies().SetSource, entityType);
-
-    // Gets Queryable.Count<TSource>(IQueryable<TSource>, Expression<Func<TSource, bool>>)
-    private static MethodInfo QueryableCountMethod = typeof(Queryable).GetMethods().First(m => m.Name == "Count" && m.GetParameters().Length == 2);
 }

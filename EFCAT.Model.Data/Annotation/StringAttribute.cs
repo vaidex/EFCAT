@@ -1,52 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
-using EFCAT.Model.Data.Extension;
+using EFCAT.Model.Data.Validation;
 
-namespace EFCAT.Model.Data.Annotation {
-    public class StringAttribute : ValidationAttribute {
-        public int? Min { get; set; }
-        public int? Max { get; set; }
-        public Regex? Pattern { get; set; }
+namespace EFCAT.Model.Data.Annotation;
 
-        private ValidationResult? Error => new ValidationResult(ErrorMessage);
-        private ValidationResult? Success => ValidationResult.Success;
+public class StringAttribute : TypeAttribute {
+    private StringValidation validation = new StringValidation();
 
-        private void SetError(ValidationContext context) => 
-            ErrorMessage = (ErrorMessage ?? $"The field {context.DisplayName} needs to have between {Min} and {Max} characters{ ((Pattern != null) ? $" and match with pattern {Pattern}" : "") }.")
-            .Replace("@min", $"{Min}")
-            .Replace("@max", $"{Max}")
-            .Replace("@pattern", $"{Pattern}");
+    public long Min { get => validation.Min; set => validation.Min = value; }
+    public long Max { get => validation.Max; set => validation.Max = value; }
+    public Regex Pattern { get => validation.Pattern; set => validation.Pattern = value; }
 
-        protected override ValidationResult? IsValid(object? value, ValidationContext context) {
-            string? _value = Convert.ToString(value);
-            int? length = _value != null ? _value.Length : null;
-            SetError(context);
-            if (_value == null) return ValidationResult.Success;
-            else if (Min.IfNotNull(min => length < min)) return Error;
-            else if (Max.IfNotNull(max => length > max)) return Error;
-            else if (Pattern.IfNotNull(pattern => pattern.IsMatch(_value))) return Error;
-            return Success;
-        }
-    }
+    public string? ErrorMessage { get => validation.ErrorMessage; set => validation.ErrorMessage = value; }
 
-    public class BaseValidationAttribute : ValidationAttribute {
+    public StringAttribute() : base("string", Int32.MaxValue) { }
+    public StringAttribute(string type, object size) : base(type, size) { Max = Convert.ToInt64(size); }
 
-    }
-
-    public class TypeAttribute<TType> where TType : struct {
-        public TType? Min { get; set; }
-        public TType? Max { get; set; }
-        public Regex? Pattern { get; set; }
-
-        public string? ErrorMessage { get; set; }
-
-        private ValidationResult? Error => new ValidationResult(ErrorMessage);
-        private ValidationResult? Success => ValidationResult.Success;
-
-        private void SetError(ValidationContext context) =>
-            ErrorMessage = (ErrorMessage ?? $"The field {context.DisplayName} needs to have between {Min} and {Max} characters{ ((Pattern != null) ? $" and match with pattern {Pattern}" : "") }.")
-            .Replace("@min", $"{Min}")
-            .Replace("@max", $"{Max}")
-            .Replace("@pattern", $"{Pattern}");
-    }
+    protected override ValidationResult? IsValid(object? value, ValidationContext context) => validation.IsValid(value, context);
 }

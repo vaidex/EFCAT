@@ -5,7 +5,7 @@
   },
   "projects": {
     "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT.Domain\\EFCAT.Domain.csproj": {
-      "version": "1.0.2",
+      "version": "1.1.0",
       "restore": {
         "projectUniqueName": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT.Domain\\EFCAT.Domain.csproj",
         "projectName": "EFCAT.Domain",
@@ -74,7 +74,7 @@
       }
     },
     "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT.Model.Data\\EFCAT.Model.Data.csproj": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "restore": {
         "projectUniqueName": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT.Model.Data\\EFCAT.Model.Data.csproj",
         "projectName": "EFCAT.Model.Data",
@@ -139,7 +139,7 @@
       }
     },
     "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT.Model\\EFCAT.Model.csproj": {
-      "version": "1.0.3",
+      "version": "1.1.0",
       "restore": {
         "projectUniqueName": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT.Model\\EFCAT.Model.csproj",
         "projectName": "EFCAT.Model",
@@ -186,10 +186,6 @@
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[6.0.0, )"
-            },
-            "System.Linq": {
-              "target": "Package",
-              "version": "[4.3.0, )"
             }
           },
           "imports": [
@@ -212,7 +208,7 @@
       }
     },
     "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT.Service\\EFCAT.Service.csproj": {
-      "version": "1.0.2",
+      "version": "1.1.0",
       "restore": {
         "projectUniqueName": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT.Service\\EFCAT.Service.csproj",
         "projectName": "EFCAT.Service",

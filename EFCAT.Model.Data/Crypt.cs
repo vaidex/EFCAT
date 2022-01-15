@@ -1,32 +1,37 @@
-﻿using System.Security.Cryptography;
+﻿using EFCAT.Model.Data.Converter;
+using System.ComponentModel;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace EFCAT.Model.Data;
 
+[JsonConverter(typeof(CryptJsonFactory))]
+[TypeDescriptionProvider(typeof(CryptTypeDescriptionProvider))]
 public class Crypt<TAlgorithm> where TAlgorithm : IAlgorithm, new() {
-
-    private string? _value;
-
-    public string Value { get => Get(); set => Set(value); }
+    private bool IsCrypted { get; set; } = false;
+    private string value;
+    private string Value { get => this.value; set { this.value = value; IsCrypted = false; } }
 
     TAlgorithm _algorithm = new TAlgorithm();
 
     public Crypt() { }
+    public Crypt(string value, bool isCrypted) { Value = value; IsCrypted = isCrypted; }
 
-    public Crypt(string value) => _value = value;
+    public static implicit operator Crypt<TAlgorithm>(string value) => String.IsNullOrEmpty(value) ? new Crypt<TAlgorithm>() : new Crypt<TAlgorithm>() { Value = value, IsCrypted = false };
 
-    public static implicit operator Crypt<TAlgorithm>(string value) => value == null ? new Crypt<TAlgorithm>() : new Crypt<TAlgorithm>() { Value = value };
-
+    public string Encrypt() {
+        if (IsCrypted) return Value;
+        Value = Encrypt(Value);
+        IsCrypted = true;
+        return Value;
+    }
     private string Encrypt(string value) => _algorithm.Encrypt(value);
+    public string Decrypt() => IsCrypted ? _algorithm.Decrypt(Value) : Value;
 
-    public string Decrypt() => _algorithm.Decrypt(_value ?? "");
+    public bool Verify(string value) => IsCrypted ? Encrypt(value) == Value : value == Value;
 
-    public bool Verify(string value) => Encrypt(value) == Get();
-
-    public string Get() => _value ?? "";
-    public void Set(string value) => _value = Encrypt(value);
-
-    public override string ToString() => Get();
+    public override string ToString() => Value;
 }
 
 public interface IAlgorithm {
@@ -40,6 +45,7 @@ public class Algorithm : IAlgorithm {
     public Algorithm(HashAlgorithm algorithm) { _algorithm = algorithm; }
 
     public string Encrypt(string value) {
+        if (String.IsNullOrEmpty(value)) return "";
         StringBuilder sb = new StringBuilder();
 
         Byte[] result = _algorithm.ComputeHash(Encoding.UTF8.GetBytes(value));
@@ -48,9 +54,7 @@ public class Algorithm : IAlgorithm {
         return sb.ToString();
     }
 
-    public string Decrypt(string value) {
-        throw new NotImplementedException();
-    }
+    public string Decrypt(string value) => value;
 }
 
 public class SHA256 : Algorithm {

@@ -3,11 +3,11 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Model.Configuration;
+using Sample.Model.Configuration;
 
 #nullable disable
 
-namespace Model.Migrations
+namespace Sample.Model.Migrations
 {
     [DbContext(typeof(TestDbContext))]
     partial class TestDbContextModelSnapshot : ModelSnapshot
@@ -39,6 +39,11 @@ namespace Model.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(256)")
                         .HasColumnName("PASSWORD");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("TYPE");
 
                     b.HasKey("Id");
 

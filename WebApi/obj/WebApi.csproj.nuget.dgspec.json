@@ -4,12 +4,12 @@
     "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\WebApi\\WebApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Domain\\Domain.csproj": {
+    "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Domain\\Sample.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Domain\\Domain.csproj",
-        "projectName": "Domain",
-        "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Domain\\Domain.csproj",
+        "projectUniqueName": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Domain\\Sample.Domain.csproj",
+        "projectName": "Sample.Domain",
+        "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Domain\\Sample.Domain.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Domain\\obj\\",
         "projectStyle": "PackageReference",
@@ -36,8 +36,8 @@
               "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT\\EFCAT.csproj": {
                 "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\EFCAT\\EFCAT.csproj"
               },
-              "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Model.csproj": {
-                "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Model.csproj"
+              "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Sample.Model.csproj": {
+                "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Sample.Model.csproj"
               }
             }
           }
@@ -252,10 +252,6 @@
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[6.0.0, )"
-            },
-            "System.Linq": {
-              "target": "Package",
-              "version": "[4.3.0, )"
             }
           },
           "imports": [
@@ -415,12 +411,12 @@
         }
       }
     },
-    "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Model.csproj": {
+    "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Sample.Model.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Model.csproj",
-        "projectName": "Model",
-        "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Model.csproj",
+        "projectUniqueName": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Sample.Model.csproj",
+        "projectName": "Sample.Model",
+        "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Sample.Model.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\obj\\",
         "projectStyle": "PackageReference",
@@ -519,11 +515,11 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Domain\\Domain.csproj"
+              "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Domain\\Sample.Domain.csproj": {
+                "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Domain\\Sample.Domain.csproj"
               },
-              "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Model.csproj": {
-                "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Model.csproj"
+              "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Sample.Model.csproj": {
+                "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Sample.Model.csproj"
               }
             }
           }

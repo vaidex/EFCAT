@@ -1,0 +1,72 @@
+﻿@page "/"
+@using Domain.Repository
+@using Sample.Model.Entity
+@inject ITestAsyncRepository _repository
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+@if (Entities != null) {
+
+
+    <table>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Number</th>
+            <th>Type</th>
+        </tr>
+
+        @foreach (TestEntity entity in Entities) {
+            <tr>
+                <td>@entity.Id</td>
+                <td>@entity.Name</td>
+                <td>@entity.Password</td>
+                <td>@entity.Number</td>
+                <td>@entity.Type.ToString()</td>
+            </tr>
+        }
+    </table>
+    @if (Entities.Any()) {
+        <hr />
+        <span>Password Verification</span> <input @bind-value=Password />
+        @if (Entities[0].Password.Verify(Password)) {
+            <p>Correct</p>
+        }
+
+    }
+}
+<hr />
+<EditForm Model=Entity OnValidSubmit=Submit>
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <input type="text" @bind-value=Entity.Name placeholder="Name" />
+    <input type="text" @bind-value=Entity.Password placeholder="Password" />
+    <input type="number" @bind-value=Entity.Number placeholder="Number" />
+    <select>
+        @foreach (var value in Enum.GetValues(typeof(ETypes))) {
+            <option @onselectionchange=@(() => Entity.Type = (ETypes)Enum.ToObject(typeof(ETypes), value) )>@value</option>
+        }
+    </select>
+    <button>submit</button>
+</EditForm>
+
+@code {
+    private List<TestEntity> Entities { get; set; }
+
+    private TestEntity Entity { get; set; } = new TestEntity();
+
+    private string Password { get; set; } = "";
+
+    protected async override Task OnInitializedAsync() {
+        Entities = (await _repository.ReadAllAsync()).ToList();
+        Entity = new TestEntity();
+    }
+
+    private async Task Submit() {
+        Entity = await _repository.CreateAsync(Entity);
+        Entities.Add(Entity);
+        Entity = new TestEntity();
+    }
+}

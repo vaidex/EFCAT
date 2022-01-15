@@ -1,8 +1,8 @@
 ﻿using EFCAT.Domain.Repository;
-using Model.Configuration;
-using Model.Entity;
+using Sample.Model.Configuration;
+using Sample.Model.Entity;
 
-namespace Domain.Repository;
+namespace Sample.Domain.Repository;
 
 public interface ITestAsyncRepository : IRepositoryAsync<TestEntity, int> { }
 

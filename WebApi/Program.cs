@@ -1,7 +1,7 @@
-using Domain.Repository;
+using Sample.Domain.Repository;
 using Microsoft.EntityFrameworkCore;
-using Model.Configuration;
-using Model.Entity;
+using Sample.Model.Configuration;
+using Sample.Model.Entity;
 
 var builder = WebApplication.CreateBuilder(args);
 
