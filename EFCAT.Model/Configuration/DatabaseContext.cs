@@ -14,7 +14,7 @@ namespace EFCAT.Model.Configuration;
 public class DatabaseContext : DbContext {
     private Dictionary<Type, Key[]> Entities { get; set; }
     private Dictionary<Type, List<string>> References { get; set; }
-    private bool Tools { get; set; } = true;
+    private bool Tools { get; set; } = false;
     private DbContextOptions Options { get; set; }
 
     public DatabaseContext([NotNull] DbContextOptions options) : base(options) { Settings.DbContextOptions = options; Options = options; }
@@ -137,7 +137,7 @@ public class DatabaseContext : DbContext {
                             PropertyBuilder propertyBuilder = entity.Property(property.Name);
 
                             propertyBuilder.HasColumnName(property.GetSqlName());
-                            property.Attribute<TypeAttribute>(attr => propertyBuilder.HasColumnType(attr.GetTypeName()));
+                            property.Attribute<TypeAttribute>(attr => propertyBuilder.HasColumnType(attr.GetTypeName()).IsRequired(!attr.Nullable));
                             property.Attribute<AutoIncrementAttribute>(attr => propertyBuilder.ValueGeneratedOnAdd());
                             property.Attribute<PrimaryKeyAttribute>(attr => keys.Add(new Key(property.Name, property.PropertyType)));
                             property.Attribute<UniqueAttribute>(attr => entity.HasIndex(property.Name).IsUnique(true));

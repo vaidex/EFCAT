@@ -94,6 +94,8 @@ public class TinyintAttribute : Int64Attribute {
 
 public class BoolAttribute : TypeAttribute {
     public BoolAttribute() : base("bit", "") { }
+
+    public override bool Nullable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 }
 
 public class BooleanAttribute : BoolAttribute {

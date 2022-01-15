@@ -8,6 +8,7 @@ public abstract class TypeValidation<TType, TRange> where TRange : IComparable {
     public TRange? Min { get; set; }
     public TRange? Max { get; set; }
     public Regex? Pattern { get; set; }
+    public bool Nullable { get; set; } = false;
 
     public string? ErrorMessage { get; set; }
 
@@ -22,7 +23,9 @@ public abstract class TypeValidation<TType, TRange> where TRange : IComparable {
         .Replace("@pattern", $"{Pattern}");
 
     public virtual ValidationResult? IsValid(object? value, ValidationContext context) {
-        if (value == null) return ValidationResult.Success;
+        if (value == null || String.IsNullOrWhiteSpace((string)value))
+            if (Nullable) return Success;
+            else return Error;
         TType? _value = (TType)value;
         SetError(context);
         TRange? _range = GetRange(_value);

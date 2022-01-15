@@ -10,6 +10,7 @@ public class StringAttribute : TypeAttribute {
     public long Min { get => validation.Min; set => validation.Min = value; }
     public long Max { get => validation.Max; set => validation.Max = value; }
     public Regex Pattern { get => validation.Pattern; set => validation.Pattern = value; }
+    public override bool Nullable { get => validation.Nullable; set => validation.Nullable = value; }
 
     public string? ErrorMessage { get => validation.ErrorMessage; set => validation.ErrorMessage = value; }
 

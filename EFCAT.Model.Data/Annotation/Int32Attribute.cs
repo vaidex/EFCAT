@@ -8,6 +8,7 @@ public class Int32Attribute : TypeAttribute {
 
     public int Min { get => validation.Min; set => validation.Min = value; }
     public int Max { get => validation.Max; set => validation.Max = value; }
+    public override bool Nullable { get => validation.Nullable; set => validation.Nullable = value; }
 
     public string? ErrorMessage { get => validation.ErrorMessage; set => validation.ErrorMessage = value; }
 

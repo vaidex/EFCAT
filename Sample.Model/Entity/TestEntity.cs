@@ -10,8 +10,7 @@ public class TestEntity {
     public int Id { get; set; }
 
     [Unique]
-    [Required]
-    [Varchar(16, Min = 3, ErrorMessage = "You need to have between @min and @max characters.")]
+    [Varchar(16, Min = 3, Max = 16, Nullable = false, ErrorMessage = "You need to have between @min and @max characters.")]
     public string Name { get; set; }
 
     [Required]

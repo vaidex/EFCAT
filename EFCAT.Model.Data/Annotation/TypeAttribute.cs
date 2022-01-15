@@ -2,9 +2,10 @@
 
 namespace EFCAT.Model.Data.Annotation;
 
-public class TypeAttribute : ValidationAttribute {
+public abstract class TypeAttribute : ValidationAttribute {
     public string Type { get; private set; }
     public string Size { get; private set; }
+    public abstract bool Nullable { get; set; }
 
     public TypeAttribute(string type, string size = "") {
         Type = type;
