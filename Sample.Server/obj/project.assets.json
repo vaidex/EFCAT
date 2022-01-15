@@ -4884,13 +4884,13 @@
     },
     "Sample.Domain/1.0.0": {
       "type": "project",
-      "path": "../Domain/Sample.Domain.csproj",
-      "msbuildProject": "../Domain/Sample.Domain.csproj"
+      "path": "../Sample.Domain/Sample.Domain.csproj",
+      "msbuildProject": "../Sample.Domain/Sample.Domain.csproj"
     },
     "Sample.Model/1.0.0": {
       "type": "project",
-      "path": "../Model/Sample.Model.csproj",
-      "msbuildProject": "../Model/Sample.Model.csproj"
+      "path": "../Sample.Model/Sample.Model.csproj",
+      "msbuildProject": "../Sample.Model/Sample.Model.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -4934,11 +4934,11 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Domain\\Sample.Domain.csproj": {
-              "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Domain\\Sample.Domain.csproj"
+            "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Sample.Domain\\Sample.Domain.csproj": {
+              "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Sample.Domain\\Sample.Domain.csproj"
             },
-            "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Sample.Model.csproj": {
-              "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Model\\Sample.Model.csproj"
+            "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Sample.Model\\Sample.Model.csproj": {
+              "projectPath": "C:\\Users\\Admin\\Documents\\Files\\XTREY\\EFCAT\\Sample.Model\\Sample.Model.csproj"
             }
           }
         }
