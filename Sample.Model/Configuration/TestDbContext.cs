@@ -5,8 +5,7 @@ using Sample.Model.Entity;
 namespace Sample.Model.Configuration;
 
 public class TestDbContext : DatabaseContext {
-    public DbSet<TestEntity> TestEntities { get; set; }
-    public DbSet<TestManyToOne> TestMTOS { get; set; }
+    public DbSet<User> Users { get; set; }
 
     public TestDbContext(DbContextOptions<TestDbContext> options) : base(options) { }
 

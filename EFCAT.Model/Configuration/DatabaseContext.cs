@@ -60,13 +60,13 @@ public class DatabaseContext : DbContext {
                 ForeignColumnAttribute column = property.GetAttributes<ForeignColumnAttribute>().First();
 
                 bool isRequired = (property.HasAttribute<PrimaryKeyAttribute>() || property.HasAttribute<RequiredAttribute>());
-                if (column.keys.Length > 0) if (fk_keys.Count == column.keys.Length) for (int i = 0; i < fk_keys.Count; i++) fk_keys[i].Name = column.keys[i]; else throw new Exception("Wrong amount of foreign keys.");
+                if (column.Keys.Length > 0) if (fk_keys.Count == column.Keys.Length) for (int i = 0; i < fk_keys.Count; i++) fk_keys[i].Name = column.Keys[i]; else throw new Exception("Wrong amount of foreign keys.");
                 foreach (var key in fk_keys) if (isRequired) entity.Property(key.Type, key.Name); else entity.Property(key.Type.GetNullableType(), key.Name);
 
                 string[] fk_keys_array = fk_keys.Select(k => k.Name).ToArray<string>();
                 string? referenceName;
 
-                switch (column.type) {
+                switch (column.Type) {
                     default:
                     case ForeignType.ONE_TO_ONE:
                         referenceName = property.PropertyType.GetProperties().Where(p => p.PropertyType == entityType && (p.HasAttribute<ReferenceColumnAttribute>() ? (p.GetAttribute<ReferenceColumnAttribute>().property == property.Name) : false)).Select(p => p.Name).FirstOrDefault(property.PropertyType.GetProperties().Where(p => p.PropertyType == entityType && (!p.HasAttribute<ReferenceColumnAttribute>())).Select(p => p.Name).Where(name => !References[property.PropertyType].Contains(name)).FirstOrDefault());
@@ -74,7 +74,7 @@ public class DatabaseContext : DbContext {
                             .HasOne(property.PropertyType, property.Name)
                             .WithOne(referenceName)
                             .HasForeignKey(entityType, fk_keys_array)
-                            .OnDelete(column.onDelete)
+                            .OnDelete(column.OnDelete)
                             .IsRequired(isRequired);
                         break;
                     case ForeignType.MANY_TO_ONE:
@@ -83,7 +83,7 @@ public class DatabaseContext : DbContext {
                             .HasOne(property.PropertyType, property.Name)
                             .WithMany(referenceName)
                             .HasForeignKey(fk_keys_array)
-                            .OnDelete(column.onDelete)
+                            .OnDelete(column.OnDelete)
                             .IsRequired(isRequired);
                         break;
                 }
@@ -137,11 +137,11 @@ public class DatabaseContext : DbContext {
                             PropertyBuilder propertyBuilder = entity.Property(property.Name);
 
                             propertyBuilder.HasColumnName(property.GetSqlName());
-                            property.Attribute<TypeAttribute>(attr => propertyBuilder.HasColumnType(attr.GetTypeName()).IsRequired(!attr.Nullable));
-                            property.Attribute<AutoIncrementAttribute>(attr => propertyBuilder.ValueGeneratedOnAdd());
-                            property.Attribute<PrimaryKeyAttribute>(attr => keys.Add(new Key(property.Name, property.PropertyType)));
-                            property.Attribute<UniqueAttribute>(attr => entity.HasIndex(property.Name).IsUnique(true));
-                            property.Attribute<EnumAttribute>(attr => propertyBuilder.HasConversion(attr.Type));
+                            property.OnAttribute<TypeAttribute>(attr => propertyBuilder.HasColumnType(attr.GetTypeName()).IsRequired(!attr.Nullable));
+                            property.OnAttribute<AutoIncrementAttribute>(attr => propertyBuilder.ValueGeneratedOnAdd());
+                            property.OnAttribute<PrimaryKeyAttribute>(attr => keys.Add(new Key(property.Name, property.PropertyType)));
+                            property.OnAttribute<UniqueAttribute>(attr => entity.HasIndex(property.Name).IsUnique(true));
+                            property.OnAttribute<EnumAttribute>(attr => propertyBuilder.HasConversion(attr.Type));
                         }
                         break;
 

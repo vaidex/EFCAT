@@ -1,5 +1,6 @@
 ﻿using EFCAT.Model.Data.Converter;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -8,7 +9,7 @@ namespace EFCAT.Model.Data;
 
 [JsonConverter(typeof(CryptJsonFactory))]
 [TypeDescriptionProvider(typeof(CryptTypeDescriptionProvider))]
-public class Crypt<TAlgorithm> where TAlgorithm : IAlgorithm, new() {
+public class Crypt<TAlgorithm> : ValueObject where TAlgorithm : IAlgorithm, new() {
     private bool IsCrypted { get; set; } = false;
     private string value;
     private string Value { get => this.value; set { this.value = value; IsCrypted = false; } }
@@ -18,7 +19,7 @@ public class Crypt<TAlgorithm> where TAlgorithm : IAlgorithm, new() {
     public Crypt() { }
     public Crypt(string value, bool isCrypted) { Value = value; IsCrypted = isCrypted; }
 
-    public static implicit operator Crypt<TAlgorithm>(string value) => String.IsNullOrEmpty(value) ? new Crypt<TAlgorithm>() : new Crypt<TAlgorithm>() { Value = value, IsCrypted = false };
+    public static implicit operator Crypt<TAlgorithm>(string value) => String.IsNullOrEmpty(value) ? new Crypt<TAlgorithm>() : new Crypt<TAlgorithm>(value, false);
 
     public string Encrypt() {
         if (IsCrypted) return Value;
@@ -32,6 +33,14 @@ public class Crypt<TAlgorithm> where TAlgorithm : IAlgorithm, new() {
     public bool Verify(string value) => IsCrypted ? Encrypt(value) == Value : value == Value;
 
     public override string ToString() => Value;
+    public bool Equals(object? obj) {
+        if (obj is string value) return Verify(value);
+        return false;
+    }
+
+    protected override IEnumerable<object> GetAtomicValues() {
+        yield return Value;
+    }
 }
 
 public interface IAlgorithm {
@@ -65,11 +74,11 @@ public class SHA512 : Algorithm {
     public SHA512() : base(System.Security.Cryptography.SHA512.Create()) { }
 }
 
-public class CustomAlgorithm : IAlgorithm {
+public class AesAlgorithm : IAlgorithm {
 
     readonly string _key = "";
 
-    public CustomAlgorithm(string key) {
+    public AesAlgorithm(string key) {
         _key = key;
     }
     

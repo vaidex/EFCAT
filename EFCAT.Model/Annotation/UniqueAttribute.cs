@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Internal;
 using EFCAT.Model.Extension;
+using System.Linq;
 
 namespace EFCAT.Model.Annotation;
 
@@ -34,11 +35,17 @@ public class UniqueAttribute : ValidationAttribute {
         SetError(context);
 
         // Check if the value is null or an empty string
-        if (String.IsNullOrWhiteSpace((string)value)) return Error;
+        if (value == null || String.IsNullOrWhiteSpace(value.ToString())) return null;
 
         // Get the Context
         ConstructorInfo constructor = contextType.GetConstructor(new Type[] { dbContextOptions.GetType() });
         DatabaseContext dbContext = (DatabaseContext)constructor.Invoke(new object[] { dbContextOptions });
+        // Get Type for valid table
+        while(entityType != null) {
+            if (dbContext.Model.GetEntityTypes().Any(e => e.ClrType == entityType)) break;
+            else if(entityType.BaseType != null) entityType = entityType.BaseType;
+            else throw new Exception("No valid Table found");
+        }
         // Get the Table
         IQueryable table = entityType.GetTable(dbContext);
         // Get the Entity if it exists

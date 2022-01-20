@@ -23,11 +23,11 @@ public abstract class TypeValidation<TType, TRange> where TRange : IComparable {
         .Replace("@pattern", $"{Pattern}");
 
     public virtual ValidationResult? IsValid(object? value, ValidationContext context) {
-        if (value == null || String.IsNullOrWhiteSpace((string)value))
+        SetError(context);
+        if (value == null || String.IsNullOrWhiteSpace(value.ToString()))
             if (Nullable) return Success;
             else return Error;
         TType? _value = (TType)value;
-        SetError(context);
         TRange? _range = GetRange(_value);
         if (Min.IfNotNull(min => _range.CompareTo(min) <= -1)) return Error;
         if (Max.IfNotNull(max => _range.CompareTo(max) >= 1)) return Error;

@@ -4,15 +4,16 @@ namespace EFCAT.Model.Annotation;
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
 public class ForeignColumnAttribute : Attribute {
-    public readonly ForeignType type;
-    public readonly string[] keys;
-    public readonly DeleteBehavior onDelete;
+    public ForeignType Type { get; set; }
+    public string[] Keys { get; set; }
+    public DeleteBehavior OnDelete { get; set; } = DeleteBehavior.Cascade;
 
-    public ForeignColumnAttribute(ForeignType type = ForeignType.ONE_TO_ONE, string keys = "", DeleteBehavior onDelete = DeleteBehavior.Cascade) {
-        this.type = type;
-        this.keys = (keys != "" ? keys.Replace(" ", "").Split(",") : new string[0]);
-        this.onDelete = onDelete;
+    public ForeignColumnAttribute(ForeignType type = ForeignType.ONE_TO_ONE, params string[] keys) {
+        Type = type;
+        Keys = keys;
     }
+
+    public ForeignColumnAttribute(ForeignType type = ForeignType.ONE_TO_ONE, string keys = "") : this(type, (keys != "" ? keys.Replace(" ", "").Split(",") : new string[0])) { }
 
 
 }

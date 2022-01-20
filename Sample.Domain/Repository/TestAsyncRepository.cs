@@ -4,9 +4,9 @@ using Sample.Model.Entity;
 
 namespace Sample.Domain.Repository;
 
-public interface ITestAsyncRepository : IRepositoryAsync<TestEntity, int> { }
+public interface ITestAsyncRepository : IRepositoryAsync<User, int> { }
 
-public class TestAsyncRepository : ARepositoryAsync<TestEntity, int>, ITestAsyncRepository {
+public class TestAsyncRepository : ARepositoryAsync<User, int>, ITestAsyncRepository {
     public TestAsyncRepository(TestDbContext context) : base(context) {
     }
 }

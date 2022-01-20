@@ -18,13 +18,11 @@
             <th>Type</th>
         </tr>
 
-        @foreach (TestEntity entity in Entities) {
+        @foreach (User entity in Entities) {
             <tr>
                 <td>@entity.Id</td>
                 <td>@entity.Name</td>
                 <td>@entity.Password</td>
-                <td>@entity.Number</td>
-                <td>@entity.Type.ToString()</td>
             </tr>
         }
     </table>
@@ -43,30 +41,31 @@
     <ValidationSummary />
     <input type="text" @bind-value=Entity.Name placeholder="Name" />
     <input type="text" @bind-value=Entity.Password placeholder="Password" />
+    <!--
     <input type="number" @bind-value=Entity.Number placeholder="Number" />
     <select>
         @foreach (var value in Enum.GetValues(typeof(ETypes))) {
             <option @onselectionchange=@(() => Entity.Type = (ETypes)Enum.ToObject(typeof(ETypes), value) )>@value</option>
         }
-    </select>
+    </select>-->
     <button>submit</button>
 </EditForm>
 
 @code {
-    private List<TestEntity> Entities { get; set; }
+    private List<User> Entities { get; set; }
 
-    private TestEntity Entity { get; set; } = new TestEntity();
+    private User Entity { get; set; } = new User();
 
     private string Password { get; set; } = "";
 
     protected async override Task OnInitializedAsync() {
         Entities = (await _repository.ReadAllAsync()).ToList();
-        Entity = new TestEntity();
+        Entity = new User();
     }
 
     private async Task Submit() {
         Entity = await _repository.CreateAsync(Entity);
         Entities.Add(Entity);
-        Entity = new TestEntity();
+        Entity = new User();
     }
 }

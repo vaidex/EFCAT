@@ -1,0 +1,66 @@
+﻿@page "/login"
+@using EFCAT.Model.Annotation
+@using EFCAT.Model.Data.Annotation
+@using EFCAT.Service.Authentication
+@using Sample.Model.Entity
+@inject NavigationManager _navigationManager
+@inject AuthenticationStateProvider AuthProvider
+
+<h3>Login</h3>
+
+<AuthorizeView>
+    <Authorized Context="AuthContext">
+        Auth
+        @Account.Name
+        <button @onclick=@(() => Auth.LogoutAsync().ContinueWith((a) => _navigationManager.NavigateTo("/", forceLoad: true)))>Logout</button>
+    </Authorized>
+    <NotAuthorized Context="NoAuthContext">
+        No Auth
+        <EditForm Model="Login" OnValidSubmit="ExecuteLogin">
+            <h3 class="title">Registration</h3>
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <input type="text" @bind-value="Login.Identifier" placeholder="Identifier" />
+            <input type="text" @bind-value="Login.Password" placeholder="Password" />
+            <button>Submit</button>
+        </EditForm>
+        <EditForm Model="Register" OnValidSubmit="ExecuteRegister">
+            <h3 class="title">Registration</h3>
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <input type="text" @bind-value="Register.Name" placeholder="Name" />
+            <input type="text" @bind-value="Register.Email" placeholder="Email" />
+            <input type="text" @bind-value="Register.Password" placeholder="Password" />
+            <input type="text" @bind-value="Register.RepeatPassword" placeholder="Repeat" />
+            <button>Submit</button>
+        </EditForm>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    IAuthService<User> Auth { get => (IAuthService<User>)AuthProvider; }
+    User Account { get => Auth.GetAccount() ?? new User(); }
+
+    public LoginForm Login { get; set; } = new LoginForm();
+    public RegisterForm Register { get; set; } = new RegisterForm();
+
+    private async Task ExecuteLogin(EditContext context) => _navigationManager.NavigateTo("/", forceLoad: true);
+    private async Task ExecuteRegister(EditContext context) => _navigationManager.NavigateTo("/", forceLoad: true);
+
+    [Authentication("REGISTER", ErrorMessage = "Something went wrong. Please try again later.")]
+    public class RegisterForm : User {
+        [Compare("Password", ErrorMessage = "No matching Passwords!")]
+        [Required]
+        public string RepeatPassword { get; set; }
+    }
+
+    [Authentication("LOGIN", ErrorMessage = "Identifier or Password incorrect.")]
+    public class LoginForm {
+        [Substitute("Name", "Email")]
+        [Required]
+        public string Identifier { get; set; }
+
+        [Required]
+        public string Password { get; set; }
+    }
+}

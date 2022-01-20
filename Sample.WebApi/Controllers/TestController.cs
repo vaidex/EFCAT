@@ -8,7 +8,7 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("test")]
-public class TestController : AControllerAsync<ITestAsyncRepository, TestEntity, int> {
+public class TestController : AControllerAsync<ITestAsyncRepository, User, int> {
     public TestController(ITestAsyncRepository repository) : base(repository) {
     }
 }
