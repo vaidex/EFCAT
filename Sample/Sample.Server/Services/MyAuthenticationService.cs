@@ -1,7 +1,5 @@
-﻿using EFCAT.Domain.Repository;
-using EFCAT.Service.Authentication;
+﻿using EFCAT.Service.Authentication;
 using Sample.Model.Entity;
-using Blazored.LocalStorage;
 using System.Net.Http.Headers;
 using Sample.Model.Configuration;
 using EFCAT.Service.Storage;

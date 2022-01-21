@@ -1,7 +1,6 @@
 using Sample.Domain.Repository;
 using Microsoft.EntityFrameworkCore;
 using Sample.Model.Configuration;
-using Blazored.LocalStorage;
 using Sample.Server.Services;
 using EFCAT.Service.Storage;
 using EFCAT.Service.Authentication;
@@ -21,7 +20,6 @@ builder.Services.AddDbContext<TestDbContext>(
     .EnableDetailedErrors()
 );
 
-builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddHttpClient();
 builder.Services.AddLocalStorage();
 builder.Services.AddAuthenticationService<MyAuthenticationService>();
