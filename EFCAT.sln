@@ -23,7 +23,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Model", "Sample.Mode
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Domain", "Sample.Domain\Sample.Domain.csproj", "{C8AE978B-05F1-4FB3-B3CF-FBA32C3AF9B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCAT.Service.Component", "EFCAT.Service.Component\EFCAT.Service.Component.csproj", "{C58C368B-90F6-485C-89B4-E8D206C6169E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCAT.Service.Component", "EFCAT.Service.Component\EFCAT.Service.Component.csproj", "{C58C368B-90F6-485C-89B4-E8D206C6169E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCAT.Service.Controller", "EFCAT.Service.Controller\EFCAT.Service.Controller.csproj", "{EEB62023-0737-4479-BC4E-6A4B3FBE53ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCAT.Service.Storage", "EFCAT.Service.Storage\EFCAT.Service.Storage.csproj", "{2E446655-EF7F-46E9-8705-0AC7F7930EFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCAT.Service.Authentication", "EFCAT.Service.Authentication\EFCAT.Service.Authentication.csproj", "{FF3C988A-692C-465A-852B-618D34B6AD78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +77,18 @@ Global
 		{C58C368B-90F6-485C-89B4-E8D206C6169E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C58C368B-90F6-485C-89B4-E8D206C6169E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C58C368B-90F6-485C-89B4-E8D206C6169E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEB62023-0737-4479-BC4E-6A4B3FBE53ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEB62023-0737-4479-BC4E-6A4B3FBE53ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEB62023-0737-4479-BC4E-6A4B3FBE53ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEB62023-0737-4479-BC4E-6A4B3FBE53ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E446655-EF7F-46E9-8705-0AC7F7930EFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E446655-EF7F-46E9-8705-0AC7F7930EFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E446655-EF7F-46E9-8705-0AC7F7930EFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E446655-EF7F-46E9-8705-0AC7F7930EFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF3C988A-692C-465A-852B-618D34B6AD78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF3C988A-692C-465A-852B-618D34B6AD78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF3C988A-692C-465A-852B-618D34B6AD78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF3C988A-692C-465A-852B-618D34B6AD78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

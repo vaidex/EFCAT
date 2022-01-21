@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
@@ -23,13 +23,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-		<PackageReference Include="Microsoft.JSInterop" Version="6.0.1" />
+	  <ProjectReference Include="..\EFCAT.Service.Authentication\EFCAT.Service.Authentication.csproj" />
+	  <ProjectReference Include="..\EFCAT.Service.Component\EFCAT.Service.Component.csproj" />
+	  <ProjectReference Include="..\EFCAT.Service.Controller\EFCAT.Service.Controller.csproj" />
+	  <ProjectReference Include="..\EFCAT.Service.Storage\EFCAT.Service.Storage.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\EFCAT.Domain\EFCAT.Domain.csproj" />
-	</ItemGroup>
-
 </Project>
