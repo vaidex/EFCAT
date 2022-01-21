@@ -89,7 +89,7 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
         this.account = account;
         return state;
     }
-    public virtual void OnAuthentication(string token) { }
+    protected virtual void OnAuthentication(string token) { }
 
     public async Task<bool> LoginAsync(object obj) {
         // Check if the Object is a Class
@@ -195,7 +195,7 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
             }
         }
         string token = GenerateToken(identity);
-        await WriteAsync(_itemName, token);
+        _ = WriteAsync(_itemName, token).ConfigureAwait(true);
     }
 
     public async Task<bool> RegisterAsync(TAccount account) {
@@ -263,4 +263,5 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
         }
         return Convert.FromBase64String(base64);
     }
-}
+
+    protected abstract Crypt<IAlgorithm> Crypt { get; set; }

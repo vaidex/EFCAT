@@ -1,6 +1,5 @@
 ﻿using EFCAT.Model.Data.Converter;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -48,10 +47,10 @@ public interface IAlgorithm {
     string Decrypt(string value);
 }
 
-public class Algorithm : IAlgorithm {
-    private HashAlgorithm _algorithm;
+public class HashAlgorithm : IAlgorithm {
+    private System.Security.Cryptography.HashAlgorithm _algorithm;
 
-    public Algorithm(HashAlgorithm algorithm) { _algorithm = algorithm; }
+    public HashAlgorithm(System.Security.Cryptography.HashAlgorithm algorithm) { _algorithm = algorithm; }
 
     public string Encrypt(string value) {
         if (String.IsNullOrEmpty(value)) return "";
@@ -65,12 +64,10 @@ public class Algorithm : IAlgorithm {
 
     public string Decrypt(string value) => value;
 }
-
-public class SHA256 : Algorithm {
+public class SHA256 : HashAlgorithm {
     public SHA256() : base(System.Security.Cryptography.SHA256.Create()) { }
 }
-
-public class SHA512 : Algorithm {
+public class SHA512 : HashAlgorithm {
     public SHA512() : base(System.Security.Cryptography.SHA512.Create()) { }
 }
 

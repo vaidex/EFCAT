@@ -18,9 +18,9 @@ namespace Sample.Server.Services {
 
         protected override async Task<string> ReadAsync(string item) => await _localStorage.GetAsync<string>(item);
         protected override async Task RemoveAsync(string item) => await _localStorage.RemoveAsync(item);
-        protected override async Task WriteAsync(string item, string value) => _localStorage.Set(item, value);
+        protected override async Task WriteAsync(string item, string value) => await _localStorage.SetAsync(item, value);
 
-        public override void OnAuthentication(string token) {
+        protected override void OnAuthentication(string token) {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
         }
     }
