@@ -20,7 +20,7 @@ namespace Sample.Server.Services {
         protected override async Task RemoveAsync(string item) => await _localStorage.RemoveAsync(item);
         protected override async Task WriteAsync(string item, string value) => await _localStorage.SetAsync(item, value);
 
-        protected override void OnAuthentication(string token) {
+        protected override async Task OnAuthenticationSuccess(string token) {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
         }
     }

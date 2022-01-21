@@ -1,45 +1,42 @@
-﻿using EFCAT.Model.Annotation;
-using EFCAT.Model.Configuration;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using System.Linq.Dynamic.Core;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
 
 namespace EFCAT.Domain.Repository;
 
-public abstract class ARepositoryAsync<TEntity, TKey> : IRepositoryAsync<TEntity, TKey> where TEntity : class {
+public abstract class ARepositoryAsync<TEntity> : IRepositoryAsync<TEntity> where TEntity : class {
     protected DbContext _context;
-    protected DbSet<TEntity> _entitySet;
+    protected DbSet<TEntity> _set;
 
     protected ARepositoryAsync(DbContext context) {
         _context = context;
-        _entitySet = _context.Set<TEntity>();
+        _set = _context.Set<TEntity>();
     }
 
-    public async Task<TEntity> ReadAsync(TKey Id) => await _entitySet.FindAsync(Id);
+    public async Task<TEntity> ReadAsync(params object[] keys) => await _set.FindAsync(keys);
 
-    public async Task<IEnumerable<TEntity>> ReadAllAsync() => await _entitySet.ToListAsync();
+    public async Task<IEnumerable<TEntity>> ReadAllAsync() => await _set.ToListAsync();
 
-    public async Task<IEnumerable<TEntity>> ReadAllAsync(int start, int count) => await _entitySet.Skip(start).Take(count).ToListAsync();
+    public async Task<IEnumerable<TEntity>> ReadAllAsync(int start, int count) => await _set.Skip(start).Take(count).ToListAsync();
 
-    public async Task<IEnumerable<TEntity>> FilterAsync(Expression<Func<TEntity, bool>> filter) => await _entitySet.AsQueryable<TEntity>().Where(filter).ToListAsync();
+    public async Task<IEnumerable<TEntity>> FilterAsync(Expression<Func<TEntity, bool>> filter) => await _set.AsQueryable<TEntity>().Where(filter).ToListAsync();
 
     public async Task<TEntity> CreateAsync(TEntity entity) {
-        _entitySet.Add(entity);
+        _set.Add(entity);
         await _context.SaveChangesAsync();
         return entity;
     }
 
     public async Task UpdateAsync(TEntity entity) {
-        _entitySet.Update(entity);
+        if (entity == null) return;
+        _set.Update(entity);
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(TKey Id) => await DeleteAsync(await ReadAsync(Id));
+    public async Task DeleteAsync(params object[] keys) => await DeleteAsync(await ReadAsync(keys));
 
     public async Task DeleteAsync(TEntity entity) {
-        _entitySet.Remove(entity);
+        if (entity == null) return;
+        _set.Remove(entity);
         await _context.SaveChangesAsync();
     }
 }

@@ -68,7 +68,7 @@ public class DatabaseContext : DbContext {
 
                 switch (column.Type) {
                     default:
-                    case ForeignType.ONE_TO_ONE:
+                    case EForeignType.ONE_TO_ONE:
                         referenceName = property.PropertyType.GetProperties().Where(p => p.PropertyType == entityType && (p.HasAttribute<ReferenceColumnAttribute>() ? (p.GetAttribute<ReferenceColumnAttribute>().property == property.Name) : false)).Select(p => p.Name).FirstOrDefault(property.PropertyType.GetProperties().Where(p => p.PropertyType == entityType && (!p.HasAttribute<ReferenceColumnAttribute>())).Select(p => p.Name).Where(name => !References[property.PropertyType].Contains(name)).FirstOrDefault());
                         entity
                             .HasOne(property.PropertyType, property.Name)
@@ -77,7 +77,7 @@ public class DatabaseContext : DbContext {
                             .OnDelete(column.OnDelete)
                             .IsRequired(isRequired);
                         break;
-                    case ForeignType.MANY_TO_ONE:
+                    case EForeignType.MANY_TO_ONE:
                         referenceName = property.PropertyType.GetProperties().Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericArguments()[0] == entityType && (p.HasAttribute<ReferenceColumnAttribute>() ? (p.GetAttribute<ReferenceColumnAttribute>().property == property.Name) : false)).Select(p => p.Name).FirstOrDefault(property.PropertyType.GetProperties().Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericArguments()[0] == entityType && (!p.HasAttribute<ReferenceColumnAttribute>())).Select(p => p.Name).Where(name => !References[property.PropertyType].Contains(name)).FirstOrDefault());
                         entity
                             .HasOne(property.PropertyType, property.Name)

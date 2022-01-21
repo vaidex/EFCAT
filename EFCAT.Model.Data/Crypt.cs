@@ -47,6 +47,7 @@ public interface IAlgorithm {
     string Decrypt(string value);
 }
 
+// Hash Algorithms
 public class HashAlgorithm : IAlgorithm {
     private System.Security.Cryptography.HashAlgorithm _algorithm;
 

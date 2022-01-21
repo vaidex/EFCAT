@@ -14,8 +14,7 @@ using System.Text.Json;
 
 namespace EFCAT.Service.Authentication;
 
-
-public interface IAuthService<TAccount> where TAccount : class {
+public interface IAuthenticationService<TAccount> where TAccount : class {
     Task<bool> LoginAsync(object value);
     bool Login(object value);
     Task<bool> RegisterAsync(TAccount account);
@@ -25,12 +24,11 @@ public interface IAuthService<TAccount> where TAccount : class {
     TAccount? GetAccount();
 }
 
-public abstract class AuthenticationService<TAccount> : AuthenticationStateProvider, IAuthService<TAccount> where TAccount : class {
-    readonly string _itemName;
-    readonly string _key;
+public abstract class AuthenticationService<TAccount> : AuthenticationStateProvider, IAuthenticationService<TAccount> where TAccount : class {
+    protected readonly string _itemName;
 
-    DbContext _dbContext;
-    DbSet<TAccount> _dbSet;
+    protected DbContext _dbContext;
+    protected DbSet<TAccount> _dbSet;
 
     AuthenticationState _authenticationState = new AuthenticationState(new ClaimsPrincipal());
 
@@ -39,11 +37,10 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
     public AuthenticationService() {
         AuthenticationSettings.provider = this;
     }
-    public AuthenticationService(DbContext dbContext, string itemName = "AuthenticationToken", string key = "keyforjwtcreationefcatdef") : this() {
+    public AuthenticationService(DbContext dbContext, string itemName = "AuthenticationToken") : this() {
         _dbContext = dbContext;
         _dbSet = dbContext.Set<TAccount>();
         _itemName = itemName;
-        _key = key;
     }
 
     public async override Task<AuthenticationState> GetAuthenticationStateAsync() {
@@ -51,7 +48,7 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
             string token = await ReadAsync(_itemName);
             if (string.IsNullOrEmpty(token)) return _authenticationState;
 
-            OnAuthentication(token);
+            OnAuthenticationSuccess(token);
 
             _authenticationState = await GetAuthState(token);
         } catch (Exception ex) {
@@ -89,7 +86,7 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
         this.account = account;
         return state;
     }
-    protected virtual void OnAuthentication(string token) { }
+    protected virtual async Task OnAuthenticationSuccess(string token) { }
 
     public async Task<bool> LoginAsync(object obj) {
         // Check if the Object is a Class
@@ -122,10 +119,15 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
 
         TAccount? account = resultEnumerable.FirstOrDefault();
         if (account == null) return false;
-        await SetAccountAsync(account);
+        string token = GetAccountToken(account);
+        await OnLoginSuccess(obj, account, token);
         return true;
     }
     public bool Login(object obj) => Task.Run(() => LoginAsync(obj)).Result;
+
+    protected virtual async Task OnLoginSuccess(object obj, TAccount account, string token) {
+        _ = WriteAsync(_itemName, token).ConfigureAwait(true);
+    }
 
     private Expression? GetExpression(object obj, bool vos) {
         // entity
@@ -186,7 +188,7 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
             return Expression.Equal(member, constant);
         }
     }
-    private async Task SetAccountAsync(TAccount account) {
+    private string GetAccountToken(TAccount account) {
         Dictionary<string, object> identity = new Dictionary<string, object>();
         foreach (PropertyInfo property in account.GetType().GetProperties()) {
             if (property.HasAttribute<PrimaryKeyAttribute>() || property.HasAttribute<System.ComponentModel.DataAnnotations.KeyAttribute>()) {
@@ -194,17 +196,20 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
                 identity.Add(property.Name, value);
             }
         }
-        string token = GenerateToken(identity);
-        _ = WriteAsync(_itemName, token).ConfigureAwait(true);
+        return GenerateToken(identity);
     }
 
     public async Task<bool> RegisterAsync(TAccount account) {
         if (_dbSet.Contains(account)) return false;
         await _dbSet.AddAsync(account);
         await _dbContext.SaveChangesAsync();
-        return account != null;
+        if (account == null) return false;
+        await OnRegisterSuccess(account);
+        return true;
     }
     public bool Register(TAccount account) => Task.Run(() => RegisterAsync(account)).Result;
+
+    protected virtual async Task OnRegisterSuccess(TAccount account) { }
 
     public async Task LogoutAsync() => await RemoveAsync(_itemName);
     public void Logout() => Task.Run(() => LogoutAsync()).ConfigureAwait(false);
@@ -215,25 +220,39 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
     protected abstract Task WriteAsync(string item, string value);
     protected abstract Task RemoveAsync(string item);
 
-    private AuthenticationState GetAuthentication(string token) => new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "Authentication")));
+    private AuthenticationState GetAuthentication(string token) => new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(Decrypt(token), "Authentication")));
 
-    private string GenerateToken(Dictionary<string, object> claims) {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));
+    private string GenerateToken(Dictionary<string, object> claims) => Encrypt(new Claim("_identity", JsonSerializer.Serialize(claims, typeof(Dictionary<string, object>))));
+
+    protected virtual JwtSettings? JwtSettings { get; set; } = new JwtSettings();
+
+    protected virtual string Encrypt(Claim claim) {
+        JwtError();
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.Key));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            "localhost",
-            "localhost",
-            new[] { new Claim("_identity", JsonSerializer.Serialize(claims, typeof(Dictionary<string, object>))) },
-            expires: DateTime.Now.AddDays(7),
+            JwtSettings.Issuer,
+            JwtSettings.Audience,
+            new[] { claim },
+            expires: DateTime.Now
+                .AddMinutes(JwtSettings.Minutes)
+                .AddHours(JwtSettings.Hours)
+                .AddDays(JwtSettings.Days)
+                .AddMonths(JwtSettings.Months),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    private IEnumerable<Claim> ParseClaimsFromJwt(string jwt) {
+    protected virtual IEnumerable<Claim> Decrypt(string jwt) {
+        JwtError();
         var claims = new List<Claim>();
         var payload = jwt.Split('.')[1];
-        var jsonBytes = ParseBase64WithoutPadding(payload);
+        switch (payload.Length % 4) {
+            case 2: payload += "=="; break;
+            case 3: payload += "="; break;
+        }
+        var jsonBytes = Convert.FromBase64String(payload);
         var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
 
         keyValuePairs.TryGetValue(ClaimTypes.Role, out object roles);
@@ -256,12 +275,15 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
 
         return claims;
     }
-    private byte[] ParseBase64WithoutPadding(string base64) {
-        switch (base64.Length % 4) {
-            case 2: base64 += "=="; break;
-            case 3: base64 += "="; break;
-        }
-        return Convert.FromBase64String(base64);
-    }
+    private JwtSettings JwtError() => JwtSettings ?? throw new Exception("Jwt Settings are not set for AuthenticationService.");
+}
 
-    protected abstract Crypt<IAlgorithm> Crypt { get; set; }
+public class JwtSettings {
+    public string Key { get; set; } = "keyforjwtcreationefcatdef";
+    public string Issuer { get; set; } = "localhost";
+    public string Audience { get; set; } = "localhost";
+    public int Months { get; set; } = 0;
+    public int Days { get; set; } = 7;
+    public int Hours { get; set; } = 0;
+    public int Minutes { get; set; } = 0;
+}

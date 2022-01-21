@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EFCAT.Service.Controller;
 
-public abstract class AControllerAsync<TInterface, TEntity, TKey> : ControllerBase where TEntity : class where TInterface : IRepositoryAsync<TEntity, TKey> {
+public abstract class AControllerAsync<TInterface, TEntity, TKey> : ControllerBase where TEntity : class where TInterface : IRepositoryAsync<TEntity> {
 
     protected TInterface _repository;
 

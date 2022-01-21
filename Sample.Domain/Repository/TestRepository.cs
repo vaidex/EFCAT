@@ -4,9 +4,9 @@ using Sample.Model.Entity;
 
 namespace Sample.Domain.Repository;
 
-public interface ITestRepository : IRepository<User, int> { }
+public interface ITestRepository : IRepository<User> { }
 
-public class TestRepository : ARepository<User, int>, ITestRepository {
+public class TestRepository : ARepository<User>, ITestRepository {
     public TestRepository(TestDbContext context) : base(context) {
     }
 }

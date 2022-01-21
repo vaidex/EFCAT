@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<PackageId>EFCAT.Service</PackageId>
+		<PackageId>EFCAT.Service.Component</PackageId>
 		<Description>An extension for your sql entity framework core service layer.</Description>
 		<Authors>NicoZeli</Authors>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -22,14 +22,18 @@
 		</None>
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-		<PackageReference Include="Microsoft.JSInterop" Version="6.0.1" />
-	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\EFCAT.Domain\EFCAT.Domain.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EFCAT.Service\EFCAT.Service.csproj" />
+  </ItemGroup>
 
 </Project>

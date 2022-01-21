@@ -1,10 +1,9 @@
 ﻿@page "/login"
-@using EFCAT.Model.Annotation
 @using EFCAT.Model.Data.Annotation
 @using EFCAT.Service.Authentication
 @using Sample.Model.Entity
+@using Sample.Server.Services
 @inject NavigationManager _navigationManager
-@inject AuthenticationStateProvider AuthProvider
 
 <h3>Login</h3>
 
@@ -12,7 +11,7 @@
     <Authorized Context="AuthContext">
         Auth
         @Account.Name
-        <button @onclick=@(() => Auth.LogoutAsync().ContinueWith((a) => _navigationManager.NavigateTo("/", forceLoad: true)))>Logout</button>
+        <button @onclick=@(() => AuthService.LogoutAsync().ContinueWith((a) => _navigationManager.NavigateTo("/", forceLoad: true)))>Logout</button>
     </Authorized>
     <NotAuthorized Context="NoAuthContext">
         No Auth
@@ -35,17 +34,20 @@
             <button>Submit</button>
         </EditForm>
     </NotAuthorized>
+    <Authorizing>
+        Authorizing...
+    </Authorizing>
 </AuthorizeView>
 
 @code {
-    IAuthService<User> Auth { get => (IAuthService<User>)AuthProvider; }
-    User Account { get => Auth.GetAccount() ?? new User(); }
+    [CascadingParameter] IAuthenticationService<User> AuthService { get; set; }
+    [CascadingParameter] User Account { get; set; }
 
     public LoginForm Login { get; set; } = new LoginForm();
     public RegisterForm Register { get; set; } = new RegisterForm();
 
-    private async Task ExecuteLogin(EditContext context) => _navigationManager.NavigateTo("/", forceLoad: true);
-    private async Task ExecuteRegister(EditContext context) => _navigationManager.NavigateTo("/", forceLoad: true);
+    private void ExecuteLogin() => _navigationManager.NavigateTo("/", forceLoad: true);
+    private void ExecuteRegister() => _navigationManager.NavigateTo("/", forceLoad: true);
 
     [Authentication("REGISTER", ErrorMessage = "Something went wrong. Please try again later.")]
     public class RegisterForm : User {

@@ -1,0 +1,18 @@
+﻿@using EFCAT.Service.Authentication
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthProvider
+@typeparam Type
+
+<CascadingValue Value="Account" IsFixed=true>
+    <CascadingValue Value="AuthService" IsFixed=true>
+        @ChildContent
+    </CascadingValue>
+</CascadingValue>
+
+@code {
+    IAuthenticationService<Type> AuthService { get => ((IAuthenticationService<Type>)AuthProvider); }
+    Type Account { get => AuthService.GetAccount(); }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

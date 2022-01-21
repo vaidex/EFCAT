@@ -2,9 +2,9 @@ using Sample.Domain.Repository;
 using Microsoft.EntityFrameworkCore;
 using Sample.Model.Configuration;
 using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Components.Authorization;
 using Sample.Server.Services;
 using EFCAT.Service.Storage;
+using EFCAT.Service.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +24,7 @@ builder.Services.AddDbContext<TestDbContext>(
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddHttpClient();
 builder.Services.AddLocalStorage();
-builder.Services.AddScoped<AuthenticationStateProvider, MyAuthenticationService>();
+builder.Services.AddAuthenticationService<MyAuthenticationService>();
 
 var app = builder.Build();
 
