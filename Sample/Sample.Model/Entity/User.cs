@@ -25,5 +25,5 @@ public class User {
 
     public Image? Image { get; set; }
 
-    public ICollection<Code> Codes { get; set; }
+    public ICollection<Code>? Codes { get; set; }
 }

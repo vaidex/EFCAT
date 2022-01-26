@@ -43,13 +43,15 @@ public class Crypt<TAlgorithm> : ValueObject where TAlgorithm : IAlgorithm, new(
 }
 
 public interface IAlgorithm {
+    int? Size { get; }
     string Encrypt(string value);
     string Decrypt(string value);
 }
 
 // Hash Algorithms
-public class HashAlgorithm : IAlgorithm {
+public abstract class HashAlgorithm : IAlgorithm {
     private System.Security.Cryptography.HashAlgorithm _algorithm;
+    public abstract int? Size { get; }
 
     public HashAlgorithm(System.Security.Cryptography.HashAlgorithm algorithm) { _algorithm = algorithm; }
 
@@ -65,14 +67,17 @@ public class HashAlgorithm : IAlgorithm {
 
     public string Decrypt(string value) => value;
 }
-public class SHA256 : HashAlgorithm {
+public sealed class SHA256 : HashAlgorithm {
     public SHA256() : base(System.Security.Cryptography.SHA256.Create()) { }
+    public override int? Size => 256;
 }
-public class SHA512 : HashAlgorithm {
+public sealed class SHA512 : HashAlgorithm {
     public SHA512() : base(System.Security.Cryptography.SHA512.Create()) { }
+    public override int? Size => 512;
 }
 
 public class AesAlgorithm : IAlgorithm {
+    public int? Size => null;
 
     readonly string _key = "";
 
