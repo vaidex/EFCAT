@@ -21,6 +21,7 @@ public class DatabaseContext : DbContext {
     public DatabaseContext([NotNull] DbContextOptions options, bool writeInformation) : this(options) { Tools = writeInformation; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        true.PrintInfo("1");
         try {
             Entities = new Dictionary<Type, Key[]>();
             References = new Dictionary<Type, List<string>>();
@@ -29,7 +30,7 @@ public class DatabaseContext : DbContext {
 
             Tools.PrintInfo($"Entities({ClrTypes.Count()}): {ClrTypes.Select(e => e.ToString()).Aggregate((a, b) => a + ", " + b)}");
 
-            foreach (var entityType in ClrTypes) if (!Entities.ContainsKey(entityType)) UpdateEntity(modelBuilder, entityType);
+            foreach (var entityType in ClrTypes) UpdateEntity(modelBuilder, entityType);
             base.OnModelCreating(modelBuilder);
         } catch (Exception ex) {
             Tools.PrintInfo(ex.Message);
@@ -37,30 +38,34 @@ public class DatabaseContext : DbContext {
     }
 
     void UpdateEntity(ModelBuilder modelBuilder, Type entityType) {
+        if (Entities.ContainsKey(entityType)) return;
+        if (entityType.BaseType != typeof(Object)) UpdateEntity(modelBuilder, entityType.BaseType);
+
         Tools.PrintInfo("Generating table: " + entityType.FullName);
 
         var entity = modelBuilder.Entity(entityType);
         var properties = entityType.GetProperties();
 
-        List<Key> keys = new List<Key>();
+        List<Key> keys = entityType.BaseType != typeof(Object) ? Entities[entityType.BaseType].ToList() : new List<Key>();
 
         if (properties == null || !properties.Any()) return;
         References.Add(entityType, new List<string>());
         foreach (var property in properties) {
+            if (property.DeclaringType != entityType) continue;
             if (property.HasAttribute<ForeignColumnAttribute>()) {
                 List<Key> fk_keys;
                 if (property.PropertyType == entityType) {
-                    if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) throw new Exception("Property needs to be nullable.");
+                    if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) throw new Exception($"Property must to be nullable at {entityType.Name}[{property.Name}].");
                     else fk_keys = keys.Select(k => new Key((property.Name + k.Name).GetSqlName(), k.Type)).ToList();
                 } else {
-                    if (!Entities.ContainsKey(property.PropertyType)) UpdateEntity(modelBuilder, property.PropertyType);
+                    UpdateEntity(modelBuilder, property.PropertyType);
                     fk_keys = Entities[property.PropertyType].Select(k => new Key((property.Name + k.Name).GetSqlName(), k.Type)).ToList();
                 }
 
-                ForeignColumnAttribute column = property.GetAttributes<ForeignColumnAttribute>().First();
+                ForeignColumnAttribute column = property.GetAttribute<ForeignColumnAttribute>();
 
                 bool isRequired = (property.HasAttribute<PrimaryKeyAttribute>() || property.HasAttribute<RequiredAttribute>());
-                if (column.Keys.Length > 0) if (fk_keys.Count == column.Keys.Length) for (int i = 0; i < fk_keys.Count; i++) fk_keys[i].Name = column.Keys[i]; else throw new Exception("Wrong amount of foreign keys.");
+                if (column.Keys.Length > 0) if (fk_keys.Count == column.Keys.Length) for (int i = 0; i < fk_keys.Count; i++) fk_keys[i].Name = column.Keys[i]; else throw new Exception($"Wrong amount of defined foreign keys at {entityType.Name}[{property.Name}].");
                 foreach (var key in fk_keys) if (isRequired) entity.Property(key.Type, key.Name); else entity.Property(key.Type.GetNullableType(), key.Name);
 
                 string[] fk_keys_array = fk_keys.Select(k => k.Name).ToArray<string>();
@@ -132,8 +137,9 @@ public class DatabaseContext : DbContext {
                         });
                         break;
                     default:
-                        if (property.PropertyType.IsGenericType && (property.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>) || property.PropertyType.GetCustomAttributes<TableAttribute>().Count() > 0)) entity.Ignore(property.Name);
-                        else {
+                        if (property.PropertyType.IsGenericType && (property.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>) || property.PropertyType.GetCustomAttributes<TableAttribute>().Count() > 0)) {
+                            if (property.DeclaringType == entityType) entity.Ignore(property.Name);
+                        } else {
                             PropertyBuilder propertyBuilder = entity.Property(property.Name);
 
                             propertyBuilder.HasColumnName(property.GetSqlName());
@@ -148,7 +154,7 @@ public class DatabaseContext : DbContext {
                 }
             }
         }
-        if (entityType.BaseType == typeof(System.Object))
+        if (entityType.BaseType == typeof(Object))
             if (keys.Count > 0) entity.HasKey(keys.Select(k => k.Name).ToArray<string>());
             else entity.HasNoKey();
         Entities.Add(entityType, keys.ToArray());

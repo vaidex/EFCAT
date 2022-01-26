@@ -24,4 +24,6 @@ public class User {
     public decimal Balance { get; set; } = 15;
 
     public Image? Image { get; set; }
+
+    public ICollection<Code> Codes { get; set; }
 }

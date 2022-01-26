@@ -13,8 +13,6 @@ public class ForeignColumnAttribute : Attribute {
         Type = type;
         Keys = keys;
     }
-
-
 }
 
 public enum EForeignType { ONE_TO_ONE, MANY_TO_ONE }
