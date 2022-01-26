@@ -3,7 +3,7 @@ using EFCAT.Model.Annotation;
 
 namespace Sample.Model.Entity;
 
-[Table("EMAIL_CODES")]
+[Table(DiscriminatorValue = "EMAIL")]
 public class EmailVerificationCode : Code {
     public EmailVerificationCode() { Type = CodeType.EMAIL_VERIFICATION; }
 }

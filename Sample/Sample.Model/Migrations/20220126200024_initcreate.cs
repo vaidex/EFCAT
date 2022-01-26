@@ -46,7 +46,12 @@ namespace Sample.Model.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     VALUE = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    EXPIRES_AT = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    EXPIRES_AT = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    QR_CONTENT = table.Column<byte[]>(type: "longblob", nullable: false),
+                    QR_TYPE = table.Column<string>(type: "varchar(32)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DISCRIMINATOR = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -55,24 +60,6 @@ namespace Sample.Model.Migrations
                         name: "FK_USER_HAS_CODES_USERS_USER_ID",
                         column: x => x.USER_ID,
                         principalTable: "USERS",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "EMAIL_CODES",
-                columns: table => new
-                {
-                    ID = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EMAIL_CODES", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_EMAIL_CODES_USER_HAS_CODES_ID",
-                        column: x => x.ID,
-                        principalTable: "USER_HAS_CODES",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -91,9 +78,9 @@ namespace Sample.Model.Migrations
                 {
                     table.PrimaryKey("PK_ADVANCED_EMAIL_CODES", x => x.CODE_ID);
                     table.ForeignKey(
-                        name: "FK_ADVANCED_EMAIL_CODES_EMAIL_CODES_CODE_ID",
+                        name: "FK_ADVANCED_EMAIL_CODES_USER_HAS_CODES_CODE_ID",
                         column: x => x.CODE_ID,
-                        principalTable: "EMAIL_CODES",
+                        principalTable: "USER_HAS_CODES",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -121,9 +108,6 @@ namespace Sample.Model.Migrations
         {
             migrationBuilder.DropTable(
                 name: "ADVANCED_EMAIL_CODES");
-
-            migrationBuilder.DropTable(
-                name: "EMAIL_CODES");
 
             migrationBuilder.DropTable(
                 name: "USER_HAS_CODES");

@@ -11,7 +11,7 @@ using Sample.Model.Configuration;
 namespace Sample.Model.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    [Migration("20220126135418_initcreate")]
+    [Migration("20220126200024_initcreate")]
     partial class initcreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,7 +28,7 @@ namespace Sample.Model.Migrations
 
                     b.HasKey("CODE_ID");
 
-                    b.ToTable("ADVANCED_EMAIL_CODES");
+                    b.ToTable("ADVANCED_EMAIL_CODES", (string)null);
                 });
 
             modelBuilder.Entity("Sample.Model.Entity.Code", b =>
@@ -37,6 +37,10 @@ namespace Sample.Model.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
                         .HasColumnName("ID");
+
+                    b.Property<string>("DISCRIMINATOR")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime(6)")
@@ -59,7 +63,9 @@ namespace Sample.Model.Migrations
 
                     b.HasIndex("USER_ID");
 
-                    b.ToTable("USER_HAS_CODES");
+                    b.ToTable("USER_HAS_CODES", (string)null);
+
+                    b.HasDiscriminator<string>("DISCRIMINATOR").HasValue("Code");
                 });
 
             modelBuilder.Entity("Sample.Model.Entity.User", b =>
@@ -96,14 +102,14 @@ namespace Sample.Model.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("USERS");
+                    b.ToTable("USERS", (string)null);
                 });
 
             modelBuilder.Entity("Sample.Model.Entity.EmailVerificationCode", b =>
                 {
                     b.HasBaseType("Sample.Model.Entity.Code");
 
-                    b.ToTable("EMAIL_CODES");
+                    b.HasDiscriminator().HasValue("EMAIL");
                 });
 
             modelBuilder.Entity("Sample.Model.Entity.AdvancedEmailVerificationCode", b =>
@@ -150,6 +156,32 @@ namespace Sample.Model.Migrations
                         .HasForeignKey("USER_ID")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.OwnsOne("EFCAT.Model.Data.Image", "QR", b1 =>
+                        {
+                            b1.Property<Guid>("CodeId")
+                                .HasColumnType("char(36)");
+
+                            b1.Property<byte[]>("Content")
+                                .IsRequired()
+                                .HasColumnType("longblob")
+                                .HasColumnName("QR_CONTENT");
+
+                            b1.Property<string>("Type")
+                                .IsRequired()
+                                .HasColumnType("varchar(32)")
+                                .HasColumnName("QR_TYPE");
+
+                            b1.HasKey("CodeId");
+
+                            b1.ToTable("USER_HAS_CODES");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CodeId");
+                        });
+
+                    b.Navigation("QR")
+                        .IsRequired();
+
                     b.Navigation("User");
                 });
 
@@ -179,15 +211,6 @@ namespace Sample.Model.Migrations
                         });
 
                     b.Navigation("Image");
-                });
-
-            modelBuilder.Entity("Sample.Model.Entity.EmailVerificationCode", b =>
-                {
-                    b.HasOne("Sample.Model.Entity.Code", null)
-                        .WithOne()
-                        .HasForeignKey("Sample.Model.Entity.EmailVerificationCode", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Sample.Model.Entity.User", b =>

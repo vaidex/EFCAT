@@ -1,8 +1,9 @@
 ﻿using EFCAT.Model.Annotation;
+using EFCAT.Model.Data;
 
 namespace Sample.Model.Entity;
 
-[Table("USER_HAS_CODES")]
+[Table("USER_HAS_CODES", Discriminator = true)]
 public class Code {
     [PrimaryKey]
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -16,6 +17,8 @@ public class Code {
     public string Value { get; set; }
 
     public DateTime ExpiresAt { get; set; }
+
+    public Image QR { get; set; }
 }
 
 public enum CodeType {

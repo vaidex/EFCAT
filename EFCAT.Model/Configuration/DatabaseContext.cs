@@ -14,6 +14,7 @@ namespace EFCAT.Model.Configuration;
 public class DatabaseContext : DbContext {
     private Dictionary<Type, Key[]> Entities { get; set; }
     private Dictionary<Type, List<string>> References { get; set; }
+    private Dictionary<Type, Dictionary<Type, string>> Discriminators { get; set; }
     private bool Tools { get; set; } = false;
     private DbContextOptions Options { get; set; }
 
@@ -23,23 +24,27 @@ public class DatabaseContext : DbContext {
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         try {
             Tools.PrintInfo("Enabled");
+
             Entities = new Dictionary<Type, Key[]>();
             References = new Dictionary<Type, List<string>>();
+            Discriminators = new Dictionary<Type, Dictionary<Type, string>>();
 
             List<Type> ClrTypes = modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType).Where(e => !($"{e.Namespace}".ToUpper().StartsWith("EFCAT.MODEL"))).ToList();
 
             Tools.PrintInfo($"Entities({ClrTypes.Count()}): {ClrTypes.Select(e => e.ToString()).Aggregate((a, b) => a + ", " + b)}");
 
-            foreach (var entityType in ClrTypes) UpdateEntity(modelBuilder, entityType);
+            foreach (Type entityType in ClrTypes) UpdateTable(modelBuilder, entityType);
+            foreach (Type entityType in Discriminators.Keys) UpdateDiscriminatorTable(modelBuilder, entityType);
+
             base.OnModelCreating(modelBuilder);
         } catch (Exception ex) {
             true.PrintInfo(ex.Message);
         }
     }
 
-    void UpdateEntity(ModelBuilder modelBuilder, Type entityType) {
+    void UpdateTable(ModelBuilder modelBuilder, Type entityType) {
         if (Entities.ContainsKey(entityType)) return;
-        if (entityType.BaseType != typeof(Object)) UpdateEntity(modelBuilder, entityType.BaseType);
+        if (entityType.BaseType != typeof(Object)) UpdateTable(modelBuilder, entityType.BaseType);
 
         Tools.PrintInfo("Generating table: " + entityType.FullName);
 
@@ -50,19 +55,33 @@ public class DatabaseContext : DbContext {
 
         List<Key> keys = entityType.BaseType != typeof(Object) ? Entities[entityType.BaseType].ToList() : new List<Key>();
 
+        if (entityType.GetCustomAttribute<TableAttribute>() is TableAttribute attr) {
+            Type baseType = entityType.BaseType;
+            if (entityType != typeof(Object) && baseType.GetCustomAttributes<TableAttribute>().Any(attr => attr.Discriminator)) Discriminators[baseType].Add(entityType, attr.DiscriminatorValue);
+            else {
+                entity.ToTable(attr.Name);
+                if (attr.Discriminator) {
+                    Discriminators.Add(entityType, new Dictionary<Type, string>());
+                    if (attr.DiscriminatorValue != null) Discriminators[entityType].Add(entityType, attr.DiscriminatorValue);
+                }
+            }
+        }
+
         if (properties == null || !properties.Any()) return;
         References.Add(entityType, new List<string>());
         foreach (PropertyInfo property in properties) {
             if (property.DeclaringType != entityType) continue;
+
             string name = property.Name;
             Type type = property.PropertyType;
+
             if (property.HasAttribute<ForeignColumnAttribute>()) {
                 List<Key> fk_keys;
                 if (type == entityType) {
                     if (type.IsGenericType && type.GetGenericTypeDefinition() != typeof(Nullable<>)) throw new Exception($"Property must to be nullable at {entityName}[{name}].");
                     else fk_keys = keys.Select(k => new Key((name + k.Name).GetSqlName(), k.Type)).ToList();
                 } else {
-                    UpdateEntity(modelBuilder, type);
+                    UpdateTable(modelBuilder, type);
                     fk_keys = Entities[type].Select(k => new Key((name + k.Name).GetSqlName(), k.Type)).ToList();
                 }
 
@@ -147,6 +166,16 @@ public class DatabaseContext : DbContext {
             if (keys.Count > 0) entity.HasKey(keys.Select(k => k.Name).ToArray<string>());
             else entity.HasNoKey();
         Entities.Add(entityType, keys.ToArray());
+    }
+
+    void UpdateDiscriminatorTable(ModelBuilder modelBuilder, Type entityType) {
+        Dictionary<Type, string> discriminators = Discriminators[entityType];
+        if (!discriminators.Any()) return;
+        EntityTypeBuilder typeBuilder = modelBuilder.Entity(entityType);
+        DiscriminatorBuilder<string> discriminatorBuilder;
+        if (discriminators.Keys.Any(type => type == entityType)) discriminatorBuilder = typeBuilder.HasDiscriminator<string>(discriminators[entityType]);
+        else discriminatorBuilder = typeBuilder.HasDiscriminator<string>("DISCRIMINATOR");
+        foreach (var discriminator in discriminators.Where(d => d.Key != entityType)) discriminatorBuilder.HasValue(discriminator.Key, discriminator.Value);
     }
 }
 
