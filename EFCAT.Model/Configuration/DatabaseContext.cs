@@ -15,6 +15,7 @@ public class DatabaseContext : DbContext {
     private Dictionary<Type, Key[]> Entities { get; set; }
     private Dictionary<Type, List<string>> References { get; set; }
     private Dictionary<Type, Dictionary<Type, string>> Discriminators { get; set; }
+    private List<Type> ClrTypes { get; set; }
     private bool Tools { get; set; } = false;
     private DbContextOptions Options { get; set; }
 
@@ -28,13 +29,12 @@ public class DatabaseContext : DbContext {
             Entities = new Dictionary<Type, Key[]>();
             References = new Dictionary<Type, List<string>>();
             Discriminators = new Dictionary<Type, Dictionary<Type, string>>();
-
-            List<Type> ClrTypes = modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType).Where(e => !($"{e.Namespace}".ToUpper().StartsWith("EFCAT.MODEL"))).ToList();
+            ClrTypes = modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType).Where(e => !($"{e.Namespace}".ToUpper().StartsWith("EFCAT.MODEL"))).ToList();
 
             Tools.PrintInfo($"Entities({ClrTypes.Count()}): {ClrTypes.Select(e => e.ToString()).Aggregate((a, b) => a + ", " + b)}");
 
-            foreach (Type entityType in ClrTypes) UpdateTable(modelBuilder, entityType);
-            foreach (Type entityType in Discriminators.Keys) UpdateDiscriminatorTable(modelBuilder, entityType);
+            if (ClrTypes.Any()) foreach (Type entityType in ClrTypes) UpdateTable(modelBuilder, entityType);
+            if (Discriminators.Any()) foreach (Type entityType in Discriminators.Keys) UpdateDiscriminatorTable(modelBuilder, entityType);
 
             base.OnModelCreating(modelBuilder);
         } catch (Exception ex) {
@@ -90,9 +90,9 @@ public class DatabaseContext : DbContext {
                 bool isRequired = (property.HasAttribute<PrimaryKeyAttribute>() || property.HasAttribute<RequiredAttribute>());
                 if (column.Keys.Length > 0) if (fk_keys.Count == column.Keys.Length) for (int i = 0; i < fk_keys.Count; i++) fk_keys[i].Name = column.Keys[i]; else throw new Exception($"Wrong amount of defined foreign keys at {entityName}[{name}].");
                 foreach (var key in fk_keys) if (isRequired) entity.Property(key.Type, key.Name); else entity.Property(key.Type.GetNullableType(), key.Name);
-
                 string[] fk_keys_array = fk_keys.Select(k => k.Name).ToArray<string>();
                 string? referenceName;
+                DeleteBehavior deleteBehaviour = column.OnDelete ?? (type == typeof(Nullable) ? DeleteBehavior.Restrict : DeleteBehavior.Cascade);
 
                 switch (column.Type) {
                     default:
@@ -102,7 +102,7 @@ public class DatabaseContext : DbContext {
                             .HasOne(type, name)
                             .WithOne(referenceName)
                             .HasForeignKey(entityType, fk_keys_array)
-                            .OnDelete(column.OnDelete)
+                            .OnDelete(deleteBehaviour)
                             .IsRequired(isRequired);
                         break;
                     case EForeignType.MANY_TO_ONE:
@@ -111,7 +111,7 @@ public class DatabaseContext : DbContext {
                             .HasOne(type, name)
                             .WithMany(referenceName)
                             .HasForeignKey(fk_keys_array)
-                            .OnDelete(column.OnDelete)
+                            .OnDelete(deleteBehaviour)
                             .IsRequired(isRequired);
                         break;
                 }
@@ -146,7 +146,7 @@ public class DatabaseContext : DbContext {
                         });
                         break;
                     default:
-                        if ((type.IsGenericType && (type.GetGenericTypeDefinition() != typeof(Nullable<>) || type.GetCustomAttributes<TableAttribute>().Count() > 0)) && property.DeclaringType == entityType) entity.Ignore(name);
+                        if ((type.IsGenericType && type.GetGenericTypeDefinition() != typeof(Nullable<>)) || type.GetCustomAttributes<TableAttribute>().Any()) entity.Ignore(name);
                         else {
                             PropertyBuilder propertyBuilder = entity.Property(name);
 
@@ -167,7 +167,6 @@ public class DatabaseContext : DbContext {
             else entity.HasNoKey();
         Entities.Add(entityType, keys.ToArray());
     }
-
     void UpdateDiscriminatorTable(ModelBuilder modelBuilder, Type entityType) {
         Dictionary<Type, string> discriminators = Discriminators[entityType];
         if (!discriminators.Any()) return;

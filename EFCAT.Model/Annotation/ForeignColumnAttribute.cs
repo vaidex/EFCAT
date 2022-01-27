@@ -6,7 +6,7 @@ namespace EFCAT.Model.Annotation;
 public class ForeignColumnAttribute : Attribute {
     public EForeignType Type { get; set; }
     public string[] Keys { get; set; }
-    public DeleteBehavior OnDelete { get; set; } = DeleteBehavior.Cascade;
+    public DeleteBehavior? OnDelete { get; set; }
 
     public ForeignColumnAttribute(EForeignType type = EForeignType.ONE_TO_ONE, string keys = "") : this(type, (keys != "" ? keys.Replace(" ", "").Split(",") : new string[0])) { }
     public ForeignColumnAttribute(EForeignType type = EForeignType.ONE_TO_ONE, params string[] keys) {

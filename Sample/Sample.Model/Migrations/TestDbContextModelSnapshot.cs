@@ -24,7 +24,11 @@ namespace Sample.Model.Migrations
                     b.Property<Guid>("CODE_ID")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("CODE_ID");
+                    b.Property<int>("Random")
+                        .HasColumnType("int(5)")
+                        .HasColumnName("RANDOM");
+
+                    b.HasKey("CODE_ID", "Random");
 
                     b.ToTable("ADVANCED_EMAIL_CODES", (string)null);
                 });
@@ -103,6 +107,21 @@ namespace Sample.Model.Migrations
                     b.ToTable("USERS", (string)null);
                 });
 
+            modelBuilder.Entity("Sample.Model.Entity.ZMail", b =>
+                {
+                    b.Property<int>("USER_ID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("VALUE");
+
+                    b.HasKey("USER_ID");
+
+                    b.ToTable("ZMAILS", (string)null);
+                });
+
             modelBuilder.Entity("Sample.Model.Entity.EmailVerificationCode", b =>
                 {
                     b.HasBaseType("Sample.Model.Entity.Code");
@@ -123,6 +142,9 @@ namespace Sample.Model.Migrations
                             b1.Property<Guid>("AdvancedEmailVerificationCodeCODE_ID")
                                 .HasColumnType("char(36)");
 
+                            b1.Property<int>("AdvancedEmailVerificationCodeRandom")
+                                .HasColumnType("int(5)");
+
                             b1.Property<byte[]>("Content")
                                 .IsRequired()
                                 .HasColumnType("longblob")
@@ -133,12 +155,12 @@ namespace Sample.Model.Migrations
                                 .HasColumnType("varchar(32)")
                                 .HasColumnName("IMAGE_TYPE");
 
-                            b1.HasKey("AdvancedEmailVerificationCodeCODE_ID");
+                            b1.HasKey("AdvancedEmailVerificationCodeCODE_ID", "AdvancedEmailVerificationCodeRandom");
 
                             b1.ToTable("ADVANCED_EMAIL_CODES");
 
                             b1.WithOwner()
-                                .HasForeignKey("AdvancedEmailVerificationCodeCODE_ID");
+                                .HasForeignKey("AdvancedEmailVerificationCodeCODE_ID", "AdvancedEmailVerificationCodeRandom");
                         });
 
                     b.Navigation("Code");
@@ -211,9 +233,23 @@ namespace Sample.Model.Migrations
                     b.Navigation("Image");
                 });
 
+            modelBuilder.Entity("Sample.Model.Entity.ZMail", b =>
+                {
+                    b.HasOne("Sample.Model.Entity.User", "User")
+                        .WithOne("Mail")
+                        .HasForeignKey("Sample.Model.Entity.ZMail", "USER_ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Sample.Model.Entity.User", b =>
                 {
                     b.Navigation("Codes");
+
+                    b.Navigation("Mail")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

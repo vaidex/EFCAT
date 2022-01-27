@@ -66,9 +66,30 @@ namespace Sample.Model.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ZMAILS",
+                columns: table => new
+                {
+                    USER_ID = table.Column<int>(type: "int", nullable: false),
+                    VALUE = table.Column<string>(type: "varchar(32)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ZMAILS", x => x.USER_ID);
+                    table.ForeignKey(
+                        name: "FK_ZMAILS_USERS_USER_ID",
+                        column: x => x.USER_ID,
+                        principalTable: "USERS",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "ADVANCED_EMAIL_CODES",
                 columns: table => new
                 {
+                    RANDOM = table.Column<int>(type: "int(5)", nullable: false),
                     CODE_ID = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     IMAGE_CONTENT = table.Column<byte[]>(type: "longblob", nullable: false),
                     IMAGE_TYPE = table.Column<string>(type: "varchar(32)", nullable: false)
@@ -76,7 +97,7 @@ namespace Sample.Model.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ADVANCED_EMAIL_CODES", x => x.CODE_ID);
+                    table.PrimaryKey("PK_ADVANCED_EMAIL_CODES", x => new { x.CODE_ID, x.RANDOM });
                     table.ForeignKey(
                         name: "FK_ADVANCED_EMAIL_CODES_USER_HAS_CODES_CODE_ID",
                         column: x => x.CODE_ID,
@@ -108,6 +129,9 @@ namespace Sample.Model.Migrations
         {
             migrationBuilder.DropTable(
                 name: "ADVANCED_EMAIL_CODES");
+
+            migrationBuilder.DropTable(
+                name: "ZMAILS");
 
             migrationBuilder.DropTable(
                 name: "USER_HAS_CODES");
