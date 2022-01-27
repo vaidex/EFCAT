@@ -28,6 +28,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\EFCAT.Model\EFCAT.Model.csproj" />
+	  <ProjectReference Include="..\EFCAT.Service.Storage\EFCAT.Service.Storage.csproj" />
 	</ItemGroup>
 
 </Project>

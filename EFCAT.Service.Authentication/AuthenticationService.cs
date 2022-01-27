@@ -2,6 +2,7 @@
 using EFCAT.Model.Data;
 using EFCAT.Model.Data.Annotation;
 using EFCAT.Model.Extension;
+using EFCAT.Service.Storage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -30,17 +31,22 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
     protected DbContext _dbContext;
     protected DbSet<TAccount> _dbSet;
 
+    private IWebStorage[]? _storages;
+
     AuthenticationState _authenticationState = new AuthenticationState(new ClaimsPrincipal());
 
     TAccount? account;
 
-    public AuthenticationService() {
+    private AuthenticationService() {
         AuthenticationSettings.provider = this;
     }
-    public AuthenticationService(DbContext dbContext, string itemName = "AuthenticationToken") : this() {
+    public AuthenticationService(DbContext dbContext) : this(dbContext, new IWebStorage[0]) { }
+    public AuthenticationService(DbContext dbContext, params IWebStorage[]? storages) : this(dbContext, "AuthenticationToken", storages) { }
+    public AuthenticationService(DbContext dbContext, string itemName, params IWebStorage[]? storages) : this() {
         _dbContext = dbContext;
         _dbSet = dbContext.Set<TAccount>();
         _itemName = itemName;
+        _storages = storages;
     }
 
     public async override Task<AuthenticationState> GetAuthenticationStateAsync() {
@@ -216,9 +222,22 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
 
     public TAccount? GetAccount() => account ?? null;
 
-    protected abstract Task<string> ReadAsync(string item);
-    protected abstract Task WriteAsync(string item, string value);
-    protected abstract Task RemoveAsync(string item);
+    protected async virtual Task<string> ReadAsync(string item) {
+        WebStorageCheck();
+        foreach(IWebStorage storage in _storages) if (await storage.GetAsync<string?>(item) is string value) return value;
+        return await Task.FromResult("");
+    }
+    protected async virtual Task WriteAsync(string item, string value) {
+        WebStorageCheck();
+        foreach (IWebStorage storage in _storages) await storage.SetAsync(item, value);
+    }
+    protected async virtual Task RemoveAsync(string item) {
+        WebStorageCheck();
+        foreach (IWebStorage storage in _storages) await storage.RemoveAsync(item);
+    }
+    private void WebStorageCheck() {
+        if (_storages == null || !_storages.Any()) throw new Exception("AuthenticationService must implement a WebStorage.");
+    }
 
     private AuthenticationState GetAuthentication(string token) => new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(Decrypt(token), "Authentication")));
 

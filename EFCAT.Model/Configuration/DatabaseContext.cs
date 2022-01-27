@@ -33,12 +33,12 @@ public class DatabaseContext : DbContext {
 
             Tools.PrintInfo($"Entities({ClrTypes.Count()}): {ClrTypes.Select(e => e.ToString()).Aggregate((a, b) => a + ", " + b)}");
 
-            if (ClrTypes.Any()) foreach (Type entityType in ClrTypes) UpdateTable(modelBuilder, entityType);
+            if (ClrTypes.Any()) foreach (Type entityType in ClrTypes) UpdateTable(modelBuilder, entityType); else throw new Exception("No entities found! Check your DbContext.");
             if (Discriminators.Any()) foreach (Type entityType in Discriminators.Keys) UpdateDiscriminatorTable(modelBuilder, entityType);
 
             base.OnModelCreating(modelBuilder);
         } catch (Exception ex) {
-            true.PrintInfo(ex.Message);
+            throw new EFCATModelException(ex.Message);
         }
     }
 
@@ -124,9 +124,9 @@ public class DatabaseContext : DbContext {
                 if (property.HasAttribute<PrimaryKeyAttribute>()) keys.AddRange(fk_keys);
                 if (property.HasAttribute<UniqueAttribute>()) entity.HasIndex(fk_keys_array).IsUnique(true);
             } else {
-                string stype = $"{ (type.IsGenericType ? type.GetGenericTypeDefinition().Name.Remove(type.GetGenericTypeDefinition().Name.IndexOf('`')) : type.Name) }".ToUpper();
+                string stringified_type = $"{ (type.IsGenericType ? type.GetGenericTypeDefinition().Name.Remove(type.GetGenericTypeDefinition().Name.IndexOf('`')) : type.Name) }".ToUpper();
                 string[] paramter = type.IsGenericType ? type.GetGenericArguments().Select(a => a.Name.ToUpper()).ToArray() : new string[0];
-                switch (stype) {
+                switch (stringified_type) {
                     case "CRYPT":
                         object? cryptAlgorithm = Activator.CreateInstance(type.GetGenericArguments()[0]);
                         int? size = (int?)cryptAlgorithm.GetType().GetProperty("Size").GetValue(cryptAlgorithm, null);
@@ -180,4 +180,8 @@ public class DatabaseContext : DbContext {
 
 public static class Settings {
     public static DbContextOptions DbContextOptions { get; set; }
+}
+
+internal class EFCATModelException : Exception {
+    public EFCATModelException(string message) : base(message) { }
 }
