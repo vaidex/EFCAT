@@ -25,7 +25,7 @@ namespace Sample.Model.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     PASSWORD = table.Column<string>(type: "varchar(256)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    BALANCE = table.Column<decimal>(type: "decimal(3,2)", precision: 3, scale: 2, nullable: false),
+                    BALANCE = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
                     IMAGE_CONTENT = table.Column<byte[]>(type: "longblob", nullable: true),
                     IMAGE_TYPE = table.Column<string>(type: "varchar(32)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
