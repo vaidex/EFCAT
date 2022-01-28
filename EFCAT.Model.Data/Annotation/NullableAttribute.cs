@@ -3,8 +3,11 @@
 namespace EFCAT.Model.Data.Annotation;
 
 public class NullableAttribute : ValidationAttribute {
-    public bool Nullable { get; set; }
+    public bool Nullable { get; private set; }
     public NullableAttribute(bool nullable = true) { Nullable = nullable; }
+
+    private ValidationResult? Error => new ValidationResult(ErrorMessage);
+    private ValidationResult? Success => ValidationResult.Success;
 
     private void SetError(ValidationContext context) =>
         ErrorMessage = (ErrorMessage ?? $"The field @displayname must have a value.")
@@ -12,6 +15,11 @@ public class NullableAttribute : ValidationAttribute {
 
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
         SetError(context);
-        return String.IsNullOrWhiteSpace(value?.ToString() ?? "") ? new ValidationResult(ErrorMessage) : ValidationResult.Success;
+        if (value == null) return Nullable ? Success : Error;
+        else return String.IsNullOrWhiteSpace(value.ToString() ?? "") ? Error : Success;
     }
+}
+
+public class NotNullAttribute : NullableAttribute {
+    public NotNullAttribute(bool notnull = true) : base(!notnull) { }
 }

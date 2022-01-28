@@ -19,6 +19,7 @@ public class Crypt<TAlgorithm> : ValueObject where TAlgorithm : IAlgorithm, new(
     public Crypt(string value, bool isCrypted) { Value = value; IsCrypted = isCrypted; }
 
     public static implicit operator Crypt<TAlgorithm>(string value) => String.IsNullOrEmpty(value) ? new Crypt<TAlgorithm>() : new Crypt<TAlgorithm>(value, false);
+    public static explicit operator string(Crypt<TAlgorithm> value) => value.ToString();
 
     public string Encrypt() {
         if (IsCrypted) return Value;

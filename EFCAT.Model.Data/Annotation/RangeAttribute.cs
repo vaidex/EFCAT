@@ -1,55 +1,30 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using EFCAT.Model.Data.Extension;
+using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 
 namespace EFCAT.Model.Data.Annotation;
 
 public class RangeAttribute : ValidationAttribute {
-    public object Min { get; set; }
-    public object Max { get; set; }
+    private object _min;
+    private object _max;
 
-    public RangeAttribute(int min = 0, int max = 0) => SetRange(min, max);
-    public RangeAttribute(long min = 0, long max = 0) => SetRange(min, max);
-    public RangeAttribute(double min = 0, double max = 0) => SetRange(min, max);
-    public RangeAttribute(float min = 0, float max = 0) => SetRange(min, max);
-    private void SetRange(object min, object max) { Min = min; Max = max; }
+    public RangeAttribute(int min, int max) => SetRange(min, max);
+    public RangeAttribute(long min, long max) => SetRange(min, max);
+    public RangeAttribute(double min, double max) => SetRange(min, max);
+    public RangeAttribute(float min, float max) => SetRange(min, max);
+    private void SetRange(object min, object max) { _min = min; _max = max; }
+
+    private ValidationResult? Error => new ValidationResult(ErrorMessage);
+    private ValidationResult? Success => ValidationResult.Success;
 
     private void SetError(ValidationContext context) =>
         ErrorMessage = (ErrorMessage ?? $"The field @displayname needs to be in the range of @max and @max.")
         .Replace("@displayname", context.DisplayName)
-        .Replace("@min", $"{Min}")
-        .Replace("@max", $"{Max}");
-
-    private ValidationResult Error => new ValidationResult(ErrorMessage);
+        .Replace("@min", $"{_min}")
+        .Replace("@max", $"{_max}");
 
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
-        if (value == null) return ValidationResult.Success;
         SetError(context);
-        switch (value.GetType().Name.ToUpper()) {
-            case "INT32":
-                if ((int)value < (int)Convert.ChangeType(Min, value.GetType())) return Error;
-                if ((int)value > (int)Convert.ChangeType(Max, value.GetType())) return Error;
-                break;
-            case "INT64":
-                if ((long)value < (long)Convert.ChangeType(Min, value.GetType())) return Error;
-                if ((long)value > (long)Convert.ChangeType(Max, value.GetType())) return Error;
-                break;
-            case "DOUBLE":
-                if ((double)value < (double)Convert.ChangeType(Min, value.GetType())) return Error;
-                if ((double)value > (double)Convert.ChangeType(Max, value.GetType())) return Error;
-                break;
-            case "DECIMAL":
-                if ((decimal)value < (decimal)Convert.ChangeType(Min, value.GetType())) return Error;
-                if ((decimal)value > (decimal)Convert.ChangeType(Max, value.GetType())) return Error;
-                break;
-            case "FLOAT":
-                if ((float)value < (float)Convert.ChangeType(Min, value.GetType())) return Error;
-                if ((float)value > (float)Convert.ChangeType(Max, value.GetType())) return Error;
-                break;
-            case "STRING":
-            default:
-                if ((value.ToString() ?? "").Length < (int)Min) return Error;
-                if ((value.ToString() ?? "").Length > (int)Max) return Error;
-                break;
-        }
-        return ValidationResult.Success;
+        return ObjectExtension.RangeCompare(value, _min, ErrorMessage, Expression.LessThan) || ObjectExtension.RangeCompare(value, _max, ErrorMessage, Expression.GreaterThan) ? Error : Success;
     }
 }

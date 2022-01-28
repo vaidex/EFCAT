@@ -27,7 +27,7 @@ public abstract class TypeValidation<TType, TRange> where TRange : IComparable {
         if (value == null || String.IsNullOrWhiteSpace(value.ToString()))
             if (Nullable) return Success;
             else return Error;
-        TType? _value = (TType)value;
+        TType? _value = (TType)Convert.ChangeType(value, typeof(TType));
         TRange? _range = GetRange(_value);
         if (Min.IfNotNull(min => _range.CompareTo(min) <= -1)) return Error;
         if (Max.IfNotNull(max => _range.CompareTo(max) >= 1)) return Error;

@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace EFCAT.Model.Configuration;
@@ -19,8 +18,8 @@ public class DatabaseContext : DbContext {
     private bool Tools { get; set; } = false;
     private DbContextOptions Options { get; set; }
 
-    public DatabaseContext([NotNull] DbContextOptions options) : base(options) { Settings.DbContextOptions = options; Options = options; }
-    public DatabaseContext([NotNull] DbContextOptions options, bool writeInformation) : this(options) { Tools = writeInformation; }
+    public DatabaseContext([System.Diagnostics.CodeAnalysis.NotNull] DbContextOptions options) : base(options) { Settings.DbContextOptions = options; Options = options; }
+    public DatabaseContext([System.Diagnostics.CodeAnalysis.NotNull] DbContextOptions options, bool writeInformation) : this(options) { Tools = writeInformation; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         try {
