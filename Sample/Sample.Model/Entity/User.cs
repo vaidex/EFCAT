@@ -1,5 +1,7 @@
 ﻿using EFCAT.Model.Annotation;
 using EFCAT.Model.Data;
+using EFCAT.Model.Data.Annotation;
+using Microsoft.EntityFrameworkCore;
 
 namespace Sample.Model.Entity;
 
@@ -20,7 +22,7 @@ public class User {
     public Crypt<SHA256> Password { get; set; }
 
     // Number from 0-100 saved as DECIMAL(5, 2) which is equal to 999.99
-    [Decimal(3, 2, Min = 10, Max = 20)]
+    [Number(3, 2, Min = 10, Max = 20)]
     public decimal Balance { get; set; } = 15;
 
     public Image? Image { get; set; }

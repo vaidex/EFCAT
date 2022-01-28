@@ -151,7 +151,13 @@ public class DatabaseContext : DbContext {
                             PropertyBuilder propertyBuilder = entity.Property(name);
 
                             propertyBuilder.HasColumnName(property.GetSqlName());
-                            property.OnAttribute<TypeAttribute>(attr => propertyBuilder.HasColumnType(attr.GetTypeName()).IsRequired(!attr.Nullable));
+                            property.OnAttribute<TypeAttribute>(attr =>
+                                property.OnAttribute<Annotation.PrecisionAttribute>(
+                                    pattr => propertyBuilder.HasPrecision(pattr.Digits, pattr.Decimals).IsRequired(!attr.Nullable),
+                                    () => propertyBuilder.HasColumnType(attr.GetTypeName()).IsRequired(!attr.Nullable)
+                                )
+                            );
+                            property.OnAttribute<NullableAttribute>(attr => propertyBuilder.IsRequired(!attr.Nullable));
                             property.OnAttribute<AutoIncrementAttribute>(attr => propertyBuilder.ValueGeneratedOnAdd());
                             property.OnAttribute<PrimaryKeyAttribute>(attr => keys.Add(new Key(name, type)));
                             property.OnAttribute<UniqueAttribute>(attr => entity.HasIndex(name).IsUnique(true));

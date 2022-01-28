@@ -12,9 +12,9 @@ public class FloatAttribute : TypeAttribute {
 
     public string? ErrorMessage { get => validation.ErrorMessage; set => validation.ErrorMessage = value; }
 
-    public FloatAttribute() : base("decimal", Decimal.MaxValue) { }
-    public FloatAttribute(string type, object size) : base(type, size) { Max = (float)size; }
-    public FloatAttribute(string type, int digits, int decimals) : base(type, $"{digits + decimals},{decimals}") { Max = (float)((Math.Pow(10, digits) - 1) + ((Math.Pow(10, decimals) - 1) / Math.Pow(10, decimals))); }
+    public FloatAttribute() : base("float", Decimal.MaxValue) { }
+    public FloatAttribute(object size) : base("float", size) { Max = (float)size; }
+    public FloatAttribute(int digits, int decimals) : base("float", $"{digits + decimals},{decimals}") { Max = (float)((Math.Pow(10, digits) - 1) + ((Math.Pow(10, decimals) - 1) / Math.Pow(10, decimals))); }
 
     protected override ValidationResult? IsValid(object? value, ValidationContext context) => validation.IsValid(value, context);
 }

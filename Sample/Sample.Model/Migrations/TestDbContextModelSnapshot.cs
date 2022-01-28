@@ -78,7 +78,8 @@ namespace Sample.Model.Migrations
                         .HasColumnName("ID");
 
                     b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(5,2)")
+                        .HasPrecision(3, 2)
+                        .HasColumnType("decimal(3,2)")
                         .HasColumnName("BALANCE");
 
                     b.Property<string>("Email")

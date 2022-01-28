@@ -53,9 +53,6 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
         try {
             string token = await ReadAsync(_itemName);
             if (string.IsNullOrEmpty(token)) return _authenticationState;
-
-            OnAuthenticationSuccess(token);
-
             _authenticationState = await GetAuthState(token);
         } catch (Exception ex) {
             System.Diagnostics.Debug.WriteLine("Authentication Error: " + ex.Message);
@@ -90,9 +87,10 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
         TAccount? account = result.FirstOrDefault();
         if (account == null) return _authenticationState;
         this.account = account;
+        await OnAuthenticationSuccess(token, account);
         return state;
     }
-    protected virtual async Task OnAuthenticationSuccess(string token) { }
+    protected virtual async Task OnAuthenticationSuccess(string token, TAccount account) { }
 
     public async Task<bool> LoginAsync(object obj) {
         // Check if the Object is a Class

@@ -11,7 +11,7 @@ using Sample.Model.Configuration;
 namespace Sample.Model.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    [Migration("20220127114815_initcreate")]
+    [Migration("20220128101603_initcreate")]
     partial class initcreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -80,7 +80,8 @@ namespace Sample.Model.Migrations
                         .HasColumnName("ID");
 
                     b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(5,2)")
+                        .HasPrecision(3, 2)
+                        .HasColumnType("decimal(3,2)")
                         .HasColumnName("BALANCE");
 
                     b.Property<string>("Email")

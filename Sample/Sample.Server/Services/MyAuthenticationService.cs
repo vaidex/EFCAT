@@ -12,7 +12,7 @@ namespace Sample.Server.Services {
             _httpClient = client;
         }
 
-        protected override async Task OnAuthenticationSuccess(string token) {
+        protected override async Task OnAuthenticationSuccess(string token, User account) {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
         }
     }

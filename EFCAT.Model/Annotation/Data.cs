@@ -1,4 +1,6 @@
 ﻿using EFCAT.Model.Data.Annotation;
+using EFCAT.Model.Data.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace EFCAT.Model.Annotation;
 
@@ -134,15 +136,41 @@ public class BigintAttribute : Int64Attribute {
     }
 }
 
-public class FloatAttribute : Data.Annotation.FloatAttribute {
-    public FloatAttribute(int digits = 3, int decimals = 2) : base("float", digits, decimals) {  }
+public class NumberAttribute : PrecisionAttribute {
+    private DoubleValidation validation = new DoubleValidation();
+
+    public double Min { get => validation.Min; set => validation.Min = value; }
+    public double Max { get => validation.Max; set => validation.Max = value; }
+    public override bool Nullable { get => validation.Nullable; set => validation.Nullable = value; }
+
+    public string? ErrorMessage { get => validation.ErrorMessage; set => validation.ErrorMessage = value; }
+
+    public NumberAttribute(int digits = 3, int decimals = 2) : base(digits, decimals) { }
+
+    protected override ValidationResult? IsValid(object? value, ValidationContext context) => validation.IsValid(value, context);
 }
 
-public class DoubleAttribute : Data.Annotation.DoubleAttribute {
-    public DoubleAttribute(int digits = 3, int decimals = 2) : base("double", digits, decimals) { }
+public class NaturalAttribute : PrecisionAttribute {
+    private FloatValidation validation = new FloatValidation();
+
+    public float Min { get => validation.Min; set => validation.Min = value; }
+    public float Max { get => validation.Max; set => validation.Max = value; }
+    public override bool Nullable { get => validation.Nullable; set => validation.Nullable = value; }
+
+    public string? ErrorMessage { get => validation.ErrorMessage; set => validation.ErrorMessage = value; }
+
+    public NaturalAttribute(int digits = 3, int decimals = 2) : base(digits, decimals) { }
+
+    protected override ValidationResult? IsValid(object? value, ValidationContext context) => validation.IsValid(value, context);
 }
 
-public class DecimalAttribute : Data.Annotation.DecimalAttribute {
-    public DecimalAttribute(int digits = 3, int decimals = 2) : base("decimal", digits, decimals) { }
-}
+public abstract class PrecisionAttribute : TypeAttribute {
+    public int Digits { get; set; }
+    public int Decimals { get; set; }
+    public override bool Nullable { get; set; }
 
+    public PrecisionAttribute(int digits, int decimals) : base("", $"({digits},{decimals})") {
+        Digits = digits;
+        Decimals = decimals;
+    }
+}
