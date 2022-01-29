@@ -145,14 +145,15 @@ public class DatabaseContext : DbContext {
                         });
                         break;
                     default:
-                        if ((type.IsGenericType && type.GetGenericTypeDefinition() != typeof(Nullable<>)) || type.GetCustomAttributes<TableAttribute>().Any()) entity.Ignore(name);
+                        if ((type.IsGenericType && type.GetGenericTypeDefinition() != typeof(Nullable<>)) || type.GetCustomAttributes<TableAttribute>().Any()) break;
+                        else if (property.HasAttribute<ImplementAttribute>()) entity.OwnsOne(type, name, obj => type.GetProperties().ToList().ForEach(objproperty => obj.Property(objproperty.PropertyType, objproperty.Name).HasColumnName((property.GetAttribute<ImplementAttribute>().GetName() ?? property.GetSqlName()) + "_" + objproperty.GetSqlName())));
                         else {
                             PropertyBuilder propertyBuilder = entity.Property(name);
 
                             propertyBuilder.HasColumnName(property.GetSqlName());
                             property.OnAttribute<TypeAttribute>(attr =>
                                 property.OnAttribute<Annotation.PrecisionAttribute>(
-                                    pattr => propertyBuilder.HasPrecision(pattr.Digits+pattr.Decimals, pattr.Decimals).IsRequired(!attr.Nullable ?? true),
+                                    pattr => propertyBuilder.HasPrecision(pattr.Digits + pattr.Decimals, pattr.Decimals).IsRequired(!attr.Nullable ?? true),
                                     () => propertyBuilder.HasColumnType(attr.Type).IsRequired(!attr.Nullable ?? true)
                                 )
                             );

@@ -18,7 +18,7 @@ public class User {
 
     [Unique]
     [NotNull(ErrorMessage = "Name can not be null")]
-    [Varchar(16, Min = 3, Max = 16, ErrorMessage = "You need to have between @min and @max characters.")]
+    [Varchar(16, Min = 3, Max = 16, Pattern = "^[A-z]+$", ErrorMessage = "You need to have between @min and @max characters.")]
     public string Name { get; set; }
 
     public Crypt<SHA256> Password { get; set; }
@@ -36,6 +36,9 @@ public class User {
     public ICollection<Code>? Codes { get; set; }
 
     public ZMail Mail { get; set; }
+
+    [Implement]
+    public Implemented Impl { get; set; }
 
     public User() {
         Codes = new List<Code>();

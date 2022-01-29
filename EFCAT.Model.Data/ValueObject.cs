@@ -1,6 +1,9 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace EFCAT.Model.Data;
 
+[NotMapped]
 public abstract class ValueObject {
     protected static bool EqualOperator(ValueObject left, ValueObject right) {
         if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null)) {

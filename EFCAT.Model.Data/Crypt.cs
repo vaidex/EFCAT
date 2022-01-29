@@ -1,11 +1,13 @@
 ﻿using EFCAT.Model.Data.Converter;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Serialization;
 
 namespace EFCAT.Model.Data;
 
+[NotMapped]
 [JsonConverter(typeof(CryptJsonFactory))]
 [TypeDescriptionProvider(typeof(CryptTypeDescriptionProvider))]
 public class Crypt<TAlgorithm> : ValueObject where TAlgorithm : IAlgorithm, new() {

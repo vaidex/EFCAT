@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 namespace EFCAT.Model.Data.Extension {
     internal static class ObjectExtension {
@@ -9,7 +10,6 @@ namespace EFCAT.Model.Data.Extension {
         }
         internal static bool RangeCompare(object? value, object border, string? ErrorMessage, Func<Expression, Expression, BinaryExpression> CompareExpression) {
             if (value == null) return false;
-            string _namespace = value.GetType().Namespace?.ToUpper() ?? "";
             Type type = value.GetType();
             if (!type.IsNumeric()) type = typeof(int);
             value = value.GetSize();
@@ -20,11 +20,14 @@ namespace EFCAT.Model.Data.Extension {
             return (bool)compile.DynamicInvoke(value);
         }
         internal static object? GetSize(this object? value) {
-            if(value == null) return null;
+            if (value == null) return null;
             Type type = value.GetType();
             if (type.IsNumeric()) return value;
             else if ((value.GetType().Namespace?.ToUpper() ?? "").StartsWith("SYSTEM.COLLECTIONS")) return type.GetProperty("Count")?.GetValue(value, null) ?? throw new NotImplementedException();
             else return ((value.ToString() ?? "").Length);
         }
+        internal static bool MatchPattern(object? value, string pattern) =>
+            (value == null) ? false : !(new Regex(pattern).IsMatch(value.ToString() ?? ""));
+
     }
 }

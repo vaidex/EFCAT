@@ -1,6 +1,9 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace EFCAT.Model.Data;
 
+[NotMapped]
 public class Image : Document {
     public Image() {
         base.filter = "image";

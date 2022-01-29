@@ -11,7 +11,7 @@ using Sample.Model.Configuration;
 namespace Sample.Model.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    [Migration("20220128105739_initcreate")]
+    [Migration("20220129010307_initcreate")]
     partial class initcreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -210,6 +210,24 @@ namespace Sample.Model.Migrations
 
             modelBuilder.Entity("Sample.Model.Entity.User", b =>
                 {
+                    b.OwnsOne("Sample.Model.Entity.Implemented", "Impl", b1 =>
+                        {
+                            b1.Property<int>("UserId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Text")
+                                .IsRequired()
+                                .HasColumnType("longtext")
+                                .HasColumnName("IMPL_TEXT");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("USERS");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
                     b.OwnsOne("EFCAT.Model.Data.Image", "Image", b1 =>
                         {
                             b1.Property<int>("UserId")
@@ -234,6 +252,9 @@ namespace Sample.Model.Migrations
                         });
 
                     b.Navigation("Image");
+
+                    b.Navigation("Impl")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Sample.Model.Entity.ZMail", b =>

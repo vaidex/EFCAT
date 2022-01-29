@@ -9,7 +9,7 @@ public class TypeAttribute : ValidationAttribute {
     public string Type { get; private set; }
     protected object? Min { get; set; }
     protected object? Max { get; set; }
-    protected Regex? Pattern { get; set; }
+    public string? Pattern { get; set; }
     public bool? Nullable { get; set; }
 
     public TypeAttribute(string type, object? size = null) => Type = size == null ? type : $"{type}({size})";
@@ -34,7 +34,7 @@ public class TypeAttribute : ValidationAttribute {
             else return Success;
         if (Min.IfNotNull(min => ObjectExtension.RangeCompare(value, min, ErrorMessage, Expression.LessThan))) return Error;
         if (Max.IfNotNull(max => ObjectExtension.RangeCompare(value, max, ErrorMessage, Expression.GreaterThan))) return Error;
-        if (Pattern.IfNotNull(pattern => pattern.IsMatch(Convert.ToString(value)))) return Error;
+        if (Pattern.IfNotNull(pattern => ObjectExtension.MatchPattern(value, pattern))) return Error;
         return Success;
     }
 

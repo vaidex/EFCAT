@@ -28,6 +28,8 @@ namespace Sample.Model.Migrations
                     BALANCE = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
                     IMAGE_CONTENT = table.Column<byte[]>(type: "longblob", nullable: true),
                     IMAGE_TYPE = table.Column<string>(type: "varchar(32)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IMPL_TEXT = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>

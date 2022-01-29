@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EFCAT.Model.Data;
 
+[NotMapped]
 public class Json<TObject> where TObject : class, new() {
     public TObject Root { get; set; }
     public Json() => Root = new TObject();
