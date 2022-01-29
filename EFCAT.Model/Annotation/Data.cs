@@ -1,5 +1,4 @@
 ﻿using EFCAT.Model.Data.Annotation;
-using EFCAT.Model.Data.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace EFCAT.Model.Annotation;
@@ -96,8 +95,6 @@ public class TinyintAttribute : Int64Attribute {
 
 public class BoolAttribute : TypeAttribute {
     public BoolAttribute() : base("bit", "") { }
-
-    public override bool Nullable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 }
 
 public class BooleanAttribute : BoolAttribute {
@@ -137,37 +134,22 @@ public class BigintAttribute : Int64Attribute {
 }
 
 public class NumberAttribute : PrecisionAttribute {
-    private DoubleValidation validation = new DoubleValidation();
-
-    public double Min { get => validation.Min; set => validation.Min = value; }
-    public double Max { get => validation.Max; set => validation.Max = value; }
-    public override bool Nullable { get => validation.Nullable; set => validation.Nullable = value; }
-
-    public string? ErrorMessage { get => validation.ErrorMessage; set => validation.ErrorMessage = value; }
+    public double Min { get => (double)(base.Min ?? 0); set => base.Min = value; }
+    public double Max { get => (double)(base.Max ?? 0); set => base.Max = value; }
 
     public NumberAttribute(int digits = 3, int decimals = 2) : base(digits, decimals) { }
-
-    protected override ValidationResult? IsValid(object? value, ValidationContext context) => validation.IsValid(value, context);
 }
 
 public class NaturalAttribute : PrecisionAttribute {
-    private FloatValidation validation = new FloatValidation();
-
-    public float Min { get => validation.Min; set => validation.Min = value; }
-    public float Max { get => validation.Max; set => validation.Max = value; }
-    public override bool Nullable { get => validation.Nullable; set => validation.Nullable = value; }
-
-    public string? ErrorMessage { get => validation.ErrorMessage; set => validation.ErrorMessage = value; }
+    public float Min { get => (float)(base.Min ?? 0); set => base.Min = value; }
+    public float Max { get => (float)(base.Max ?? 0); set => base.Max = value; }
 
     public NaturalAttribute(int digits = 3, int decimals = 2) : base(digits, decimals) { }
-
-    protected override ValidationResult? IsValid(object? value, ValidationContext context) => validation.IsValid(value, context);
 }
 
 public abstract class PrecisionAttribute : TypeAttribute {
     public int Digits { get; set; }
     public int Decimals { get; set; }
-    public override bool Nullable { get; set; }
 
     public PrecisionAttribute(int digits, int decimals) : base("", $"({digits},{decimals})") {
         Digits = digits;

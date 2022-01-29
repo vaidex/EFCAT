@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "EFCAT": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "EFCAT_VERSION": "1.1.3"
+      }
+    }
+  }
+}

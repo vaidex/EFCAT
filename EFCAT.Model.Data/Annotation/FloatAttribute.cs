@@ -1,20 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using EFCAT.Model.Data.Validation;
 
 namespace EFCAT.Model.Data.Annotation;
 
 public class FloatAttribute : TypeAttribute {
-    private FloatValidation validation = new FloatValidation();
-
-    public float Min { get => validation.Min; set => validation.Min = value; }
-    public float Max { get => validation.Max; set => validation.Max = value; }
-    public override bool Nullable { get => validation.Nullable; set => validation.Nullable = value; }
-
-    public string? ErrorMessage { get => validation.ErrorMessage; set => validation.ErrorMessage = value; }
-
+    public float Min { get => (float)(base.Min ?? 0); set => base.Min = value; }
+    public float Max { get => (float)(base.Max ?? 0); set => base.Max = value; }
     public FloatAttribute() : base("float", Decimal.MaxValue) { }
-    public FloatAttribute(object size) : base("float", size) { Max = (float)size; }
-    public FloatAttribute(int digits, int decimals) : base("float", $"{digits + decimals},{decimals}") { Max = (float)((Math.Pow(10, digits) - 1) + ((Math.Pow(10, decimals) - 1) / Math.Pow(10, decimals))); }
-
-    protected override ValidationResult? IsValid(object? value, ValidationContext context) => validation.IsValid(value, context);
+    protected FloatAttribute(object size) : base("float", size) { }
+    public FloatAttribute(int digits, int decimals) : base("float", $"{digits + decimals},{decimals}") { }
 }

@@ -152,8 +152,8 @@ public class DatabaseContext : DbContext {
                             propertyBuilder.HasColumnName(property.GetSqlName());
                             property.OnAttribute<TypeAttribute>(attr =>
                                 property.OnAttribute<Annotation.PrecisionAttribute>(
-                                    pattr => propertyBuilder.HasPrecision(pattr.Digits+pattr.Decimals, pattr.Decimals).IsRequired(!attr.Nullable),
-                                    () => propertyBuilder.HasColumnType(attr.GetTypeName()).IsRequired(!attr.Nullable)
+                                    pattr => propertyBuilder.HasPrecision(pattr.Digits+pattr.Decimals, pattr.Decimals).IsRequired(!attr.Nullable ?? true),
+                                    () => propertyBuilder.HasColumnType(attr.Type).IsRequired(!attr.Nullable ?? true)
                                 )
                             );
                             property.OnAttribute<NullableAttribute>(attr => propertyBuilder.IsRequired(!attr.Nullable));

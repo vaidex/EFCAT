@@ -1,20 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using EFCAT.Model.Data.Validation;
 
 namespace EFCAT.Model.Data.Annotation;
 
 public class DoubleAttribute : TypeAttribute {
-    private DoubleValidation validation = new DoubleValidation();
-
-    public double Min { get => validation.Min; set => validation.Min = value; }
-    public double Max { get => validation.Max; set => validation.Max = value; }
-    public override bool Nullable { get => validation.Nullable; set => validation.Nullable = value; }
-
-    public string? ErrorMessage { get => validation.ErrorMessage; set => validation.ErrorMessage = value; }
+    public double Min { get => (double)(base.Min ?? 0); set => base.Min = value; }
+    public double Max { get => (double)(base.Max ?? 0); set => base.Max = value; }
 
     public DoubleAttribute() : base("double", Double.MaxValue) { }
-    public DoubleAttribute(object size) : base("double", size) { Max = (double)size; }
-    public DoubleAttribute(int digits, int decimals) : base("double", $"{digits + decimals},{decimals}") { Max = ((Math.Pow(10, digits) - 1) + ((Math.Pow(10, decimals) - 1) / Math.Pow(10, decimals))); }
-
-    protected override ValidationResult? IsValid(object? value, ValidationContext context) => validation.IsValid(value, context);
+    protected DoubleAttribute(object size) : base("double", size) { }
+    public DoubleAttribute(int digits, int decimals) : base("double", $"{digits + decimals},{decimals}") { }
 }

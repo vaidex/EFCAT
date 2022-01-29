@@ -12,7 +12,7 @@ public class User {
     public int Id { get; set; }
 
     [Unique]
-    [Nullable(ErrorMessage = "Email can not be null.")]
+    [NotNull(ErrorMessage = "Email can not be null.")]
     [Varchar(255, Min = 5)]
     public string Email { get; set; }
 
@@ -26,9 +26,10 @@ public class User {
     // Number from 0-100 saved as DECIMAL(5, 2) which is equal to 999.99
     [Min(10, ErrorMessage = "Balance needs to have a Minimum of 10.")]
     [Max(20, ErrorMessage = "Balance needs to have a Maximum of 20.")]
-    [Number(3, 2)]
+    [Number(3, 2, Min = 2)]
     public decimal Balance { get; set; } = 15;
 
+    [Nullable]
     public Image? Image { get; set; }
 
     [Range(1, 5, ErrorMessage = "The List needs to have between 1 and 5 elements.")]
