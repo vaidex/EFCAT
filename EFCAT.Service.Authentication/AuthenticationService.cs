@@ -99,7 +99,7 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
         if (obj.GetType().GetProperties().Length == 0) throw new Exception($"Class has no properties!");
 
         Console.WriteLine();
-
+        
         IEnumerable<TAccount> resultQuery;
 
         // Get the Expression from all non VOs

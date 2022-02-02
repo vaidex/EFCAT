@@ -14,6 +14,40 @@ namespace Sample.Model.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "BAD_PEOPLE",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    PERSON_FIRST_NAME = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PERSON_LAST_NAME = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BAD_PEOPLE", x => x.ID);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "NICE_PEOPLE",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    FIRST_NAME = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LAST_NAME = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NICE_PEOPLE", x => x.ID);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "USERS",
                 columns: table => new
                 {
@@ -29,7 +63,7 @@ namespace Sample.Model.Migrations
                     IMAGE_CONTENT = table.Column<byte[]>(type: "longblob", nullable: true),
                     IMAGE_TYPE = table.Column<string>(type: "varchar(32)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    IMPL_TEXT = table.Column<string>(type: "longtext", nullable: false)
+                    IMPL_TEXT = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -44,14 +78,9 @@ namespace Sample.Model.Migrations
                 {
                     ID = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     USER_ID = table.Column<int>(type: "int", nullable: true),
-                    TYPE = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     VALUE = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    EXPIRES_AT = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    QR_CONTENT = table.Column<byte[]>(type: "longblob", nullable: false),
-                    QR_TYPE = table.Column<string>(type: "varchar(32)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    EXPIRES_AT = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     DISCRIMINATOR = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
@@ -131,6 +160,12 @@ namespace Sample.Model.Migrations
         {
             migrationBuilder.DropTable(
                 name: "ADVANCED_EMAIL_CODES");
+
+            migrationBuilder.DropTable(
+                name: "BAD_PEOPLE");
+
+            migrationBuilder.DropTable(
+                name: "NICE_PEOPLE");
 
             migrationBuilder.DropTable(
                 name: "ZMAILS");

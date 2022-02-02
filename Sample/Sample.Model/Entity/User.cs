@@ -35,14 +35,8 @@ public class User {
     [Range(1, 5, ErrorMessage = "The List needs to have between 1 and 5 elements.")]
     public ICollection<Code>? Codes { get; set; }
 
-    public ZMail Mail { get; set; }
+    public ZMail? Mail { get; set; }
 
     [Implement]
-    public Implemented Impl { get; set; }
-
-    public User() {
-        Codes = new List<Code>();
-        //Codes.Add(new Code());
-    }
-
+    public Implemented? Impl { get; set; }
 }

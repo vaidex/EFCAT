@@ -2,5 +2,5 @@
 
 namespace EFCAT.Model.Annotation;
 
-public class NotGeneratedAttribute : NotMappedAttribute {
+public class NotGeneratedAttribute : Attribute {
 }

@@ -15,6 +15,7 @@ public class DatabaseContext : DbContext {
     private Dictionary<Type, List<string>> References { get; set; }
     private Dictionary<Type, Dictionary<Type, string>> Discriminators { get; set; }
     private List<Type> ClrTypes { get; set; }
+    private List<Type> NotGenerated { get; set; }
     private bool Tools { get; set; } = false;
     private DbContextOptions Options { get; set; }
 
@@ -29,6 +30,7 @@ public class DatabaseContext : DbContext {
             References = new Dictionary<Type, List<string>>();
             Discriminators = new Dictionary<Type, Dictionary<Type, string>>();
             ClrTypes = modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType).Where(e => !($"{e.Namespace}".ToUpper().StartsWith("EFCAT.MODEL"))).ToList();
+            NotGenerated = new List<Type>();
 
             Tools.PrintInfo($"Entities({ClrTypes.Count()}): {ClrTypes.Select(e => e.ToString()).Aggregate((a, b) => a + ", " + b)}");
 
@@ -43,6 +45,7 @@ public class DatabaseContext : DbContext {
 
     void UpdateTable(ModelBuilder modelBuilder, Type entityType) {
         if (Entities.ContainsKey(entityType)) return;
+        if (entityType.GetCustomAttributes<NotGeneratedAttribute>().Any() && !entityType.GetCustomAttributes<TableAttribute>().Any()) return;
         if (entityType.BaseType != typeof(Object)) UpdateTable(modelBuilder, entityType.BaseType);
 
         Tools.PrintInfo("Generating table: " + entityType.FullName);
@@ -52,7 +55,7 @@ public class DatabaseContext : DbContext {
 
         string entityName = entityType.Name;
 
-        List<Key> keys = entityType.BaseType != typeof(Object) ? Entities[entityType.BaseType].ToList() : new List<Key>();
+        List<Key> keys = entityType.BaseType != typeof(Object) && !entityType.BaseType.GetCustomAttributes<NotGeneratedAttribute>().Any() ? Entities[entityType.BaseType].ToList() : new List<Key>();
 
         if (entityType.GetCustomAttribute<TableAttribute>() is TableAttribute attr) {
             Type baseType = entityType.BaseType;
@@ -69,7 +72,8 @@ public class DatabaseContext : DbContext {
         if (properties == null || !properties.Any()) return;
         References.Add(entityType, new List<string>());
         foreach (PropertyInfo property in properties) {
-            if (property.DeclaringType != entityType) continue;
+            Type declaringType = property.DeclaringType ?? typeof(Object);
+            if (declaringType != entityType && !declaringType.GetCustomAttributes<NotGeneratedAttribute>().Any()) continue;
 
             string name = property.Name;
             Type type = property.PropertyType;
@@ -124,16 +128,16 @@ public class DatabaseContext : DbContext {
                 if (property.HasAttribute<UniqueAttribute>()) entity.HasIndex(fk_keys_array).IsUnique(true);
             } else {
                 string stringified_type = $"{ (type.IsGenericType ? type.GetGenericTypeDefinition().Name.Remove(type.GetGenericTypeDefinition().Name.IndexOf('`')) : type.Name) }".ToUpper();
-                string[] paramter = type.IsGenericType ? type.GetGenericArguments().Select(a => a.Name.ToUpper()).ToArray() : new string[0];
+                Type[] paramter = type.IsGenericType ? type.GetGenericArguments().ToArray() : new Type[0];
                 switch (stringified_type) {
                     case "CRYPT":
                         object? cryptAlgorithm = Activator.CreateInstance(type.GetGenericArguments()[0]);
-                        int? size = (int?)cryptAlgorithm.GetType().GetProperty("Size").GetValue(cryptAlgorithm, null);
-                        object? cryptConverter = Activator.CreateInstance(typeof(CryptConverter<>).MakeGenericType(property.PropertyType.GetGenericArguments()[0]));
-                        entity.Property(name).HasColumnName(property.GetSqlName()).HasColumnType(size == null ? "text" : $"varchar({size})").HasConversion((ValueConverter?)cryptConverter);
+                        int? cryptSize = (int?)cryptAlgorithm.GetType().GetProperty("Size").GetValue(cryptAlgorithm, null);
+                        object? cryptConverter = Activator.CreateInstance(typeof(CryptConverter<>).MakeGenericType(paramter[0]));
+                        entity.Property(name).HasColumnName(property.GetSqlName()).HasColumnType(cryptSize == null ? "text" : $"varchar({cryptSize})").HasConversion((ValueConverter?)cryptConverter);
                         break;
                     case "JSON":
-                        object? jsonConverter = Activator.CreateInstance(typeof(JsonConverter<>).MakeGenericType(property.PropertyType.GetGenericArguments()[0]));
+                        object? jsonConverter = Activator.CreateInstance(typeof(JsonConverter<>).MakeGenericType(paramter[0]));
                         entity.Property(name).HasColumnName(property.GetSqlName()).HasColumnType($"text").HasConversion((ValueConverter?)jsonConverter);
                         break;
                     case "DOCUMENT":
@@ -145,7 +149,7 @@ public class DatabaseContext : DbContext {
                         });
                         break;
                     default:
-                        if ((type.IsGenericType && type.GetGenericTypeDefinition() != typeof(Nullable<>)) || type.GetCustomAttributes<TableAttribute>().Any()) break;
+                        if ((type.IsGenericType && type.GetGenericTypeDefinition() != typeof(Nullable<>)) || type.GetCustomAttributes<TableAttribute>().Any()) entity.Ignore(name);
                         else if (property.HasAttribute<ImplementAttribute>()) entity.OwnsOne(type, name, obj => type.GetProperties().ToList().ForEach(objproperty => obj.Property(objproperty.PropertyType, objproperty.Name).HasColumnName((property.GetAttribute<ImplementAttribute>().GetName() ?? property.GetSqlName()) + "_" + objproperty.GetSqlName())));
                         else {
                             PropertyBuilder propertyBuilder = entity.Property(name);
@@ -180,7 +184,9 @@ public class DatabaseContext : DbContext {
         DiscriminatorBuilder<string> discriminatorBuilder;
         if (discriminators.Keys.Any(type => type == entityType)) discriminatorBuilder = typeBuilder.HasDiscriminator<string>(discriminators[entityType]);
         else discriminatorBuilder = typeBuilder.HasDiscriminator<string>("DISCRIMINATOR");
-        foreach (var discriminator in discriminators.Where(d => d.Key != entityType)) discriminatorBuilder.HasValue(discriminator.Key, discriminator.Value);
+        foreach (var discriminator in discriminators.Where(d => d.Key != entityType)) {
+            discriminatorBuilder.HasValue(discriminator.Key, discriminator.Value);
+        }
     }
 }
 

@@ -10,6 +10,8 @@ public class TestDbContext : DatabaseContext {
     public DbSet<EmailVerificationCode> EmailCodes { get; set; }
     public DbSet<AdvancedEmailVerificationCode> AdvancedEmailCodes { get; set; }
     public DbSet<ZMail> ZMails { get; set; }
+    public DbSet<NicePerson> NicePeople { get; set; }
+    public DbSet<BadPerson> BadPeople { get; set; }
 
     public TestDbContext(DbContextOptions<TestDbContext> options) : base(options, true) { }
 

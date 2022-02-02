@@ -18,7 +18,7 @@ public class RangeAttribute : ValidationAttribute {
     private ValidationResult? Success => ValidationResult.Success;
 
     private void SetError(ValidationContext context) =>
-        ErrorMessage = (ErrorMessage ?? $"The field @displayname needs to be in the range of @max and @max.")
+        ErrorMessage = (ErrorMessage ?? $"The field @displayname needs to be in the range of @min and @max.")
         .Replace("@displayname", context.DisplayName)
         .Replace("@min", $"{_min}")
         .Replace("@max", $"{_max}");

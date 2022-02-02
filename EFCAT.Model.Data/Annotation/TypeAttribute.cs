@@ -25,7 +25,6 @@ public class TypeAttribute : ValidationAttribute {
         .Replace("@pattern", $"{Pattern}");
 
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
-        Console.WriteLine(context.DisplayName + " > " + (Nullable == null) + " : " + (Min == null) + " : " + (Max == null) + " : " + (Pattern == null));
         SetError(context);
         if (value == null || String.IsNullOrWhiteSpace(value.ToString()))
             if (Nullable != null)

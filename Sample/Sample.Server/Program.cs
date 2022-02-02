@@ -4,6 +4,7 @@ using Sample.Model.Configuration;
 using Sample.Server.Services;
 using EFCAT.Service.Storage;
 using EFCAT.Service.Authentication;
+using Sample.Model.Entity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,16 @@ using (var context = app.Services.CreateScope().ServiceProvider.GetService<TestD
     if (context == null) return;
     context.Database.EnsureDeleted();
     context.Database.EnsureCreated();
+
+    context.Set<User>().Add(new User() {
+        Name = "Nico",
+        Email = "tel@mail.com",
+        Password = "test",
+        Codes = new[] {
+            new EmailVerificationCode() { Value = "fromcodes" }
+        }
+    });
+    context.SaveChanges();
 }
 
 // Configure the HTTP request pipeline.

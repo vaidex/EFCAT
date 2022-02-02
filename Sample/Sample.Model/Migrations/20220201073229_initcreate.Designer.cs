@@ -11,7 +11,7 @@ using Sample.Model.Configuration;
 namespace Sample.Model.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    [Migration("20220129010307_initcreate")]
+    [Migration("20220201073229_initcreate")]
     partial class initcreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,6 +35,18 @@ namespace Sample.Model.Migrations
                     b.ToTable("ADVANCED_EMAIL_CODES", (string)null);
                 });
 
+            modelBuilder.Entity("Sample.Model.Entity.BadPerson", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BAD_PEOPLE", (string)null);
+                });
+
             modelBuilder.Entity("Sample.Model.Entity.Code", b =>
                 {
                     b.Property<Guid>("Id")
@@ -46,14 +58,9 @@ namespace Sample.Model.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("ExpiresAt")
+                    b.Property<DateTime?>("ExpiresAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("EXPIRES_AT");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("TYPE");
 
                     b.Property<int?>("USER_ID")
                         .HasColumnType("int");
@@ -70,6 +77,28 @@ namespace Sample.Model.Migrations
                     b.ToTable("USER_HAS_CODES", (string)null);
 
                     b.HasDiscriminator<string>("DISCRIMINATOR").HasValue("Code");
+                });
+
+            modelBuilder.Entity("Sample.Model.Entity.NicePerson", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("FIRST_NAME");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("LAST_NAME");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NICE_PEOPLE", (string)null);
                 });
 
             modelBuilder.Entity("Sample.Model.Entity.User", b =>
@@ -172,38 +201,41 @@ namespace Sample.Model.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Sample.Model.Entity.BadPerson", b =>
+                {
+                    b.OwnsOne("Sample.Model.Entity.Person", "Person", b1 =>
+                        {
+                            b1.Property<int>("BadPersonId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("FirstName")
+                                .IsRequired()
+                                .HasColumnType("longtext")
+                                .HasColumnName("PERSON_FIRST_NAME");
+
+                            b1.Property<string>("LastName")
+                                .IsRequired()
+                                .HasColumnType("longtext")
+                                .HasColumnName("PERSON_LAST_NAME");
+
+                            b1.HasKey("BadPersonId");
+
+                            b1.ToTable("BAD_PEOPLE");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BadPersonId");
+                        });
+
+                    b.Navigation("Person")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Sample.Model.Entity.Code", b =>
                 {
                     b.HasOne("Sample.Model.Entity.User", "User")
                         .WithMany("Codes")
                         .HasForeignKey("USER_ID")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.OwnsOne("EFCAT.Model.Data.Image", "QR", b1 =>
-                        {
-                            b1.Property<Guid>("CodeId")
-                                .HasColumnType("char(36)");
-
-                            b1.Property<byte[]>("Content")
-                                .IsRequired()
-                                .HasColumnType("longblob")
-                                .HasColumnName("QR_CONTENT");
-
-                            b1.Property<string>("Type")
-                                .IsRequired()
-                                .HasColumnType("varchar(32)")
-                                .HasColumnName("QR_TYPE");
-
-                            b1.HasKey("CodeId");
-
-                            b1.ToTable("USER_HAS_CODES");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CodeId");
-                        });
-
-                    b.Navigation("QR")
-                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -253,8 +285,7 @@ namespace Sample.Model.Migrations
 
                     b.Navigation("Image");
 
-                    b.Navigation("Impl")
-                        .IsRequired();
+                    b.Navigation("Impl");
                 });
 
             modelBuilder.Entity("Sample.Model.Entity.ZMail", b =>
@@ -272,8 +303,7 @@ namespace Sample.Model.Migrations
                 {
                     b.Navigation("Codes");
 
-                    b.Navigation("Mail")
-                        .IsRequired();
+                    b.Navigation("Mail");
                 });
 #pragma warning restore 612, 618
         }
