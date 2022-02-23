@@ -37,9 +37,7 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
 
     TAccount? account;
 
-    private AuthenticationService() {
-        AuthenticationSettings.provider = this;
-    }
+    private AuthenticationService() => AuthenticationSettings.provider = this;
     public AuthenticationService(DbContext dbContext) : this(dbContext, new IWebStorage[0]) { }
     public AuthenticationService(DbContext dbContext, params IWebStorage[]? storages) : this(dbContext, "AuthenticationToken", storages) { }
     public AuthenticationService(DbContext dbContext, string itemName, params IWebStorage[]? storages) : this() {
@@ -49,26 +47,31 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
         _storages = storages;
     }
 
+    // Authentication
     public async override Task<AuthenticationState> GetAuthenticationStateAsync() {
         try {
             string token = await ReadAsync(_itemName);
             if (string.IsNullOrEmpty(token)) return _authenticationState;
-            _authenticationState = await GetAuthState(token);
+            AuthenticationPackage package = await ExecuteAuthentication(token);
+            if (package.Success) await OnAuthenticationSuccess(package.Token, package.Account);
+            else await OnAuthenticationFailure();
+            _authenticationState = package.State;
         } catch (Exception ex) {
             System.Diagnostics.Debug.WriteLine("Authentication Error: " + ex.Message);
         }
         return _authenticationState;
     }
-    private async Task<AuthenticationState> GetAuthState(string token) {
+    private async Task<AuthenticationPackage> ExecuteAuthentication(string token) {
+        AuthenticationPackage package = new AuthenticationPackage() { Success = false, State = _authenticationState };
         AuthenticationState state = GetAuthentication(token);
         Claim? identityClaim = state.User.Claims.FirstOrDefault(c => c.Type == "_identity");
-        if (identityClaim == null) return _authenticationState;
+        if (identityClaim == null) return package;
         Dictionary<string, object> identity = (Dictionary<string, object>)JsonSerializer.Deserialize(identityClaim.Value, typeof(Dictionary<string, object>));
         ParameterExpression parameter = Expression.Parameter(typeof(TAccount), "entity");
         List<BinaryExpression> expressions = new List<BinaryExpression>();
         foreach (var property in identity) {
             PropertyInfo? info = typeof(TAccount).GetProperty(property.Key);
-            if (info == null) return _authenticationState;
+            if (info == null) return package;
             // entity.Property
             MemberExpression member = Expression.MakeMemberAccess(parameter, info);
             // value
@@ -76,30 +79,51 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
             // entity.Property == value
             expressions.Add(Expression.Equal(member, constant));
         }
-        if (!expressions.Any()) return _authenticationState;
+        if (!expressions.Any()) return package;
         Expression final = expressions.Aggregate((left, right) => Expression.And(left, right));
         // entity => entity.Property == value && ...
         LambdaExpression lambda = Expression.Lambda(final, parameter);
         var result = await _dbSet.AsQueryable<TAccount>().Where((Expression<Func<TAccount, bool>>)lambda).ToListAsync();
 
-        if (result == null || !result.Any()) return _authenticationState;
+        if (result == null || !result.Any()) return package;
 
         TAccount? account = result.FirstOrDefault();
-        if (account == null) return _authenticationState;
-        this.account = account;
-        await OnAuthenticationSuccess(token, account);
-        return state;
+        if (account == null) return package;
+        this.account = await OnAuthentication(token, account) ? account : null;
+        if (this.account == null) return package;
+        return new AuthenticationPackage() {
+            Success = true,
+            Account = account,
+            Token = token,
+            State = state
+        };
     }
+    private AuthenticationState GetAuthentication(string token) => new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(Decrypt(token), "Authentication")));
+    protected virtual async Task<bool> OnAuthentication(string token, TAccount account) => true;
     protected virtual async Task OnAuthenticationSuccess(string token, TAccount account) { }
+    protected virtual async Task OnAuthenticationFailure() { }
+    private class AuthenticationPackage {
+        public bool Success { get; set; }
+        public TAccount Account { get; set; }
+        public string Token { get; set; }
+        public AuthenticationState State { get; set; }
+    }
 
+    // Login
     public async Task<bool> LoginAsync(object obj) {
+        LoginPackage package = await ExecuteLogin(obj);
+        if (package.Success) await OnLoginSuccess(obj, package.Account, package.Token);
+        else await OnLoginFailure(obj);
+        return package.Success;
+    }
+    public bool Login(object obj) => Task.Run(() => LoginAsync(obj)).Result;
+    private async Task<LoginPackage> ExecuteLogin(object obj) {
+        LoginPackage package = new LoginPackage() { Success = false };
         // Check if the Object is a Class
         if (!obj.GetType().IsClass) throw (new Exception($"Object needs to be a class!"));
         // Check if Entity has Properties
         if (obj.GetType().GetProperties().Length == 0) throw new Exception($"Class has no properties!");
 
-        Console.WriteLine();
-        
         IEnumerable<TAccount> resultQuery;
 
         // Get the Expression from all non VOs
@@ -110,7 +134,7 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
         else resultQuery = await _dbSet.AsQueryable<TAccount>().Where((Expression<Func<TAccount, bool>>)query).ToListAsync();
 
         // Return false if there are no accounts
-        if (resultQuery == null || !resultQuery.Any()) return false;
+        if (resultQuery == null || !resultQuery.Any()) return package;
 
         IEnumerable<TAccount> resultEnumerable;
 
@@ -119,20 +143,31 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
         if (enumerable == null) resultEnumerable = resultQuery;
         else resultEnumerable = resultQuery.AsQueryable().Where((Expression<Func<TAccount, bool>>)enumerable).AsEnumerable();
 
-        if (resultEnumerable == null || !resultEnumerable.Any()) return false;
+        if (resultEnumerable == null || !resultEnumerable.Any()) return package;
 
         TAccount? account = resultEnumerable.FirstOrDefault();
-        if (account == null) return false;
+        if (account == null) return package;
         string token = GetAccountToken(account);
-        await OnLoginSuccess(obj, account, token);
-        return true;
+        bool login = await OnLogin(obj, account, token);
+        if (login == false) return package;
+        return new LoginPackage() {
+            Success = true,
+            Account = account,
+            Token = token,
+            Object = obj,
+        };
     }
-    public bool Login(object obj) => Task.Run(() => LoginAsync(obj)).Result;
-
-    protected virtual async Task OnLoginSuccess(object obj, TAccount account, string token) {
-        _ = WriteAsync(_itemName, token).ConfigureAwait(true);
+    protected virtual async Task<bool> OnLogin(object obj, TAccount account, string token) => true;
+    protected virtual async Task OnLoginSuccess(object obj, TAccount account, string token) => _ = WriteAsync(_itemName, token).ConfigureAwait(true);
+    protected virtual async Task OnLoginFailure(object obj) { }
+    private class LoginPackage {
+        public bool Success { get; set; }
+        public TAccount Account { get; set; }
+        public string Token { get; set; }
+        public object Object { get; set; }
     }
 
+    // Tools
     private Expression? GetExpression(object obj, bool vos) {
         // entity
         ParameterExpression parameter = Expression.Parameter(typeof(TAccount), "entity");
@@ -203,23 +238,35 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
         return GenerateToken(identity);
     }
 
+    // Register
     public async Task<bool> RegisterAsync(TAccount account) {
+        bool success = await ExecuteRegister(account);
+        if (success) await OnRegisterSuccess(account);
+        else await OnRegisterFailure(account);
+        return success;
+    }
+    public bool Register(TAccount account) => Task.Run(() => RegisterAsync(account)).Result;
+    private async Task<bool> ExecuteRegister(TAccount account) {
+        bool register = await OnRegister(account);
+        if (!register) return false;
         if (_dbSet.Contains(account)) return false;
         await _dbSet.AddAsync(account);
         await _dbContext.SaveChangesAsync();
         if (account == null) return false;
-        await OnRegisterSuccess(account);
         return true;
     }
-    public bool Register(TAccount account) => Task.Run(() => RegisterAsync(account)).Result;
-
+    protected virtual async Task<bool> OnRegister(TAccount account) => true;
     protected virtual async Task OnRegisterSuccess(TAccount account) { }
+    protected virtual async Task OnRegisterFailure(TAccount account) { }
 
+    // Logout
     public async Task LogoutAsync() => await RemoveAsync(_itemName);
     public void Logout() => Task.Run(() => LogoutAsync()).ConfigureAwait(false);
 
+    // Account
     public TAccount? GetAccount() => account ?? null;
 
+    // Web Storage
     protected async virtual Task<string> ReadAsync(string item) {
         WebStorageCheck();
         foreach(IWebStorage storage in _storages) if (await storage.GetAsync<string?>(item) is string value) return value;
@@ -233,16 +280,11 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
         WebStorageCheck();
         foreach (IWebStorage storage in _storages) await storage.RemoveAsync(item);
     }
-    private void WebStorageCheck() {
-        if (_storages == null || !_storages.Any()) throw new Exception("AuthenticationService must implement a WebStorage.");
-    }
+    private void WebStorageCheck() { if (_storages == null || !_storages.Any()) throw new Exception("AuthenticationService must implement a WebStorage."); }
 
-    private AuthenticationState GetAuthentication(string token) => new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(Decrypt(token), "Authentication")));
-
+    // Encryption
     private string GenerateToken(Dictionary<string, object> claims) => Encrypt(new Claim("_identity", JsonSerializer.Serialize(claims, typeof(Dictionary<string, object>))));
-
     protected virtual JwtSettings? JwtSettings { get; set; } = new JwtSettings();
-
     protected virtual string Encrypt(Claim claim) {
         JwtError();
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.Key));

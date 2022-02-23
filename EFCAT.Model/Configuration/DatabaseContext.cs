@@ -57,6 +57,9 @@ public class DatabaseContext : DbContext {
 
         List<Key> keys = entityType.BaseType != typeof(Object) && !entityType.BaseType.GetCustomAttributes<NotGeneratedAttribute>().Any() ? Entities[entityType.BaseType].ToList() : new List<Key>();
 
+        List<string> SqlProperties = new List<string>();
+        List<string> SqlForeignKeys = new List<string>();
+
         if (entityType.GetCustomAttribute<TableAttribute>() is TableAttribute attr) {
             Type baseType = entityType.BaseType;
             if (entityType != typeof(Object) && baseType.GetCustomAttributes<TableAttribute>().Any(attr => attr.Discriminator)) Discriminators[baseType].Add(entityType, attr.DiscriminatorValue);
@@ -77,6 +80,7 @@ public class DatabaseContext : DbContext {
 
             string name = property.Name;
             Type type = property.PropertyType;
+            string sqlEntry = "";
 
             if (property.HasAttribute<ForeignColumnAttribute>()) {
                 List<Key> fk_keys;
@@ -168,7 +172,6 @@ public class DatabaseContext : DbContext {
                             property.OnAttribute<EnumAttribute>(attr => propertyBuilder.HasConversion(attr.Type));
                         }
                         break;
-
                 }
             }
         }
@@ -187,6 +190,13 @@ public class DatabaseContext : DbContext {
         foreach (var discriminator in discriminators.Where(d => d.Key != entityType)) {
             discriminatorBuilder.HasValue(discriminator.Key, discriminator.Value);
         }
+    }
+    
+}
+internal static class Output {
+    static string GetPropertySqlInfo(this PropertyInfo property) {
+        string propertyInfo = "";
+        return "";
     }
 }
 

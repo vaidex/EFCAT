@@ -12,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ITestAsyncRepository, TestAsyncRepository>();
+//builder.Services.AddScoped<ITestAsyncRepository, TestAsyncRepository>();
 
 builder.Services.AddDbContext<TestDbContext>(
     options => options
