@@ -1,6 +1,8 @@
 ﻿@page "/"
 @using Domain.Repository
+@using EFCAT.Model.Annotation
 @using Sample.Model.Entity
+@using EFCAT.Service.Component.Input
 @inject ITestAsyncRepository _repository
 
 <PageTitle>Index</PageTitle>
@@ -51,12 +53,25 @@
     <button>submit</button>
 </EditForm>
 
+<Number @bind-Value=Value Unit="%" />
+
+<EditForm Model=Ex>
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <input type="text" @bind-value=Ex.Username placeholder="Name" />
+    <button>submit</button>
+</EditForm>
+
 @code {
-    private List<User> Entities { get; set; }
+    List<User> Entities { get; set; }
 
-    private User Entity { get; set; } = new User();
+    User Entity { get; set; } = new User();
 
-    private string Password { get; set; } = "";
+    string Password { get; set; } = "";
+
+    int Value { get; set; } = 0;
+
+    TestExist Ex { get; set; } = new TestExist();
 
     protected async override Task OnInitializedAsync() {
         Entities = (await _repository.ReadAllAsync()).ToList();
@@ -67,5 +82,10 @@
         Entity = await _repository.CreateAsync(Entity);
         Entities.Add(Entity);
         Entity = new User();
+    }
+
+    private class TestExist {
+        [Exist(typeof(User), "Name")]
+        public string Username { get; set; }
     }
 }

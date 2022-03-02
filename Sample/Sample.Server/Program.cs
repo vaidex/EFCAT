@@ -26,7 +26,7 @@ builder.Services.AddLocalStorage();
 builder.Services.AddAuthenticationService<MyAuthenticationService>();
 
 var app = builder.Build();
-
+/*
 using (var context = app.Services.CreateScope().ServiceProvider.GetService<TestDbContext>()) {
     if (context == null) return;
     context.Database.EnsureDeleted();
@@ -41,7 +41,7 @@ using (var context = app.Services.CreateScope().ServiceProvider.GetService<TestD
         }
     });
     context.SaveChanges();
-}
+}*/
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment()) {

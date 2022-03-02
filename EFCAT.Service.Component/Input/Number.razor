@@ -1,0 +1,72 @@
+﻿@typeparam T
+@using System.Linq
+
+<div class="input-wrapper @Class">
+    <input class="input-value" value="@DisplayValue" type="text" @oninput="OnInput" />
+    <div class="input-display">
+        <span class="input-hidden">@DisplayValue</span>
+        <span class='input-unit'>@(DisplayValue != null ? Unit : "")</span>
+    </div>
+    <div class="input-range">
+        <button type="button" @onclick="Increase"><span>&#11165;</span></button>
+        <button type="button" @onclick="Decrease"><span>&#11167;</span></button>
+    </div>
+</div>
+
+@code {
+    private string? DisplayValue { get; set; }
+    [Parameter] public T Value { get; set; }
+    [Parameter] public EventCallback<T> ValueChanged { get; set; }
+
+    private bool isNullable => typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition().Equals(typeof(Nullable<>));
+    private Type? convertType => isNullable ? Nullable.GetUnderlyingType(typeof(T)) : typeof(T);
+
+    bool minSet = false; T min;
+    [Parameter] public T Min { get => min; set { min = value; minSet = true; } }
+    bool maxSet = false; T max;
+    [Parameter] public T Max { get => max; set { max = value; maxSet = true; } }
+    [Parameter] public T Step { get; set; }
+
+    [Parameter] public string? Unit { get; set; }
+
+    [Parameter] public string Class { get; set; } = "";
+
+    protected async override Task OnInitializedAsync() {
+        DisplayValue = Value.ToString();
+        Step = (T)Convert.ChangeType("1", convertType);
+    }
+
+    private async Task UpdateValue(T value) { DisplayValue = value.ToString(); await ValueChanged.InvokeAsync(value); }
+    private async Task UpdateValue() => await UpdateValue(Value);
+
+    private async Task OnInput(ChangeEventArgs e) {
+        DisplayValue = e.Value == null ? (isNullable ? null : "0") : e.Value.ToString();
+        if (
+            new[] { ",", "." }.Any(s => DisplayValue.Contains(s)) &&
+            new[] { typeof(Int16), typeof(Int32), typeof(Int64) }.Any(t => convertType == t))
+            DisplayValue = DisplayValue.Replace(",","").Replace(".", "");
+        T val = (T)Value;
+        try { val = (T)Convert.ChangeType(DisplayValue.Replace('.', ','), convertType); }
+        catch (FormatException ex) { val = default(T); }
+        catch (OverflowException ex) { return; }
+        await UpdateValue(val);
+    }
+
+    private async Task Increase() {
+        T value = Add(Value, Step) ;
+        if (maxSet) if (GreaterThan(value, Max)) value = (T)Max;
+        await UpdateValue(value);
+    }
+    private async Task Decrease() {
+        T value = Sub(Value, Step) ;
+        if (minSet) if (LowerThan(value, Min)) value = (T)Min;
+        await UpdateValue(value);
+    }
+
+    private T Add(dynamic a, dynamic b) => ConvertObj(a + b);
+    private T Sub(dynamic a, dynamic b) => ConvertObj(a - b);
+    private bool GreaterThan(dynamic a, dynamic b) => a > b;
+    private bool LowerThan(dynamic a, dynamic b) => a < b;
+
+    private T ConvertObj(object obj) => (T)Convert.ChangeType(obj, convertType);
+}

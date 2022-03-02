@@ -1,12 +1,9 @@
 ﻿using EFCAT.Model.Configuration;
-using Microsoft.EntityFrameworkCore.Metadata;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore.Internal;
 using EFCAT.Model.Extension;
-using System.Linq;
 
 namespace EFCAT.Model.Annotation;
 
@@ -40,22 +37,18 @@ public class UniqueAttribute : ValidationAttribute {
         // Get the Context
         ConstructorInfo constructor = contextType.GetConstructor(new Type[] { dbContextOptions.GetType() });
         DatabaseContext dbContext = (DatabaseContext)constructor.Invoke(new object[] { dbContextOptions });
-        // Get Type for valid table
-        while(entityType != null) {
-            if (dbContext.Model.GetEntityTypes().Any(e => e.ClrType == entityType)) break;
-            else if(entityType.BaseType != null) entityType = entityType.BaseType;
-            else throw new Exception("No valid Table found");
-        }
+        
         // Get the Table
         IQueryable table = entityType.GetTable(dbContext);
+        entityType = table.ElementType;
         // Get the Entity if it exists
         var entity = GetEntity(table, entityType, context.ObjectInstance);
         // Check if the entity is not null
         if (entity != null)
-            // Check if the values are eual
+            // Check if the values are equal
             if(CheckValueEquality(entity, propertyName, value)) return Success;
         // Check if the value is unique
-        return CheckUniqueness(table, entityType, propertyName, value);
+        return !table.Exists(propertyName, value) ? Success : Error;
     }
 
     private object? GetEntity(IQueryable table, Type entity, object instance) {
@@ -97,24 +90,5 @@ public class UniqueAttribute : ValidationAttribute {
         object? entityValue = entity.GetType().GetProperty(propertyName)?.GetValue(entity);
         // Check if the EntityValue is equal to the Value
         return entityValue != null ? entityValue.ToString() == value.ToString() : false;
-    }
-
-    private ValidationResult CheckUniqueness(IQueryable table, Type entity, string propertyName, object value) {
-        // Get the Property
-        PropertyInfo propertyInfo = entity.GetProperty(propertyName);
-        // entity
-        ParameterExpression parameter = Expression.Parameter(entity, "entity");
-        // entity.Property
-        MemberExpression property = Expression.MakeMemberAccess(parameter, propertyInfo);
-        // value
-        ConstantExpression convertedValue = Expression.Constant(Convert.ChangeType(value, propertyInfo.PropertyType));
-        // entity.Property == value
-        BinaryExpression equal = Expression.Equal(property, convertedValue);
-        // entity => entity.Property == value
-        LambdaExpression lambda = Expression.Lambda(equal, parameter);
-        // Execute Count() and get the amount of inserts
-        int count = (int)entity.ExecuteQuery("Count", new object[] { table, lambda });
-        // Return an Error if count is greater than zero.
-        return count == 0 ? Success : Error;
     }
 }

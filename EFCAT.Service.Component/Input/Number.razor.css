@@ -1,0 +1,53 @@
+﻿.input-wrapper {
+    position: relative;
+    width: 200px;
+    height: 20px;
+    display: flex;
+}
+
+.input-value {
+    width: 100%;
+    border: 0;
+    background: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+}
+
+    .input-value:focus {
+        outline: 0;
+    }
+
+.input-display {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 5px;
+    pointer-events: none;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding-left: inherit;
+}
+
+.input-hidden {
+    visibility: hidden;
+}
+
+.input-unit {
+    white-space: pre;
+}
+
+.input-range {
+    display: grid;
+    grid-template-rows: 50% 50%;
+    margin: 0 5px;
+}
+
+    .input-range button {
+        display: flex;
+        align-items: center;
+        background: none;
+        border: 0;
+    }
