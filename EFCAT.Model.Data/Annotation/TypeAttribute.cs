@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace EFCAT.Model.Data.Annotation;
 
-public class TypeAttribute : ValidationAttribute {
+public class TypeAttribute : XValidationAttribute {
     public string Type { get; private set; }
     protected object? Min { get; set; }
     protected object? Max { get; set; }
@@ -14,18 +14,12 @@ public class TypeAttribute : ValidationAttribute {
 
     public TypeAttribute(string type, object? size = null) => Type = size == null ? type : $"{type}({size})";
 
-    private ValidationResult? Error => new ValidationResult(ErrorMessage);
-    private ValidationResult? Success => ValidationResult.Success;
-
-    private void SetError(ValidationContext context) =>
-        ErrorMessage = (ErrorMessage ?? $"The field @displayname needs to be in the range of @min and @max{ ((Pattern != null) ? $" and match with the pattern @pattern" : "") }.")
-        .Replace("@displayname", context.DisplayName)
-        .Replace("@min", $"{Min}")
-        .Replace("@max", $"{Max}")
-        .Replace("@pattern", $"{Pattern}");
-
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
-        SetError(context);
+        Error = ValidationResultManager.Error(context, ErrorMessage,
+            $"The field @displayname needs to be in the range of @min and @max{ ((Pattern != null) ? $" and match with the pattern @pattern" : "") }.",
+            new Dictionary<string, object> { { "@displayname", context.DisplayName }, { "@min", Min }, { "@max", Max }, { "@pattern", Pattern } }
+            );
+
         if (value == null || String.IsNullOrWhiteSpace(value.ToString()))
             if (Nullable != null)
                 if ((bool)Nullable) return Success;

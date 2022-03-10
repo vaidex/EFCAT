@@ -1,9 +1,10 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace EFCAT.Model.Data.Annotation;
 
-public class CompareAttribute : ValidationAttribute {
+public class CompareAttribute : XValidationAttribute {
     public string PropertyName { get; set; }
 
     public CompareAttribute(string propertyName) {
@@ -11,9 +12,12 @@ public class CompareAttribute : ValidationAttribute {
     }
 
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
-        object? result = context.ObjectType.GetProperty(PropertyName)?.GetValue(context.ObjectInstance, null);
+        PropertyInfo? property = context.ObjectType.GetProperty(PropertyName);
+        if (property == null) throw new Exception($"{context.DisplayName} comparison property not found");
+        Error = ValidationResultManager.Error(context, ErrorMessage, "@displayname needs to be equal to @comparisonname.", new Dictionary<string, object> { { "@displayname", context.DisplayName }, { "@comparisonname", property.Name } });
+        object? result = property.GetValue(context.ObjectInstance, null);
         if(result != null && value != null)
-            if(result.Equals(value)) return ValidationResult.Success;
-        return new ValidationResult(ErrorMessage);
+            if(result.Equals(value)) return Success;
+        return Error;
     }
 }

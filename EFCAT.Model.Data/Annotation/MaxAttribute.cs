@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace EFCAT.Model.Data.Annotation;
 
-public class MaxAttribute : ValidationAttribute {
+public class MaxAttribute : XValidationAttribute {
     private object _max;
 
     public MaxAttribute(int max) => SetMax(max);
@@ -13,16 +13,11 @@ public class MaxAttribute : ValidationAttribute {
     public MaxAttribute(float max) => SetMax(max);
     private void SetMax(object max) => _max = max;
 
-    private ValidationResult? Error => new ValidationResult(ErrorMessage);
-    private ValidationResult? Success => ValidationResult.Success;
-
-    private void SetError(ValidationContext context) =>
-        ErrorMessage = (ErrorMessage ?? $"The field @displayname needs to have a maximum of @max.")
-        .Replace("@displayname", context.DisplayName)
-        .Replace("@max", $"{_max}");
-
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
-        SetError(context);
+        Error = ValidationResultManager.Error(context, ErrorMessage,
+            "The field @displayname needs to have a maximum of @max.",
+            new Dictionary<string, object> { { "@displayname", context.DisplayName }, { "@max", _max } }
+            );
         return ObjectExtension.RangeCompare(value, _max, ErrorMessage, Expression.GreaterThan) ? Error : Success;
     }
 }

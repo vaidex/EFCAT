@@ -4,21 +4,16 @@ using System.Linq.Expressions;
 
 namespace EFCAT.Model.Data.Annotation;
 
-public class PatternAttribute : ValidationAttribute {
+public class PatternAttribute : XValidationAttribute {
     private string _pattern;
 
     public PatternAttribute(string pattern) => _pattern = pattern;
 
-    private ValidationResult? Error => new ValidationResult(ErrorMessage);
-    private ValidationResult? Success => ValidationResult.Success;
-
-    private void SetError(ValidationContext context) =>
-        ErrorMessage = (ErrorMessage ?? $"The field @displayname needs to follow the template @pattern.")
-        .Replace("@displayname", context.DisplayName)
-        .Replace("@pattern", $"{_pattern}");
-
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
-        SetError(context);
+        Error = ValidationResultManager.Error(context, ErrorMessage,
+            "The field @displayname needs to follow the template @pattern.",
+            new Dictionary<string, object> { { "@displayname", context.DisplayName }, { "@pattern", _pattern } }
+            );
         return ObjectExtension.MatchPattern(value, _pattern) ? Error : Success;
     }
 

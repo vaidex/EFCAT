@@ -17,10 +17,11 @@ public class User {
     public string Email { get; set; }
 
     [Unique]
-    [NotNull(ErrorMessage = "Name can not be null")]
+    [NotNull(ErrorMessage = "Name can not be null.")]
     [Varchar(16, Min = 3, Max = 16, Pattern = "^[A-z]+$", ErrorMessage = "You need to have between @min and @max characters.")]
     public string Name { get; set; }
 
+    [NotNull]
     public Crypt<SHA256> Password { get; set; }
 
     // Number from 0-100 saved as DECIMAL(5, 2) which is equal to 999.99

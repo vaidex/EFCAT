@@ -1,6 +1,7 @@
 ﻿@page "/login"
 @using EFCAT.Model.Data.Annotation
 @using EFCAT.Service.Authentication
+@using EFCAT.Service.Component.Validation
 @using Sample.Model.Entity
 @using Sample.Server.Services
 @inject NavigationManager _navigationManager
@@ -28,9 +29,13 @@
             <DataAnnotationsValidator />
             <ValidationSummary />
             <input type="text" @bind-value="Register.Name" placeholder="Name" />
+            <CustomError For="() => Register.Name" />
             <input type="text" @bind-value="Register.Email" placeholder="Email" />
+            <CustomError For="() => Register.Email" />
             <input type="text" @bind-value="Register.Password" placeholder="Password" />
+            <CustomError For="() => Register.Password" />
             <input type="text" @bind-value="Register.RepeatPassword" placeholder="Repeat" />
+            <CustomError For="() => Register.RepeatPassword" />
             <button>Submit</button>
         </EditForm>
     </NotAuthorized>

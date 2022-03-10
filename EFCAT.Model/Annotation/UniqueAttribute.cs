@@ -4,22 +4,14 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using EFCAT.Model.Extension;
+using EFCAT.Model.Data.Annotation;
+using EFCAT.Model.Data;
 
 namespace EFCAT.Model.Annotation;
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class UniqueAttribute : ValidationAttribute {
+public class UniqueAttribute : XValidationAttribute {
     public UniqueAttribute() { }
-
-    // Returns an ValidationError with the Errormessage
-    private ValidationResult? Error => new ValidationResult(ErrorMessage);
-    // Returns an ValidationSuccess
-    private ValidationResult? Success => ValidationResult.Success;
-
-    // Set the Errormessage
-    private void SetError(ValidationContext context) =>
-        ErrorMessage = (ErrorMessage ?? $"The field @displayname needs to be unique.")
-        .Replace("@displayname", context.DisplayName);
 
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
         // Configure Connection
@@ -29,7 +21,7 @@ public class UniqueAttribute : ValidationAttribute {
         string propertyName = context.DisplayName;
 
         // Set the Error Message
-        SetError(context);
+        Error = ValidationResultManager.Error(context, ErrorMessage, "The field @displayname needs to be unique.", new Dictionary<string, object> { { "@displayname", context.DisplayName } });
 
         // Check if the value is null or an empty string
         if (value == null || String.IsNullOrWhiteSpace(value.ToString())) return null;

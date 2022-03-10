@@ -1,15 +1,15 @@
-﻿
-using EFCAT.Model.Configuration;
+﻿using EFCAT.Model.Configuration;
+using EFCAT.Model.Data;
+using EFCAT.Model.Data.Annotation;
 using EFCAT.Model.Extension;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace EFCAT.Model.Annotation;
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-public class ExistAttribute : ValidationAttribute {
+public class ExistAttribute : XValidationAttribute {
     public bool Exists { get; set; } = true;
     public Dictionary<Type, string[]> Values { get; set; } = new Dictionary<Type, string[]>();
 
@@ -20,23 +20,13 @@ public class ExistAttribute : ValidationAttribute {
     public ExistAttribute(bool exists, Type entity, string[] columns) : this(exists, new Dictionary<Type, string[]>() { { entity, columns } }) { }
     public ExistAttribute(bool exists, Type entity, string column) : this(exists, entity, new string[] { column }) { }
 
-    // Returns an ValidationError with the Errormessage
-    private ValidationResult? Error => new ValidationResult(ErrorMessage);
-    // Returns an ValidationSuccess
-    private ValidationResult? Success => ValidationResult.Success;
-
-    // Set the Errormessage
-    private void SetError(ValidationContext context) =>
-        ErrorMessage = (ErrorMessage ?? $"The field @displayname needs to exist.")
-        .Replace("@displayname", context.DisplayName);
-
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
         // Configure Connection
         DbContextOptions dbContextOptions = Settings.DbContextOptions;
         Type contextType = dbContextOptions.ContextType;
 
         // Set the Error Message
-        SetError(context);
+        Error = ValidationResultManager.Error(context, ErrorMessage, "The field @displayname needs to exist.", new Dictionary<string, object> { { "@displayname", context.DisplayName } } );
 
         // Check if the value is null or an empty string
         if (value == null || String.IsNullOrWhiteSpace(value.ToString())) return null;

@@ -1,0 +1,9 @@
+﻿@using System.Linq.Expressions
+@using EFCAT.Service.Component.Validation
+@typeparam TValue
+
+<ValidationError For=@For Style="TITLE" Class="db-error" Content="&#128712;" />
+
+@code {
+    [Parameter] public Expression<Func<TValue>> For { get; set; }
+}

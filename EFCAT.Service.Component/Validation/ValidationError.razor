@@ -1,0 +1,44 @@
+﻿@using System.Linq.Expressions
+@using Microsoft.AspNetCore.Components.Forms
+@typeparam TValue
+@implements IDisposable
+
+@if (Messages.Any()) {
+    @switch (Style.ToUpper()) {
+        default:
+        case "LIST":
+            <ul class="@Class">
+                @foreach (string msg in Messages) {
+                    <li>@msg</li>
+                }
+            </ul>
+            break;
+        case "TITLE":
+            <span class="@Class" title="@Message">@((MarkupString)Content)</span>
+            break;
+    }
+}
+
+
+@code {
+    [CascadingParameter] private EditContext EditContext { get; set; }
+    [Parameter] public Expression<Func<TValue>> For { get; set; }
+
+    [Parameter] public string Style { get; set; } = "";
+    [Parameter] public string Content { get; set; } = "";
+    [Parameter] public string Class { get; set; } = "";
+
+
+    private List<string> Messages => EditContext.GetValidationMessages(_fieldIdentifier).Distinct().ToList();
+    private string Message => Messages.Any() ? Messages.Aggregate((current, next) => current + "\n" + next) : "";
+
+    private FieldIdentifier _fieldIdentifier;
+
+    protected override void OnInitialized() {
+        _fieldIdentifier = FieldIdentifier.Create(For);
+        EditContext.OnValidationStateChanged += HandleValidationStateChanged;
+    }
+
+    private void HandleValidationStateChanged(object o, ValidationStateChangedEventArgs args) => this.StateHasChanged();
+    public void Dispose() => EditContext.OnValidationStateChanged -= HandleValidationStateChanged;
+}

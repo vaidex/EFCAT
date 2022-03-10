@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace EFCAT.Model.Data.Annotation;
 
-public class MinAttribute : ValidationAttribute {
+public class MinAttribute : XValidationAttribute {
     private object _min;
 
     public MinAttribute(int min) => SetMin(min);
@@ -13,16 +13,11 @@ public class MinAttribute : ValidationAttribute {
     public MinAttribute(float min) => SetMin(min);
     private void SetMin(object min) => _min = min;
 
-    private ValidationResult? Error => new ValidationResult(ErrorMessage);
-    private ValidationResult? Success => ValidationResult.Success;
-
-    private void SetError(ValidationContext context) =>
-        ErrorMessage = (ErrorMessage ?? $"The field @displayname needs to have a minimum of @min.")
-        .Replace("@displayname", context.DisplayName)
-        .Replace("@min", $"{_min}");
-
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
-        SetError(context);
+        Error = ValidationResultManager.Error(context, ErrorMessage,
+            "The field @displayname needs to have a minimum of @max.",
+            new Dictionary<string, object> { { "@displayname", context.DisplayName }, { "@min", _min } }
+            );
         return ObjectExtension.RangeCompare(value, _min, ErrorMessage, Expression.LessThan) ? Error : Success;
     }
 
