@@ -11,8 +11,9 @@ public class CompareAttribute : ValidationAttribute {
     }
 
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
-        string? result = context.ObjectType.GetProperty(PropertyName)?.GetValue(context.ObjectInstance, null)?.ToString();
-        if(result == (string?)value) return ValidationResult.Success;
+        object? result = context.ObjectType.GetProperty(PropertyName)?.GetValue(context.ObjectInstance, null);
+        if(result != null && value != null)
+            if(result.Equals(value)) return ValidationResult.Success;
         return new ValidationResult(ErrorMessage);
     }
 }

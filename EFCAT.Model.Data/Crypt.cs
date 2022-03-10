@@ -1,5 +1,5 @@
 ﻿using EFCAT.Model.Data.Converter;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
@@ -11,7 +11,7 @@ namespace EFCAT.Model.Data;
 [NotMapped]
 [JsonConverter(typeof(CryptJsonFactory))]
 [TypeDescriptionProvider(typeof(CryptTypeDescriptionProvider))]
-public class Crypt<TAlgorithm> : ValueObject where TAlgorithm : IAlgorithm, new() {
+public class Crypt<TAlgorithm> : ValueObject, IEquatable<object> where TAlgorithm : IAlgorithm, new() {
     private bool IsCrypted { get; set; } = false;
     private string value;
     private string Value { get => this.value; set { this.value = value; IsCrypted = false; } }
@@ -36,14 +36,8 @@ public class Crypt<TAlgorithm> : ValueObject where TAlgorithm : IAlgorithm, new(
     public bool Verify(string value) => IsCrypted ? Encrypt(value) == Value : value == Value;
 
     public override string ToString() => Value;
-    public bool Equals(object? obj) {
-        if (obj is string value) return Verify(value);
-        return false;
-    }
-
-    protected override IEnumerable<object> GetAtomicValues() {
-        yield return Value;
-    }
+    public override bool Equals(object? other) => other is string str ? Verify(str) : false;
+    public override int GetHashCode() => (Value).GetHashCode();
 }
 
 public interface IAlgorithm {
