@@ -155,12 +155,7 @@ public class DatabaseContext : DbContext {
                         break;
                     default:
                         if ((type.IsGenericType && type.GetGenericTypeDefinition() != typeof(Nullable<>)) || type.GetCustomAttributes<TableAttribute>().Any()) entity.Ignore(name);
-                        else if (property.HasAttribute<ImplementAttribute>())
-                            entity.OwnsOne(type, name, objEntity => {
-                                type.GetProperties().ToList().ForEach(objProperty => {
-                                    SetProperty(objEntity, objProperty, keys);
-                                });
-                            });
+                        else if (property.HasAttribute<ImplementAttribute>()) entity.OwnsOne(type, name, objEntity => type.GetProperties().ToList().ForEach(objProperty => SetProperty(objEntity, objProperty, keys, property.GetAttribute<ImplementAttribute>().Name ?? (property.GetSqlName() + "_"))));
                         else SetProperty(entity, property, keys);
                         break;
                 }
@@ -182,11 +177,12 @@ public class DatabaseContext : DbContext {
             discriminatorBuilder.HasValue(discriminator.Key, discriminator.Value);
         }
     }
-    void SetProperty<T>(T infrastructure, PropertyInfo property, List<Key> keys) where T : IInfrastructure<IConventionEntityTypeBuilder> {
+    void SetProperty<T>(T infrastructure, PropertyInfo property, List<Key> keys, string prefix = "") where T : IInfrastructure<IConventionEntityTypeBuilder> {
         IConventionEntityTypeBuilder entity = infrastructure.Instance;
         IConventionPropertyBuilder? propertyBuilder = entity.Property(property.PropertyType, property.Name);
+        string name = prefix + property.GetSqlName();
         if (propertyBuilder == null) return;
-        propertyBuilder.HasColumnName(property.GetSqlName());
+        propertyBuilder.HasColumnName(name);
         property.OnAttribute<TypeAttribute>(attr =>
             property.OnAttribute<Annotation.PrecisionAttribute>(
                 pattr => {
@@ -200,7 +196,7 @@ public class DatabaseContext : DbContext {
         property.OnAttribute<NullableAttribute>(attr => propertyBuilder.IsRequired(!attr.Nullable));
         property.OnAttribute<AutoIncrementAttribute>(attr => propertyBuilder.ValueGenerated(Microsoft.EntityFrameworkCore.Metadata.ValueGenerated.OnAdd));
         property.OnAttribute<PrimaryKeyAttribute>(attr => keys.Add(new Key(property.Name, property.PropertyType)));
-        property.OnAttribute<UniqueAttribute>(attr => entity.HasIndex(new[]{ property.Name }, $"UQ_{property.DeclaringType.Name.GetSqlName()}_{property.Name.GetSqlName()}").IsUnique(true, true));
+        property.OnAttribute<UniqueAttribute>(attr => entity.HasIndex(new[]{ property.Name }, $"UQ_{property.DeclaringType.Name.GetSqlName()}_{name}").IsUnique(true, true));
         property.OnAttribute<EnumAttribute>(attr => propertyBuilder.HasConversion(attr.Type));
     }
 }

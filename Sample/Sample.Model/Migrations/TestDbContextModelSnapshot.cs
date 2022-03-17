@@ -214,17 +214,17 @@ namespace Sample.Model.Migrations
                             b1.Property<string>("FirstName")
                                 .IsRequired()
                                 .HasColumnType("varchar(32)")
-                                .HasColumnName("FIRST_NAME");
+                                .HasColumnName("PERSON_FIRST_NAME");
 
                             b1.Property<string>("Gender")
                                 .IsRequired()
                                 .HasColumnType("longtext")
-                                .HasColumnName("GENDER");
+                                .HasColumnName("PERSON_GENDER");
 
                             b1.Property<string>("LastName")
                                 .IsRequired()
                                 .HasColumnType("varchar(32)")
-                                .HasColumnName("LAST_NAME");
+                                .HasColumnName("PERSON_LAST_NAME");
 
                             b1.HasKey("BadPersonId");
 
@@ -258,7 +258,7 @@ namespace Sample.Model.Migrations
                             b1.Property<string>("Text")
                                 .IsRequired()
                                 .HasColumnType("varchar(32)")
-                                .HasColumnName("TEXT");
+                                .HasColumnName("IMPL_TEXT");
 
                             b1.HasKey("UserId");
 

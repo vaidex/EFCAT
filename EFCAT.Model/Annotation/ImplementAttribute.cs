@@ -1,7 +1,6 @@
 ﻿namespace EFCAT.Model.Annotation;
 
 public class ImplementAttribute : Attribute {
-    private string? _name;
-    public ImplementAttribute(string? name = null) => _name = name;
-    public string? GetName() => _name;
+    public string? Name { get; private set; }
+    public ImplementAttribute(string? name = null) => Name = name;
 }

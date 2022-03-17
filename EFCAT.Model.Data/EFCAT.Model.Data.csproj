@@ -8,7 +8,7 @@
 		<Description>An extension for your sql entity framework core data structure.</Description>
 		<Authors>NicoZeli</Authors>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Version>1.1.9</Version>
+		<Version>1.1.11</Version>
 		<RepositoryUrl>https://github.com/xtreydev/EFCAT</RepositoryUrl>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>

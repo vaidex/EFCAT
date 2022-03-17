@@ -19,11 +19,11 @@ namespace Sample.Model.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    FIRST_NAME = table.Column<string>(type: "varchar(32)", nullable: false)
+                    PERSON_FIRST_NAME = table.Column<string>(type: "varchar(32)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    LAST_NAME = table.Column<string>(type: "varchar(32)", nullable: false)
+                    PERSON_LAST_NAME = table.Column<string>(type: "varchar(32)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    GENDER = table.Column<string>(type: "longtext", nullable: false)
+                    PERSON_GENDER = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -67,7 +67,7 @@ namespace Sample.Model.Migrations
                     IMAGE_CONTENT = table.Column<byte[]>(type: "longblob", nullable: true),
                     IMAGE_TYPE = table.Column<string>(type: "varchar(32)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    TEXT = table.Column<string>(type: "varchar(32)", nullable: true)
+                    IMPL_TEXT = table.Column<string>(type: "varchar(32)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
