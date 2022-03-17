@@ -10,6 +10,9 @@ public class Person {
 
     [Varchar(32)]
     public string LastName { get; set; }
+
+    [Enum(typeof(string))]
+    public EGender Gender { get; set; }
 }
 
 [Table("NICE_PEOPLE")]
@@ -28,3 +31,5 @@ public class BadPerson {
     [Implement]
     public Person Person { get; set; }
 }
+
+public enum EGender { MALE, FEMALE }

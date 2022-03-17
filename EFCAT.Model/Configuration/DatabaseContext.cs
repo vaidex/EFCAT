@@ -3,6 +3,7 @@ using EFCAT.Model.Converter;
 using EFCAT.Model.Data.Annotation;
 using EFCAT.Model.Extension;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.ComponentModel.DataAnnotations;
@@ -157,32 +158,10 @@ public class DatabaseContext : DbContext {
                         else if (property.HasAttribute<ImplementAttribute>())
                             entity.OwnsOne(type, name, objEntity => {
                                 type.GetProperties().ToList().ForEach(objProperty => {
-                                    PropertyBuilder objPropertyBuilder = objEntity.Property(objProperty.PropertyType, objProperty.Name);
-                                    objPropertyBuilder.HasColumnName((property.GetAttribute<ImplementAttribute>().GetName() ?? property.GetSqlName()) + "_" + objProperty.GetSqlName());
-                                    objProperty.OnAttribute<TypeAttribute>(attr =>
-                                        objProperty.OnAttribute<Annotation.PrecisionAttribute>(
-                                            pattr => objPropertyBuilder.HasPrecision(pattr.Digits + pattr.Decimals, pattr.Decimals).IsRequired(!attr.Nullable ?? true),
-                                            () => objPropertyBuilder.HasColumnType(attr.Type).IsRequired(!attr.Nullable ?? true)
-                                        )
-                                    );
+                                    SetProperty(objEntity, objProperty, keys);
                                 });
                             });
-                        else {
-                            PropertyBuilder propertyBuilder = entity.Property(name);
-
-                            propertyBuilder.HasColumnName(property.GetSqlName());
-                            property.OnAttribute<TypeAttribute>(attr =>
-                                property.OnAttribute<Annotation.PrecisionAttribute>(
-                                    pattr => propertyBuilder.HasPrecision(pattr.Digits + pattr.Decimals, pattr.Decimals).IsRequired(!attr.Nullable ?? true),
-                                    () => propertyBuilder.HasColumnType(attr.Type).IsRequired(!attr.Nullable ?? true)
-                                )
-                            );
-                            property.OnAttribute<NullableAttribute>(attr => propertyBuilder.IsRequired(!attr.Nullable));
-                            property.OnAttribute<AutoIncrementAttribute>(attr => propertyBuilder.ValueGeneratedOnAdd());
-                            property.OnAttribute<PrimaryKeyAttribute>(attr => keys.Add(new Key(name, type)));
-                            property.OnAttribute<UniqueAttribute>(attr => entity.HasIndex(name).IsUnique(true));
-                            property.OnAttribute<EnumAttribute>(attr => propertyBuilder.HasConversion(attr.Type));
-                        }
+                        else SetProperty(entity, property, keys);
                         break;
                 }
             }
@@ -203,7 +182,27 @@ public class DatabaseContext : DbContext {
             discriminatorBuilder.HasValue(discriminator.Key, discriminator.Value);
         }
     }
-
+    void SetProperty<T>(T infrastructure, PropertyInfo property, List<Key> keys) where T : IInfrastructure<IConventionEntityTypeBuilder> {
+        IConventionEntityTypeBuilder entity = infrastructure.Instance;
+        IConventionPropertyBuilder? propertyBuilder = entity.Property(property.PropertyType, property.Name);
+        if (propertyBuilder == null) return;
+        propertyBuilder.HasColumnName(property.GetSqlName());
+        property.OnAttribute<TypeAttribute>(attr =>
+            property.OnAttribute<Annotation.PrecisionAttribute>(
+                pattr => {
+                    propertyBuilder.HasPrecision(pattr.Digits + pattr.Decimals);
+                    propertyBuilder.HasScale(pattr.Decimals);
+                    propertyBuilder.IsRequired(!attr.Nullable ?? true);
+                },
+                () => propertyBuilder.HasColumnType(attr.Type).IsRequired(!attr.Nullable ?? true)
+            )
+        );
+        property.OnAttribute<NullableAttribute>(attr => propertyBuilder.IsRequired(!attr.Nullable));
+        property.OnAttribute<AutoIncrementAttribute>(attr => propertyBuilder.ValueGenerated(Microsoft.EntityFrameworkCore.Metadata.ValueGenerated.OnAdd));
+        property.OnAttribute<PrimaryKeyAttribute>(attr => keys.Add(new Key(property.Name, property.PropertyType)));
+        property.OnAttribute<UniqueAttribute>(attr => entity.HasIndex(new[]{ property.Name }, $"UQ_{property.DeclaringType.Name.GetSqlName()}_{property.Name.GetSqlName()}").IsUnique(true, true));
+        property.OnAttribute<EnumAttribute>(attr => propertyBuilder.HasConversion(attr.Type));
+    }
 }
 internal static class Output {
     static string GetPropertySqlInfo(this PropertyInfo property) {
@@ -211,7 +210,6 @@ internal static class Output {
         return "";
     }
 }
-
 public static class Settings {
     public static DbContextOptions DbContextOptions { get; set; }
 }

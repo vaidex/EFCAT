@@ -19,9 +19,11 @@ namespace Sample.Model.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    PERSON_FIRST_NAME = table.Column<string>(type: "varchar(32)", nullable: false)
+                    FIRST_NAME = table.Column<string>(type: "varchar(32)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PERSON_LAST_NAME = table.Column<string>(type: "varchar(32)", nullable: false)
+                    LAST_NAME = table.Column<string>(type: "varchar(32)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    GENDER = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -39,6 +41,8 @@ namespace Sample.Model.Migrations
                     FIRST_NAME = table.Column<string>(type: "varchar(32)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     LAST_NAME = table.Column<string>(type: "varchar(32)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    GENDER = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -63,7 +67,7 @@ namespace Sample.Model.Migrations
                     IMAGE_CONTENT = table.Column<byte[]>(type: "longblob", nullable: true),
                     IMAGE_TYPE = table.Column<string>(type: "varchar(32)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    IMPL_TEXT = table.Column<string>(type: "varchar(32)", nullable: true)
+                    TEXT = table.Column<string>(type: "varchar(32)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -144,13 +148,13 @@ namespace Sample.Model.Migrations
                 column: "USER_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_USERS_EMAIL",
+                name: "UQ_USER_EMAIL",
                 table: "USERS",
                 column: "EMAIL",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_USERS_NAME",
+                name: "UQ_USER_NAME",
                 table: "USERS",
                 column: "NAME",
                 unique: true);

@@ -11,7 +11,7 @@ using Sample.Model.Configuration;
 namespace Sample.Model.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    [Migration("20220317130727_initcreate")]
+    [Migration("20220317152318_initcreate")]
     partial class initcreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -91,6 +91,11 @@ namespace Sample.Model.Migrations
                         .HasColumnType("varchar(32)")
                         .HasColumnName("FIRST_NAME");
 
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("GENDER");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("varchar(32)")
@@ -130,10 +135,10 @@ namespace Sample.Model.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
+                    b.HasIndex(new[] { "Email" }, "UQ_USER_EMAIL")
                         .IsUnique();
 
-                    b.HasIndex("Name")
+                    b.HasIndex(new[] { "Name" }, "UQ_USER_NAME")
                         .IsUnique();
 
                     b.ToTable("USERS", (string)null);
@@ -211,12 +216,17 @@ namespace Sample.Model.Migrations
                             b1.Property<string>("FirstName")
                                 .IsRequired()
                                 .HasColumnType("varchar(32)")
-                                .HasColumnName("PERSON_FIRST_NAME");
+                                .HasColumnName("FIRST_NAME");
+
+                            b1.Property<string>("Gender")
+                                .IsRequired()
+                                .HasColumnType("longtext")
+                                .HasColumnName("GENDER");
 
                             b1.Property<string>("LastName")
                                 .IsRequired()
                                 .HasColumnType("varchar(32)")
-                                .HasColumnName("PERSON_LAST_NAME");
+                                .HasColumnName("LAST_NAME");
 
                             b1.HasKey("BadPersonId");
 
@@ -250,7 +260,7 @@ namespace Sample.Model.Migrations
                             b1.Property<string>("Text")
                                 .IsRequired()
                                 .HasColumnType("varchar(32)")
-                                .HasColumnName("IMPL_TEXT");
+                                .HasColumnName("TEXT");
 
                             b1.HasKey("UserId");
 
