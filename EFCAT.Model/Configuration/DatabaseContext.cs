@@ -154,7 +154,19 @@ public class DatabaseContext : DbContext {
                         break;
                     default:
                         if ((type.IsGenericType && type.GetGenericTypeDefinition() != typeof(Nullable<>)) || type.GetCustomAttributes<TableAttribute>().Any()) entity.Ignore(name);
-                        else if (property.HasAttribute<ImplementAttribute>()) entity.OwnsOne(type, name, obj => type.GetProperties().ToList().ForEach(objproperty => obj.Property(objproperty.PropertyType, objproperty.Name).HasColumnName((property.GetAttribute<ImplementAttribute>().GetName() ?? property.GetSqlName()) + "_" + objproperty.GetSqlName())));
+                        else if (property.HasAttribute<ImplementAttribute>())
+                            entity.OwnsOne(type, name, objEntity => {
+                                type.GetProperties().ToList().ForEach(objProperty => {
+                                    PropertyBuilder objPropertyBuilder = objEntity.Property(objProperty.PropertyType, objProperty.Name);
+                                    objPropertyBuilder.HasColumnName((property.GetAttribute<ImplementAttribute>().GetName() ?? property.GetSqlName()) + "_" + objProperty.GetSqlName());
+                                    objProperty.OnAttribute<TypeAttribute>(attr =>
+                                        objProperty.OnAttribute<Annotation.PrecisionAttribute>(
+                                            pattr => objPropertyBuilder.HasPrecision(pattr.Digits + pattr.Decimals, pattr.Decimals).IsRequired(!attr.Nullable ?? true),
+                                            () => objPropertyBuilder.HasColumnType(attr.Type).IsRequired(!attr.Nullable ?? true)
+                                        )
+                                    );
+                                });
+                            });
                         else {
                             PropertyBuilder propertyBuilder = entity.Property(name);
 
@@ -191,7 +203,7 @@ public class DatabaseContext : DbContext {
             discriminatorBuilder.HasValue(discriminator.Key, discriminator.Value);
         }
     }
-    
+
 }
 internal static class Output {
     static string GetPropertySqlInfo(this PropertyInfo property) {

@@ -5,8 +5,10 @@ namespace Sample.Model.Entity;
 
 [NotGenerated]
 public class Person {
+    [Varchar(32)]
     public string FirstName { get; set; }
 
+    [Varchar(32)]
     public string LastName { get; set; }
 }
 
