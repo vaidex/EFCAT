@@ -4,7 +4,7 @@ using System.Net.Http.Headers;
 using Sample.Model.Configuration;
 using EFCAT.Service.Storage;
 
-namespace Sample.Server.Services {
+namespace Sample.UI.Services {
     public class MyAuthenticationService : AuthenticationService<User> {
         HttpClient _httpClient;
 

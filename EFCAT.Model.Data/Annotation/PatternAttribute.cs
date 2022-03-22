@@ -16,6 +16,4 @@ public class PatternAttribute : XValidationAttribute {
             );
         return ObjectExtension.MatchPattern(value, _pattern) ? Error : Success;
     }
-
-    
 }

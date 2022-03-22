@@ -1,10 +1,4 @@
-using Sample.Domain.Repository;
-using Microsoft.EntityFrameworkCore;
-using Sample.Model.Configuration;
-using Sample.Server.Services;
-using EFCAT.Service.Storage;
-using EFCAT.Service.Authentication;
-using Sample.Model.Entity;
+using Sample.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,18 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddScoped<ITestAsyncRepository, TestAsyncRepository>();
-
-builder.Services.AddDbContext<TestDbContext>(
-    options => options
-    .UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new System.Version("8.0.25")))
-    .EnableSensitiveDataLogging()
-    .EnableDetailedErrors()
-);
-
-builder.Services.AddHttpClient();
-builder.Services.AddLocalStorage();
-builder.Services.AddAuthenticationService<MyAuthenticationService>();
+builder.Services.AddUI();
 
 var app = builder.Build();
 /*

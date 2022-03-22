@@ -8,7 +8,7 @@ namespace EFCAT.Model.Data.Extension {
             if (obj != null) return predicate(obj);
             return false;
         }
-        internal static bool RangeCompare(object? value, object border, string? ErrorMessage, Func<Expression, Expression, BinaryExpression> CompareExpression) {
+        internal static bool RangeCompare(object? value, object border, Func<Expression, Expression, BinaryExpression> CompareExpression) {
             if (value == null) return false;
             Type type = value.GetType();
             if (!type.IsNumeric()) type = typeof(int);

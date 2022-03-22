@@ -18,6 +18,6 @@ public class MaxAttribute : XValidationAttribute {
             "The field @displayname needs to have a maximum of @max.",
             new Dictionary<string, object> { { "@displayname", context.DisplayName }, { "@max", _max } }
             );
-        return ObjectExtension.RangeCompare(value, _max, ErrorMessage, Expression.GreaterThan) ? Error : Success;
+        return ObjectExtension.RangeCompare(value, _max, Expression.GreaterThan) ? Error : Success;
     }
 }

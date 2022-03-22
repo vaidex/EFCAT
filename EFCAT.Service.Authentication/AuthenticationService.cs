@@ -50,8 +50,8 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
     // Authentication
     public async override Task<AuthenticationState> GetAuthenticationStateAsync() {
         try {
-            string token = await ReadAsync(_itemName);
-            if (string.IsNullOrEmpty(token)) return _authenticationState;
+            string? token = await ReadAsync(_itemName);
+            if (string.IsNullOrWhiteSpace(token)) return _authenticationState;
             AuthenticationPackage package = await ExecuteAuthentication(token);
             if (package.Success) await OnAuthenticationSuccess(package.Token, package.Account);
             else await OnAuthenticationFailure();
@@ -267,10 +267,10 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
     public TAccount? GetAccount() => account ?? null;
 
     // Web Storage
-    protected async virtual Task<string> ReadAsync(string item) {
+    protected async virtual Task<string?> ReadAsync(string item) {
         WebStorageCheck();
         foreach(IWebStorage storage in _storages) if (await storage.GetAsync<string?>(item) is string value) return value;
-        return await Task.FromResult("");
+        return null;
     }
     protected async virtual Task WriteAsync(string item, string value) {
         WebStorageCheck();

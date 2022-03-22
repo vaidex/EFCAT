@@ -193,7 +193,7 @@ public class DatabaseContext : DbContext {
                 () => propertyBuilder.HasColumnType(attr.Type).IsRequired(!attr.Nullable ?? true)
             )
         );
-        property.OnAttribute<NullableAttribute>(attr => propertyBuilder.IsRequired(!attr.Nullable));
+        property.OnAttribute<NullableAttribute>(attr => propertyBuilder.IsRequired(!attr.Nullable), () => propertyBuilder.IsRequired(Nullable.GetUnderlyingType(property.GetType()) == null));
         property.OnAttribute<AutoIncrementAttribute>(attr => propertyBuilder.ValueGenerated(Microsoft.EntityFrameworkCore.Metadata.ValueGenerated.OnAdd));
         property.OnAttribute<PrimaryKeyAttribute>(attr => keys.Add(new Key(property.Name, property.PropertyType)));
         property.OnAttribute<UniqueAttribute>(attr => entity.HasIndex(new[]{ property.Name }, $"UQ_{property.DeclaringType.Name.GetSqlName()}_{name}").IsUnique(true, true));

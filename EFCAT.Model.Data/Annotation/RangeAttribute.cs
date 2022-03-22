@@ -19,6 +19,6 @@ public class RangeAttribute : XValidationAttribute {
             "The field @displayname needs to be in the range of @min and @max.",
             new Dictionary<string, object> { { "@displayname", context.DisplayName }, { "@min", _min }, { "@max", _max } }
             );
-        return ObjectExtension.RangeCompare(value, _min, ErrorMessage, Expression.LessThan) || ObjectExtension.RangeCompare(value, _max, ErrorMessage, Expression.GreaterThan) ? Error : Success;
+        return ObjectExtension.RangeCompare(value, _min, Expression.LessThan) || ObjectExtension.RangeCompare(value, _max, Expression.GreaterThan) ? Error : Success;
     }
 }

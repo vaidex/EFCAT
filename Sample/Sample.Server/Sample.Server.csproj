@@ -15,9 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\EFCAT.Service\EFCAT.Service.csproj" />
-		<ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
-		<ProjectReference Include="..\Sample.Model\Sample.Model.csproj" />
+	  <ProjectReference Include="..\Sample.UI\Sample.UI.csproj" />
 	</ItemGroup>
 
 </Project>

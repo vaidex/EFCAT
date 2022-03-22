@@ -18,8 +18,6 @@ public class MinAttribute : XValidationAttribute {
             "The field @displayname needs to have a minimum of @max.",
             new Dictionary<string, object> { { "@displayname", context.DisplayName }, { "@min", _min } }
             );
-        return ObjectExtension.RangeCompare(value, _min, ErrorMessage, Expression.LessThan) ? Error : Success;
+        return ObjectExtension.RangeCompare(value, _min, Expression.LessThan) ? Error : Success;
     }
-
-    
 }
