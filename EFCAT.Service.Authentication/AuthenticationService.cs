@@ -269,7 +269,7 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
     // Web Storage
     protected async virtual Task<string?> ReadAsync(string item) {
         WebStorageCheck();
-        foreach(IWebStorage storage in _storages) if (await storage.GetAsync<string?>(item) is string value) return value;
+        foreach (IWebStorage storage in _storages) if (await storage.GetAsync<string?>(item) is string value) return value;
         return null;
     }
     protected async virtual Task WriteAsync(string item, string value) {
