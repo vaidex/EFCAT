@@ -14,9 +14,11 @@ public class AuthenticationAttribute : ValidationAttribute {
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
         switch (authenticationType) {
             case EAuthenticationType.LOGIN:
-                return (bool)Get("Login", new object[] { value }) ? ValidationResult.Success : new ValidationResult(ErrorMessage);
             case EAuthenticationType.REGISTER:
-                return (bool)Get("Register", new object[] { value }) ? ValidationResult.Success : new ValidationResult(ErrorMessage);
+                string request = authenticationType == EAuthenticationType.LOGIN ? "Login" : "Register";
+                Package? package = Get(request, new object[] { value }) as Package;
+                if(package == null) return new ValidationResult(ErrorMessage);
+                return package.Success ? ValidationResult.Success : new ValidationResult(package.ErrorMessage ?? ErrorMessage);
             default:
                 Get("Logout");
                 return ValidationResult.Success;

@@ -57,17 +57,17 @@
     [Authentication("REGISTER", ErrorMessage = "Something went wrong. Please try again later.")]
     public class RegisterForm : User {
         [Compare("Password", ErrorMessage = "No matching Passwords!")]
-        [Nullable(false)]
+        [NotNull]
         public string RepeatPassword { get; set; }
     }
 
     [Authentication("LOGIN", ErrorMessage = "Identifier or Password incorrect.")]
     public class LoginForm {
         [Substitute("Name", "Email")]
-        [Nullable(false)]
+        [NotNull]
         public string Identifier { get; set; }
-
-        [Nullable(false)]
+        
+        [NotNull]
         public string Password { get; set; }
     }
 }

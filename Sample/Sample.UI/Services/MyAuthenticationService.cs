@@ -15,5 +15,8 @@ namespace Sample.UI.Services {
         protected override async Task OnAuthenticationSuccess(string token, User account) {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
         }
+
+        //protected override Task<Package> OnLogin(object obj, User account, string token) => Task.FromResult(new Package() { State = EState.ERROR, ErrorMessage = "This Error is displayed!" });
+        //protected override Task<Package> OnRegister(User account) => Task.FromResult(new Package() { State = EState.ERROR, ErrorMessage = "Disallowed!" });
     }
 }

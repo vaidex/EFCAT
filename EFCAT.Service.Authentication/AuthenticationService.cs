@@ -16,10 +16,10 @@ using System.Text.Json;
 namespace EFCAT.Service.Authentication;
 
 public interface IAuthenticationService<TAccount> where TAccount : class {
-    Task<bool> LoginAsync(object value);
-    bool Login(object value);
-    Task<bool> RegisterAsync(TAccount account);
-    bool Register(TAccount account);
+    Task<Package> LoginAsync(object value);
+    Package Login(object value);
+    Task<Package> RegisterAsync(TAccount account);
+    Package Register(TAccount account);
     Task LogoutAsync();
     void Logout();
     TAccount? GetAccount();
@@ -110,15 +110,15 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
     }
 
     // Login
-    public async Task<bool> LoginAsync(object obj) {
+    public async Task<Package> LoginAsync(object obj) {
         LoginPackage package = await ExecuteLogin(obj);
         if (package.Success) await OnLoginSuccess(obj, package.Account, package.Token);
         else await OnLoginFailure(obj);
-        return package.Success;
+        return package;
     }
-    public bool Login(object obj) => Task.Run(() => LoginAsync(obj)).Result;
+    public Package Login(object obj) => Task.Run(() => LoginAsync(obj)).Result;
     private async Task<LoginPackage> ExecuteLogin(object obj) {
-        LoginPackage package = new LoginPackage() { Success = false };
+        LoginPackage package = new LoginPackage() { State = EState.ERROR };
         // Check if the Object is a Class
         if (!obj.GetType().IsClass) throw (new Exception($"Object needs to be a class!"));
         // Check if Entity has Properties
@@ -148,20 +148,19 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
         TAccount? account = resultEnumerable.FirstOrDefault();
         if (account == null) return package;
         string token = GetAccountToken(account);
-        bool login = await OnLogin(obj, account, token);
-        if (login == false) return package;
+        package = (await OnLogin(obj, account, token)).Copy(package) as LoginPackage;
+        if (!package.Success) return package;
         return new LoginPackage() {
-            Success = true,
+            State = EState.OK,
             Account = account,
             Token = token,
             Object = obj,
         };
     }
-    protected virtual async Task<bool> OnLogin(object obj, TAccount account, string token) => true;
+    protected virtual async Task<Package> OnLogin(object obj, TAccount account, string token) => new Package();
     protected virtual async Task OnLoginSuccess(object obj, TAccount account, string token) => _ = WriteAsync(_itemName, token).ConfigureAwait(true);
     protected virtual async Task OnLoginFailure(object obj) { }
-    private class LoginPackage {
-        public bool Success { get; set; }
+    private class LoginPackage : Package {
         public TAccount Account { get; set; }
         public string Token { get; set; }
         public object Object { get; set; }
@@ -239,23 +238,23 @@ public abstract class AuthenticationService<TAccount> : AuthenticationStateProvi
     }
 
     // Register
-    public async Task<bool> RegisterAsync(TAccount account) {
-        bool success = await ExecuteRegister(account);
-        if (success) await OnRegisterSuccess(account);
+    public async Task<Package> RegisterAsync(TAccount account) {
+        Package package = await ExecuteRegister(account);
+        if (package.Success) await OnRegisterSuccess(account);
         else await OnRegisterFailure(account);
-        return success;
+        return package;
     }
-    public bool Register(TAccount account) => Task.Run(() => RegisterAsync(account)).Result;
-    private async Task<bool> ExecuteRegister(TAccount account) {
-        bool register = await OnRegister(account);
-        if (!register) return false;
-        if (_dbSet.Contains(account)) return false;
+    public Package Register(TAccount account) => Task.Run(() => RegisterAsync(account)).Result;
+    private async Task<Package> ExecuteRegister(TAccount account) {
+        Package package = new Package() { State = EState.ERROR };
+        if (await OnRegister(account) is Package register && !register.Success) return register;
+        if (_dbSet.Contains(account)) return package;
         await _dbSet.AddAsync(account);
         await _dbContext.SaveChangesAsync();
-        if (account == null) return false;
-        return true;
+        if (account == null) return package;
+        return new Package() { State = EState.OK };
     }
-    protected virtual async Task<bool> OnRegister(TAccount account) => true;
+    protected virtual async Task<Package> OnRegister(TAccount account) => new Package();
     protected virtual async Task OnRegisterSuccess(TAccount account) { }
     protected virtual async Task OnRegisterFailure(TAccount account) { }
 
