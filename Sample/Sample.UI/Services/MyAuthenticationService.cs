@@ -3,6 +3,7 @@ using Sample.Model.Entity;
 using System.Net.Http.Headers;
 using Sample.Model.Configuration;
 using EFCAT.Service.Storage;
+using Microsoft.EntityFrameworkCore;
 
 namespace Sample.UI.Services {
     public class MyAuthenticationService : AuthenticationService<User> {
@@ -10,6 +11,8 @@ namespace Sample.UI.Services {
 
         public MyAuthenticationService(TestDbContext context, ILocalStorage localStorage, HttpClient client) : base(context, localStorage) {
             _httpClient = client;
+            _roles.Add((user) => _dbSet.Where(o => o.Id == user.Id).Include(o => o.Roles).SelectMany(o => o.Roles.Select(o => o.RoleName)).ToListAsync());
+            _roles.Add((user) => _dbSet.Where(o => o.Id == user.Id).Select(o => o.Id == 1 ? "Admin" : "").ToListAsync());
         }
 
         protected override async Task OnAuthenticationSuccess(string token, User account) {

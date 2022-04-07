@@ -5,6 +5,7 @@
 @using EFCAT.Model.Data.Annotation
 @using Sample.Model.Entity
 @using EFCAT.Service.Component.Input
+@using System.Text.RegularExpressions
 @inject ITestAsyncRepository _repository
 
 <PageTitle>Index</PageTitle>
@@ -65,6 +66,28 @@
     <input type="text" @bind-value=Ex.Username placeholder="Name" />
     <button>submit</button>
 </EditForm>
+<hr />
+<EditForm Model=MinTst>
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <input type="number" @bind-value=MinTst.MinInt />
+    <input type="number" @bind-value=MinTst.MinDouble />
+    <input type="number" @bind-value=MinTst.MinProperty />
+    <input type="datetime" @bind-value=MinTst.MinDate />
+    <input type="number" @bind-value=MinTst.MinMethod />
+    <button>submit</button>
+</EditForm>
+<hr />
+<EditForm Model=PatternTst>
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <input type="text" @bind-value=PatternTst.PatternString />
+    <input type="text" @bind-value=PatternTst.PatternPropertyString />
+    <input type="text" @bind-value=PatternTst.PatternPropertyRegex />
+    <input type="text" @bind-value=PatternTst.PatternMethodString />
+    <input type="text" @bind-value=PatternTst.PatternMethodRegex />
+    <button>submit</button>
+</EditForm>
 
 @code {
     List<User> Entities { get; set; }
@@ -78,6 +101,10 @@
     TestExist Ex { get; set; } = new TestExist();
 
     Comparison com { get; set; } = new Comparison();
+
+    MinTest MinTst { get; set; } = new MinTest();
+    
+    PatternTest PatternTst { get; set; } = new PatternTest();
 
     protected async override Task OnInitializedAsync() {
         Entities = (await _repository.ReadAllAsync()).ToList();
@@ -102,5 +129,59 @@
         public Crypt<SHA256> CurrentPassword { get; set; }
         [Compare("CurrentPassword", ErrorMessage = "Wrong!")]
         public string ComparePassword { get; set; }
+    }
+
+    private class MinTest {
+        [NotNull]
+        [Min(1)]
+        public int MinInt { get; set; }
+
+        [NotNull]
+        [Min(1.00)]
+        public int MinDouble { get; set; }
+
+        [NotNull]
+        [Min(EParameter.PROPERTY, "MinInt")]
+        public int MinProperty { get; set; }
+
+        public DateTime date => DateTime.Now;
+
+        [NotNull]
+        [Min(EParameter.PROPERTY, "date")]
+        public DateTime MinDate { get; set; }
+
+        public int Add(int x, int y) => x + y;
+
+        [NotNull]
+        [Min(EParameter.METHOD, "Add", 2, 3)]
+        public int MinMethod { get; set; }
+    }
+
+    private class PatternTest {
+        [NotNull]
+        [Pattern("^[1-9]+$")]
+        public string PatternString { get; set; }
+
+        public string Pattern { get; set; } = "^[1-9]+$";
+        public Regex PatternRegex { get; set; } = new Regex("^[1-9]+$");
+
+        [NotNull]
+        [Pattern(EParameter.PROPERTY, "Pattern")]
+        public string PatternPropertyString { get; set; }
+        
+        [NotNull]
+        [Pattern(EParameter.PROPERTY, "PatternRegex")]
+        public string PatternPropertyRegex { get; set; }
+
+        public string GetPattern() => Pattern;
+        public Regex GetPatternRegex() => PatternRegex;
+
+        [NotNull]
+        [Pattern(EParameter.METHOD, "GetPattern")]
+        public string PatternMethodString { get; set; }
+        
+        [NotNull]
+        [Pattern(EParameter.METHOD, "GetPatternRegex")]
+        public string PatternMethodRegex { get; set; }
     }
 }

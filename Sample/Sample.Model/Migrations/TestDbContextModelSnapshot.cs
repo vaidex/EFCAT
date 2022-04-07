@@ -57,6 +57,7 @@ namespace Sample.Model.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<DateTime?>("ExpiresAt")
+                        .IsRequired()
                         .HasColumnType("datetime(6)")
                         .HasColumnName("EXPIRES_AT");
 
@@ -102,6 +103,20 @@ namespace Sample.Model.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("NICE_PEOPLE", (string)null);
+                });
+
+            modelBuilder.Entity("Sample.Model.Entity.Role", b =>
+                {
+                    b.Property<int>("USER_ID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RoleName")
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("ROLE_NAME");
+
+                    b.HasKey("USER_ID", "RoleName");
+
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("Sample.Model.Entity.User", b =>
@@ -248,6 +263,17 @@ namespace Sample.Model.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Sample.Model.Entity.Role", b =>
+                {
+                    b.HasOne("Sample.Model.Entity.User", "User")
+                        .WithMany("Roles")
+                        .HasForeignKey("USER_ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Sample.Model.Entity.User", b =>
                 {
                     b.OwnsOne("Sample.Model.Entity.Implemented", "Impl", b1 =>
@@ -312,6 +338,8 @@ namespace Sample.Model.Migrations
                     b.Navigation("Codes");
 
                     b.Navigation("Mail");
+
+                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }

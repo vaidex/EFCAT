@@ -40,4 +40,6 @@ public class User {
 
     [Implement]
     public Implemented? Impl { get; set; }
+
+    public ICollection<Role> Roles { get; set; }
 }

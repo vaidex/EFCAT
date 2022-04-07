@@ -27,7 +27,7 @@ public class TypeAttribute : XValidationAttribute {
             else return Success;
         if (Min.IfNotNull(min => ObjectExtension.RangeCompare(value, min, Expression.LessThan))) return Error;
         if (Max.IfNotNull(max => ObjectExtension.RangeCompare(value, max, Expression.GreaterThan))) return Error;
-        if (Pattern.IfNotNull(pattern => ObjectExtension.MatchPattern(value, pattern))) return Error;
+        if (Pattern.IfNotNull(pattern => ObjectExtension.MatchPattern(value, new Regex(pattern)))) return Error;
         return Success;
     }
 

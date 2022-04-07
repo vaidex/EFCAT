@@ -13,6 +13,62 @@
     </div>
 </div>
 
+<style>
+    .input-wrapper {
+        position: relative;
+        width: 200px;
+        height: 20px;
+        display: flex;
+    }
+
+    .input-value {
+        width: 100%;
+        border: 0;
+        background: 0;
+        font-family: inherit;
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
+    }
+
+        .input-value:focus {
+            outline: 0;
+        }
+
+    .input-display {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 5px;
+        pointer-events: none;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        padding-left: inherit;
+    }
+
+    .input-hidden {
+        visibility: hidden;
+    }
+
+    .input-unit {
+        white-space: pre;
+    }
+
+    .input-range {
+        display: grid;
+        grid-template-rows: 50% 50%;
+        margin: 0 5px;
+    }
+
+        .input-range button {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: 0;
+        }
+</style>
+
 @code {
     private string? DisplayValue { get; set; }
     [Parameter] public T Value { get; set; }
@@ -44,21 +100,19 @@
         if (
             new[] { ",", "." }.Any(s => DisplayValue.Contains(s)) &&
             new[] { typeof(Int16), typeof(Int32), typeof(Int64) }.Any(t => convertType == t))
-            DisplayValue = DisplayValue.Replace(",","").Replace(".", "");
+            DisplayValue = DisplayValue.Replace(",", "").Replace(".", "");
         T val = (T)Value;
-        try { val = (T)Convert.ChangeType(DisplayValue.Replace('.', ','), convertType); }
-        catch (FormatException ex) { val = default(T); }
-        catch (OverflowException ex) { return; }
+        try { val = (T)Convert.ChangeType(DisplayValue.Replace('.', ','), convertType); } catch (FormatException ex) { val = default(T); } catch (OverflowException ex) { return; }
         await UpdateValue(val);
     }
 
     private async Task Increase() {
-        T value = Add(Value, Step) ;
+        T value = Add(Value, Step);
         if (maxSet) if (GreaterThan(value, Max)) value = (T)Max;
         await UpdateValue(value);
     }
     private async Task Decrease() {
-        T value = Sub(Value, Step) ;
+        T value = Sub(Value, Step);
         if (minSet) if (LowerThan(value, Min)) value = (T)Min;
         await UpdateValue(value);
     }

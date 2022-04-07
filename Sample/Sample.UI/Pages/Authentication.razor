@@ -3,21 +3,40 @@
 @using EFCAT.Service.Authentication
 @using EFCAT.Service.Component.Validation
 @using Sample.Model.Entity
-@using Sample.UI.Services
 @inject NavigationManager _navigationManager
+@inject AuthenticationStateProvider AuthProvider
 
-<h3>Login</h3>
 
 <AuthorizeView>
     <Authorized Context="AuthContext">
-        Auth
-        @Account.Name
-        <button @onclick=@(() => AuthService.LogoutAsync().ContinueWith((a) => _navigationManager.NavigateTo("/", forceLoad: true)))>Logout</button>
+        @if (Account != null) {
+            <span>Auth</span>
+            <button @onclick=@(() => AuthService.LogoutAsync().ContinueWith((a) => _navigationManager.NavigateTo("/", forceLoad: true)))>Logout</button>
+        }
+        <hr />
+        <ul>
+            <li>
+                <b>Name</b>
+                <span>@AuthContext.User.Claims.First(o => o.Type == "Name").Value</span>
+            </li>
+            <li>
+                <b>Roles</b>
+                <ul>
+                    @foreach (string str in new string[] { "Nice", "Noice", "Admin" }) {
+                        <li>
+                            <b>@str</b>
+                            <span> @AuthContext.User.IsInRole(str) </span>
+                        </li>
+                    }
+                </ul>
+            </li>
+        </ul>
+
     </Authorized>
     <NotAuthorized Context="NoAuthContext">
         No Auth
         <EditForm Model="Login" OnValidSubmit="ExecuteLogin">
-            <h3 class="title">Registration</h3>
+            <h3 class="title">Login</h3>
             <DataAnnotationsValidator />
             <ValidationSummary />
             <input type="text" @bind-value="Login.Identifier" placeholder="Identifier" />
@@ -66,7 +85,7 @@
         [Substitute("Name", "Email")]
         [NotNull]
         public string Identifier { get; set; }
-        
+
         [NotNull]
         public string Password { get; set; }
     }

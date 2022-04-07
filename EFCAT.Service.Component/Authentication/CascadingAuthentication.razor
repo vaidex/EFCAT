@@ -1,17 +1,19 @@
 ﻿@using EFCAT.Service.Authentication
 @using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthProvider
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationProvider
 @typeparam Type
 
-<CascadingValue Value="Account" IsFixed=true>
-    <CascadingValue Value="AuthService" IsFixed=true>
+
+<CascadingValue Value="AuthenticationService" IsFixed=true>
+    <CascadingValue Value="Account" IsFixed=true>
         @ChildContent
     </CascadingValue>
 </CascadingValue>
 
 @code {
-    IAuthenticationService<Type> AuthService { get => ((IAuthenticationService<Type>)AuthProvider); }
-    Type Account { get => AuthService.GetAccount(); }
+    public IAuthenticationService<Type> AuthenticationService { get => ((IAuthenticationService<Type>)AuthenticationProvider); }
+    public Type Account { get => AuthenticationService.GetAccount(); }
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }

@@ -12,6 +12,7 @@ public class TestDbContext : DatabaseContext {
     public DbSet<ZMail> ZMails { get; set; }
     public DbSet<NicePerson> NicePeople { get; set; }
     public DbSet<BadPerson> BadPeople { get; set; }
+    public DbSet<Role> Roles { get; set; }
 
     public TestDbContext(DbContextOptions<TestDbContext> options) : base(options, true) { }
 
