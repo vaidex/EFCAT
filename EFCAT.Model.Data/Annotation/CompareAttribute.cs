@@ -5,17 +5,14 @@ using System.Reflection;
 namespace EFCAT.Model.Data.Annotation;
 
 public class CompareAttribute : XValidationAttribute {
-    public string PropertyName { get; set; }
+    Parameter? _parameter = null;
 
-    public CompareAttribute(string propertyName) {
-        PropertyName = propertyName;
-    }
+    public CompareAttribute(string propertyName) : this(EParameter.PROPERTY, propertyName) { }
+    public CompareAttribute(EParameter type, string name, params object[] parameter) => _parameter = new Parameter(type, name, parameter);
 
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
-        PropertyInfo? property = context.ObjectType.GetProperty(PropertyName);
-        if (property == null) throw new Exception($"{context.DisplayName} comparison property not found");
-        Error = ValidationResultManager.Error(context, ErrorMessage, "@displayname needs to be equal to @comparisonname.", new Dictionary<string, object> { { "@displayname", context.DisplayName }, { "@comparisonname", property.Name } });
-        object? result = property.GetValue(context.ObjectInstance, null);
+        Error = ValidationResultManager.Error(context, ErrorMessage, "@displayname needs to be equal to @comparisonname.", new Dictionary<string, object> { { "@displayname", context.DisplayName }, { "@comparisonname", _parameter.Name } });
+        object? result = _parameter.GetValue(context);
         if(result != null && value != null)
             if(result.Equals(value)) return Success;
         return Error;
