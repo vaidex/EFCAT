@@ -141,19 +141,19 @@
         public int MinDouble { get; set; }
 
         [NotNull]
-        [Min(EParameter.PROPERTY, "MinInt")]
+        [Min(Parameter.Property, "MinInt")]
         public int MinProperty { get; set; }
 
         public DateTime date => DateTime.Now;
 
         [NotNull]
-        [Min(EParameter.PROPERTY, "date")]
+        [Min(Parameter.Property, "date")]
         public DateTime MinDate { get; set; }
 
         public int Add(int x, int y) => x + y;
 
         [NotNull]
-        [Min(EParameter.METHOD, "Add", 2, 3)]
+        [Min(Parameter.Method, "Add", 2, 3)]
         public int MinMethod { get; set; }
     }
 
@@ -166,22 +166,22 @@
         public Regex PatternRegex { get; set; } = new Regex("^[1-9]+$");
 
         [NotNull]
-        [Pattern(EParameter.PROPERTY, "Pattern")]
+        [Pattern(Parameter.Property, "Pattern")]
         public string PatternPropertyString { get; set; }
         
         [NotNull]
-        [Pattern(EParameter.PROPERTY, "PatternRegex")]
+        [Pattern(Parameter.Property, "PatternRegex")]
         public string PatternPropertyRegex { get; set; }
 
         public string GetPattern() => Pattern;
         public Regex GetPatternRegex() => PatternRegex;
 
         [NotNull]
-        [Pattern(EParameter.METHOD, "GetPattern")]
+        [Pattern(Parameter.Method, "GetPattern")]
         public string PatternMethodString { get; set; }
         
         [NotNull]
-        [Pattern(EParameter.METHOD, "GetPatternRegex")]
+        [Pattern(Parameter.Method, "GetPatternRegex")]
         public string PatternMethodRegex { get; set; }
     }
 }

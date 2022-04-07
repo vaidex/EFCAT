@@ -2,9 +2,10 @@
 
 namespace EFCAT.Model.Data.Annotation;
 
-public enum EParameter { PROPERTY, METHOD }
+public class Parameter {
+    public const EParameter Property = EParameter.PROPERTY;
+    public const EParameter Method = EParameter.METHOD;
 
-internal class Parameter {
     public EParameter Type { get; private set; }
     public string Name { get; private set; }
     public object[]? Parameters { get; private set; } = null;
@@ -19,3 +20,10 @@ internal class Parameter {
         ? context.ObjectType.GetProperty(Name).GetValue(context.ObjectInstance)
         : context.ObjectType.GetMethods().FirstOrDefault(o => o.Name == Name && o.GetParameters().Select(p => new { Property = p, Index = Array.IndexOf(o.GetParameters().ToArray(), p) }).Where(p => p.Property.ParameterType == Parameters[p.Index].GetType()).Count() == Parameters.Count()).Invoke(context.ObjectInstance, Parameters);
 }
+
+public class PR {
+    public const EParameter Property = EParameter.PROPERTY;
+    public const EParameter Method = EParameter.METHOD;
+}
+
+public enum EParameter { PROPERTY, METHOD }
