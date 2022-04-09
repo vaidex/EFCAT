@@ -1,8 +1,4 @@
-﻿using EFCAT.Model.Annotation;
-using EFCAT.Model.Data;
-using EFCAT.Model.Data.Annotation;
-using Microsoft.EntityFrameworkCore;
-
+﻿
 namespace Sample.Model.Entity;
 
 [Table("USERS")]

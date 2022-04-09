@@ -1,5 +1,4 @@
-﻿using EFCAT.Model.Annotation;
-
+﻿
 namespace Sample.Model.Entity;
 
 [Table("ZMAILS")]

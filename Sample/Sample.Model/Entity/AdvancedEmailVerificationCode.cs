@@ -1,6 +1,4 @@
-﻿using EFCAT.Model.Annotation;
-using EFCAT.Model.Data;
-
+﻿
 namespace Sample.Model.Entity;
 
 [Table("ADVANCED_EMAIL_CODES")]

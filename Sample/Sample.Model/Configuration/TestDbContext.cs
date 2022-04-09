@@ -14,6 +14,17 @@ public class TestDbContext : DatabaseContext {
     public DbSet<BadPerson> BadPeople { get; set; }
     public DbSet<Role> Roles { get; set; }
 
+    // Select the primary key from a foreign column
+    public DbSet<ForeignMultiKey> ForeignMultiKeys { get; set; }
+    public DbSet<ForeignMultiKeyCustomized> ForeignMultiKeyCustomized { get; set; }
+    public DbSet<ForeignMultiKeyDefault> ForeignMultiKeyDefault { get; set; }
+
+    // Use a not generated base class as primary key
+    public DbSet<NotGeneratedKey> NotGeneratedKeys { get; set; }
+    public DbSet<NotGeneratedKeyInherit> NotGeneratedKeyInherits { get; set; }
+    public DbSet<NotGeneratedKeyImplement> NotGeneratedKeyImplements { get; set; }
+
+
     public TestDbContext(DbContextOptions<TestDbContext> options) : base(options, true) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {

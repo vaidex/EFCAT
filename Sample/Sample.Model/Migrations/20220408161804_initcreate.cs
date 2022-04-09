@@ -33,6 +33,21 @@ namespace Sample.Model.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "MULTI_KEYS",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false),
+                    NAME = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DATE = table.Column<DateOnly>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MULTI_KEYS", x => new { x.ID, x.NAME, x.DATE });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "NICE_PEOPLE",
                 columns: table => new
                 {
@@ -73,6 +88,48 @@ namespace Sample.Model.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_USERS", x => x.ID);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "FOREIGN_MULTI_KEYS_CUSTOMIZED",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false),
+                    NAME = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DATE = table.Column<DateOnly>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FOREIGN_MULTI_KEYS_CUSTOMIZED", x => new { x.ID, x.NAME });
+                    table.ForeignKey(
+                        name: "FK_FOREIGN_MULTI_KEYS_CUSTOMIZED_MULTI_KEYS_ID_NAME_DATE",
+                        columns: x => new { x.ID, x.NAME, x.DATE },
+                        principalTable: "MULTI_KEYS",
+                        principalColumns: new[] { "ID", "NAME", "DATE" },
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "FOREIGN_MULTI_KEYS_DEFAULT",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false),
+                    NAME = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DATE = table.Column<DateOnly>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FOREIGN_MULTI_KEYS_DEFAULT", x => new { x.ID, x.NAME, x.DATE });
+                    table.ForeignKey(
+                        name: "FK_FOREIGN_MULTI_KEYS_DEFAULT_MULTI_KEYS_ID_NAME_DATE",
+                        columns: x => new { x.ID, x.NAME, x.DATE },
+                        principalTable: "MULTI_KEYS",
+                        principalColumns: new[] { "ID", "NAME", "DATE" },
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -163,6 +220,12 @@ namespace Sample.Model.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FOREIGN_MULTI_KEYS_CUSTOMIZED_ID_NAME_DATE",
+                table: "FOREIGN_MULTI_KEYS_CUSTOMIZED",
+                columns: new[] { "ID", "NAME", "DATE" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_USER_HAS_CODES_USER_ID",
                 table: "USER_HAS_CODES",
                 column: "USER_ID");
@@ -189,6 +252,12 @@ namespace Sample.Model.Migrations
                 name: "BAD_PEOPLE");
 
             migrationBuilder.DropTable(
+                name: "FOREIGN_MULTI_KEYS_CUSTOMIZED");
+
+            migrationBuilder.DropTable(
+                name: "FOREIGN_MULTI_KEYS_DEFAULT");
+
+            migrationBuilder.DropTable(
                 name: "NICE_PEOPLE");
 
             migrationBuilder.DropTable(
@@ -199,6 +268,9 @@ namespace Sample.Model.Migrations
 
             migrationBuilder.DropTable(
                 name: "USER_HAS_CODES");
+
+            migrationBuilder.DropTable(
+                name: "MULTI_KEYS");
 
             migrationBuilder.DropTable(
                 name: "USERS");

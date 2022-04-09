@@ -11,7 +11,7 @@ using Sample.Model.Configuration;
 namespace Sample.Model.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    [Migration("20220406193540_initcreate")]
+    [Migration("20220408161804_initcreate")]
     partial class initcreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,6 +78,60 @@ namespace Sample.Model.Migrations
                     b.ToTable("USER_HAS_CODES", (string)null);
 
                     b.HasDiscriminator<string>("DISCRIMINATOR").HasValue("Code");
+                });
+
+            modelBuilder.Entity("Sample.Model.Entity.ForeignMultiKeyCustomized", b =>
+                {
+                    b.Property<int>("ID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NAME")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateOnly>("DATE")
+                        .HasColumnType("date");
+
+                    b.HasKey("ID", "NAME");
+
+                    b.HasIndex("ID", "NAME", "DATE")
+                        .IsUnique();
+
+                    b.ToTable("FOREIGN_MULTI_KEYS_CUSTOMIZED", (string)null);
+                });
+
+            modelBuilder.Entity("Sample.Model.Entity.ForeignMultiKeyDefault", b =>
+                {
+                    b.Property<int>("ID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NAME")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateOnly>("DATE")
+                        .HasColumnType("date");
+
+                    b.HasKey("ID", "NAME", "DATE");
+
+                    b.ToTable("FOREIGN_MULTI_KEYS_DEFAULT", (string)null);
+                });
+
+            modelBuilder.Entity("Sample.Model.Entity.MultiKey", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("NAME");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date")
+                        .HasColumnName("DATE");
+
+                    b.HasKey("Id", "Name", "Date");
+
+                    b.ToTable("MULTI_KEYS", (string)null);
                 });
 
             modelBuilder.Entity("Sample.Model.Entity.NicePerson", b =>
@@ -263,6 +317,28 @@ namespace Sample.Model.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Sample.Model.Entity.ForeignMultiKeyCustomized", b =>
+                {
+                    b.HasOne("Sample.Model.Entity.MultiKey", "Key")
+                        .WithOne()
+                        .HasForeignKey("Sample.Model.Entity.ForeignMultiKeyCustomized", "ID", "NAME", "DATE")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Key");
+                });
+
+            modelBuilder.Entity("Sample.Model.Entity.ForeignMultiKeyDefault", b =>
+                {
+                    b.HasOne("Sample.Model.Entity.MultiKey", "Key")
+                        .WithOne()
+                        .HasForeignKey("Sample.Model.Entity.ForeignMultiKeyDefault", "ID", "NAME", "DATE")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Key");
                 });
 
             modelBuilder.Entity("Sample.Model.Entity.Role", b =>

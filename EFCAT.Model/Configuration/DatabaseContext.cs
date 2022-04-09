@@ -20,8 +20,11 @@ public class DatabaseContext : DbContext {
     private bool Tools { get; set; } = false;
     private DbContextOptions Options { get; set; }
 
-    public DatabaseContext([System.Diagnostics.CodeAnalysis.NotNull] DbContextOptions options) : base(options) { Settings.DbContextOptions = options; Options = options; }
-    public DatabaseContext([System.Diagnostics.CodeAnalysis.NotNull] DbContextOptions options, bool writeInformation) : this(options) { Tools = writeInformation; }
+    public DatabaseContext([System.Diagnostics.CodeAnalysis.NotNull] DbContextOptions options, bool writeInformation = false) : base(options) {
+        Settings.DbContextOptions = options;
+        Options = options;
+        Tools = writeInformation;
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         try {
@@ -129,8 +132,8 @@ public class DatabaseContext : DbContext {
                 if (referenceName != null) Tools.PrintInfo($"Foreign key {entityType.Name}[{property.Name}] has reference in {property.PropertyType.Name}[{referenceName}].");
                 else Tools.PrintInfo($"Foreign key {entityType.Name}[{property.Name}] found but has no reference.");
 
-                if (property.HasAttribute<PrimaryKeyAttribute>()) keys.AddRange(fk_keys);
-                if (property.HasAttribute<UniqueAttribute>()) entity.HasIndex(fk_keys_array).IsUnique(true);
+                property.OnAttribute<PrimaryKeyAttribute>(attr => keys.AddRange(attr.Keys != null ? fk_keys.Where(k => attr.Keys.Contains(k.Name)).ToList() : fk_keys));
+                property.OnAttribute<UniqueAttribute>(attr => entity.HasIndex(fk_keys_array).IsUnique(true));
             } else {
                 string stringified_type = $"{ (type.IsGenericType ? type.GetGenericTypeDefinition().Name.Remove(type.GetGenericTypeDefinition().Name.IndexOf('`')) : type.Name) }".ToUpper();
                 Type[] paramter = type.IsGenericType ? type.GetGenericArguments().ToArray() : new Type[0];
