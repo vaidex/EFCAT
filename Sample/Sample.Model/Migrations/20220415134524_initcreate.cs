@@ -33,7 +33,7 @@ namespace Sample.Model.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "MULTI_KEYS",
+                name: "FOREIGN_MULTI_KEYS",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false),
@@ -43,7 +43,7 @@ namespace Sample.Model.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MULTI_KEYS", x => new { x.ID, x.NAME, x.DATE });
+                    table.PrimaryKey("PK_FOREIGN_MULTI_KEYS", x => new { x.ID, x.NAME, x.DATE });
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -63,6 +63,54 @@ namespace Sample.Model.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_NICE_PEOPLE", x => x.ID);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "NOT_GENERATED_KEY_IMPLEMENT",
+                columns: table => new
+                {
+                    SECOND_ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    NOT_GENERATED_KEY_ID = table.Column<int>(type: "int", nullable: false),
+                    NOT_GENERATED_KEY_NAME = table.Column<string>(type: "varchar(32)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NOT_GENERATED_KEY_IMPLEMENT", x => x.SECOND_ID);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "NOT_GENERATED_KEY_INHERIT",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    SECOND_ID = table.Column<int>(type: "int", nullable: false),
+                    NAME = table.Column<string>(type: "varchar(32)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NOT_GENERATED_KEY_INHERIT", x => x.ID);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "NOT_GENERATED_KEY_INHERIT_2ND",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    SECOND_ID = table.Column<int>(type: "int", nullable: false),
+                    NAME = table.Column<string>(type: "varchar(32)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NOT_GENERATED_KEY_INHERIT_2ND", x => x.ID);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -104,9 +152,9 @@ namespace Sample.Model.Migrations
                 {
                     table.PrimaryKey("PK_FOREIGN_MULTI_KEYS_CUSTOMIZED", x => new { x.ID, x.NAME });
                     table.ForeignKey(
-                        name: "FK_FOREIGN_MULTI_KEYS_CUSTOMIZED_MULTI_KEYS_ID_NAME_DATE",
+                        name: "FK_FOREIGN_MULTI_KEYS_CUSTOMIZED_FOREIGN_MULTI_KEYS_ID_NAME_DATE",
                         columns: x => new { x.ID, x.NAME, x.DATE },
-                        principalTable: "MULTI_KEYS",
+                        principalTable: "FOREIGN_MULTI_KEYS",
                         principalColumns: new[] { "ID", "NAME", "DATE" },
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -125,16 +173,16 @@ namespace Sample.Model.Migrations
                 {
                     table.PrimaryKey("PK_FOREIGN_MULTI_KEYS_DEFAULT", x => new { x.ID, x.NAME, x.DATE });
                     table.ForeignKey(
-                        name: "FK_FOREIGN_MULTI_KEYS_DEFAULT_MULTI_KEYS_ID_NAME_DATE",
+                        name: "FK_FOREIGN_MULTI_KEYS_DEFAULT_FOREIGN_MULTI_KEYS_ID_NAME_DATE",
                         columns: x => new { x.ID, x.NAME, x.DATE },
-                        principalTable: "MULTI_KEYS",
+                        principalTable: "FOREIGN_MULTI_KEYS",
                         principalColumns: new[] { "ID", "NAME", "DATE" },
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Roles",
+                name: "ROLES",
                 columns: table => new
                 {
                     ROLE_NAME = table.Column<string>(type: "varchar(255)", nullable: false)
@@ -143,9 +191,9 @@ namespace Sample.Model.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roles", x => new { x.USER_ID, x.ROLE_NAME });
+                    table.PrimaryKey("PK_ROLES", x => new { x.USER_ID, x.ROLE_NAME });
                     table.ForeignKey(
-                        name: "FK_Roles_USERS_USER_ID",
+                        name: "FK_ROLES_USERS_USER_ID",
                         column: x => x.USER_ID,
                         principalTable: "USERS",
                         principalColumn: "ID",
@@ -261,7 +309,16 @@ namespace Sample.Model.Migrations
                 name: "NICE_PEOPLE");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "NOT_GENERATED_KEY_IMPLEMENT");
+
+            migrationBuilder.DropTable(
+                name: "NOT_GENERATED_KEY_INHERIT");
+
+            migrationBuilder.DropTable(
+                name: "NOT_GENERATED_KEY_INHERIT_2ND");
+
+            migrationBuilder.DropTable(
+                name: "ROLES");
 
             migrationBuilder.DropTable(
                 name: "ZMAILS");
@@ -270,7 +327,7 @@ namespace Sample.Model.Migrations
                 name: "USER_HAS_CODES");
 
             migrationBuilder.DropTable(
-                name: "MULTI_KEYS");
+                name: "FOREIGN_MULTI_KEYS");
 
             migrationBuilder.DropTable(
                 name: "USERS");

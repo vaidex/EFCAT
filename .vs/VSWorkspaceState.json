@@ -1,6 +1,15 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\EFCAT.Service.Authentication",
+    "\\EFCAT.Service.Component",
+    "\\EFCAT.Service.Component\\Authentication",
+    "\\Sample",
+    "\\Sample\\Sample.Model",
+    "\\Sample\\Sample.Model\\Entity",
+    "\\Sample\\Sample.UI",
+    "\\Sample\\Sample.UI\\Pages"
   ],
+  "SelectedNode": "\\EFCAT.sln",
   "PreviewInSolutionExplorer": false
 }

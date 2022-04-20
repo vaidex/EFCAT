@@ -1,8 +1,8 @@
 ﻿
 namespace EFCAT.Model.Annotation;
 
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public class TableAttribute : Attribute {
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+public class TableAttribute : EntityAttribute {
     public string Name { get; set; }
     public string? Schema { get; set; }
     public bool Discriminator { get; set; }
@@ -14,4 +14,3 @@ public class TableAttribute : Attribute {
         Discriminator = false;
     }
 }
-

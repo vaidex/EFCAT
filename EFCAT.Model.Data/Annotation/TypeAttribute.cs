@@ -7,12 +7,18 @@ namespace EFCAT.Model.Data.Annotation;
 
 public class TypeAttribute : XValidationAttribute {
     public string Type { get; private set; }
+    public object? Size { get; private set; }
+    public string SqlType { get => Type + (string.IsNullOrWhiteSpace(Size?.ToString()) ? "" : $"({Size})"); }
+
     protected object? Min { get; set; }
     protected object? Max { get; set; }
     public string? Pattern { get; set; }
     public bool? Nullable { get; set; }
 
-    public TypeAttribute(string type, object? size = null) => Type = size == null ? type : $"{type}({size})";
+    public TypeAttribute(string type, object? size = null) {
+        Type = type;
+        Size = size;
+    }
 
     protected override ValidationResult? IsValid(object? value, ValidationContext context) {
         Error = ValidationResultManager.Error(context, ErrorMessage,
@@ -31,6 +37,6 @@ public class TypeAttribute : XValidationAttribute {
         return Success;
     }
 
-    public void MaxSizeReached(string size) => throw new ArgumentOutOfRangeException($"{Type.ToUpper()} has max size of {size}");
-    public void MinSizeReached(string size) => throw new ArgumentOutOfRangeException($"{Type.ToUpper()} has min size of {size}");
+    public void MaxSizeReached(string size) => throw new ArgumentOutOfRangeException($"{SqlType.ToUpper()} has max size of {size}");
+    public void MinSizeReached(string size) => throw new ArgumentOutOfRangeException($"{SqlType.ToUpper()} has min size of {size}");
 }

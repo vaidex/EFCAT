@@ -151,7 +151,7 @@ public abstract class PrecisionAttribute : TypeAttribute {
     public int Digits { get; set; }
     public int Decimals { get; set; }
 
-    public PrecisionAttribute(int digits, int decimals) : base("", $"({digits},{decimals})") {
+    public PrecisionAttribute(int digits, int decimals, string type = "") : base(type, $"({digits},{decimals})") {
         Digits = digits;
         Decimals = decimals;
     }

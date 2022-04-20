@@ -78,6 +78,25 @@ namespace Sample.Model.Migrations
                     b.HasDiscriminator<string>("DISCRIMINATOR").HasValue("Code");
                 });
 
+            modelBuilder.Entity("Sample.Model.Entity.ForeignMultiKey", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("NAME");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date")
+                        .HasColumnName("DATE");
+
+                    b.HasKey("Id", "Name", "Date");
+
+                    b.ToTable("FOREIGN_MULTI_KEYS", (string)null);
+                });
+
             modelBuilder.Entity("Sample.Model.Entity.ForeignMultiKeyCustomized", b =>
                 {
                     b.Property<int>("ID")
@@ -113,25 +132,6 @@ namespace Sample.Model.Migrations
                     b.ToTable("FOREIGN_MULTI_KEYS_DEFAULT", (string)null);
                 });
 
-            modelBuilder.Entity("Sample.Model.Entity.MultiKey", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int")
-                        .HasColumnName("ID");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("NAME");
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date")
-                        .HasColumnName("DATE");
-
-                    b.HasKey("Id", "Name", "Date");
-
-                    b.ToTable("MULTI_KEYS", (string)null);
-                });
-
             modelBuilder.Entity("Sample.Model.Entity.NicePerson", b =>
                 {
                     b.Property<int>("Id")
@@ -159,6 +159,60 @@ namespace Sample.Model.Migrations
                     b.ToTable("NICE_PEOPLE", (string)null);
                 });
 
+            modelBuilder.Entity("Sample.Model.Entity.NotGeneratedKeyImplement", b =>
+                {
+                    b.Property<int>("SecondId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("SECOND_ID");
+
+                    b.HasKey("SecondId");
+
+                    b.ToTable("NOT_GENERATED_KEY_IMPLEMENT", (string)null);
+                });
+
+            modelBuilder.Entity("Sample.Model.Entity.NotGeneratedKeyInherit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("NAME");
+
+                    b.Property<int>("SecondId")
+                        .HasColumnType("int")
+                        .HasColumnName("SECOND_ID");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NOT_GENERATED_KEY_INHERIT", (string)null);
+                });
+
+            modelBuilder.Entity("Sample.Model.Entity.NotGeneratedKeyInherit2nd", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("NAME");
+
+                    b.Property<int>("SecondId")
+                        .HasColumnType("int")
+                        .HasColumnName("SECOND_ID");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NOT_GENERATED_KEY_INHERIT_2ND", (string)null);
+                });
+
             modelBuilder.Entity("Sample.Model.Entity.Role", b =>
                 {
                     b.Property<int>("USER_ID")
@@ -170,7 +224,7 @@ namespace Sample.Model.Migrations
 
                     b.HasKey("USER_ID", "RoleName");
 
-                    b.ToTable("Roles");
+                    b.ToTable("ROLES", (string)null);
                 });
 
             modelBuilder.Entity("Sample.Model.Entity.User", b =>
@@ -319,7 +373,7 @@ namespace Sample.Model.Migrations
 
             modelBuilder.Entity("Sample.Model.Entity.ForeignMultiKeyCustomized", b =>
                 {
-                    b.HasOne("Sample.Model.Entity.MultiKey", "Key")
+                    b.HasOne("Sample.Model.Entity.ForeignMultiKey", "Key")
                         .WithOne()
                         .HasForeignKey("Sample.Model.Entity.ForeignMultiKeyCustomized", "ID", "NAME", "DATE")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -330,13 +384,42 @@ namespace Sample.Model.Migrations
 
             modelBuilder.Entity("Sample.Model.Entity.ForeignMultiKeyDefault", b =>
                 {
-                    b.HasOne("Sample.Model.Entity.MultiKey", "Key")
+                    b.HasOne("Sample.Model.Entity.ForeignMultiKey", "Key")
                         .WithOne()
                         .HasForeignKey("Sample.Model.Entity.ForeignMultiKeyDefault", "ID", "NAME", "DATE")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Key");
+                });
+
+            modelBuilder.Entity("Sample.Model.Entity.NotGeneratedKeyImplement", b =>
+                {
+                    b.OwnsOne("Sample.Model.Entity.NotGeneratedKey", "NotGeneratedKey", b1 =>
+                        {
+                            b1.Property<int>("NotGeneratedKeyImplementSecondId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasColumnName("NOT_GENERATED_KEY_ID");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasColumnType("varchar(32)")
+                                .HasColumnName("NOT_GENERATED_KEY_NAME");
+
+                            b1.HasKey("NotGeneratedKeyImplementSecondId");
+
+                            b1.ToTable("NOT_GENERATED_KEY_IMPLEMENT");
+
+                            b1.WithOwner()
+                                .HasForeignKey("NotGeneratedKeyImplementSecondId");
+                        });
+
+                    b.Navigation("NotGeneratedKey")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Sample.Model.Entity.Role", b =>

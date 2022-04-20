@@ -20,8 +20,8 @@ public class TestDbContext : DatabaseContext {
     public DbSet<ForeignMultiKeyDefault> ForeignMultiKeyDefault { get; set; }
 
     // Use a not generated base class as primary key
-    public DbSet<NotGeneratedKey> NotGeneratedKeys { get; set; }
     public DbSet<NotGeneratedKeyInherit> NotGeneratedKeyInherits { get; set; }
+    public DbSet<NotGeneratedKeyInherit2nd> NotGeneratedKeyInherit2nds { get; set; }
     public DbSet<NotGeneratedKeyImplement> NotGeneratedKeyImplements { get; set; }
 
 

@@ -13,13 +13,22 @@ public class NotGeneratedKey {
 }
 
 [Table("NOT_GENERATED_KEY_INHERIT")]
-public class NotGeneratedKeyInherit : Person {
+public class NotGeneratedKeyInherit : NotGeneratedKey {
+    [PrimaryKey]
+    public int SecondId { get; set; }
+}
 
+[Table("NOT_GENERATED_KEY_INHERIT_2ND")]
+public class NotGeneratedKeyInherit2nd : NotGeneratedKey {
+    [PrimaryKey]
+    public int SecondId { get; set; }
 }
 
 [Table("NOT_GENERATED_KEY_IMPLEMENT")]
 public class NotGeneratedKeyImplement {
     [PrimaryKey]
+    public int SecondId { get; set; }
+
     [Implement]
-    public Person Person { get; set; }
+    public NotGeneratedKey NotGeneratedKey { get; set; }
 }

@@ -1,6 +1,7 @@
 ﻿
 namespace Sample.Model.Entity;
 
+[Table("ROLES")]
 public class Role {
     [PrimaryKey]
     [ForeignColumn(EForeignType.MANY_TO_ONE, "USER_ID")]
